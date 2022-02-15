@@ -5,13 +5,15 @@ const fastify = require('fastify')();
 
 fastify.register(require('fastify-jwt'), {
     secret: config.SECRET
-})
+});
 
-// TODO: colocar esse pedação de código na rota /login
+fastify.register(require('./auth'));
+
+// TODO: colocar essa lógica na rota api/login
 fastify.post('/signup', (req, reply) => {
     const token = fastify.jwt.sign({ id: 1, nome: 'abc' })
     reply.send({ token })
-})
+});
 
 // fastify.register(require('fastify-static'), {
 //     // TODO: tocrar pasta raiz para padrão do react
