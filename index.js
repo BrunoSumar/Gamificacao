@@ -9,14 +9,9 @@ fastify.register(require('fastify-jwt'), {
 
 fastify.register(require('./auth'));
 
-// TODO: colocar essa lógica na rota api/login
-fastify.post('/signup', (req, reply) => {
-    const token = fastify.jwt.sign({ id: 1, nome: 'abc' })
-    reply.send({ token })
-});
-
+// TODO: Adicionar suporte front-end
 // fastify.register(require('fastify-static'), {
-//     // TODO: tocrar pasta raiz para padrão do react
+//     // TODO: trocar pasta raiz para padrão do react
 //     root: path.join(__dirname, './dist'),
 //     prefix: '/',
 // });

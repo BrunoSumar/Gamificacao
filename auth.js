@@ -3,10 +3,10 @@ const config = require('./config');
 
 async function verify(req, reply){
     try {
-        console.log(req)
-        await req.jwtVerify()
+        req.auth = await req.jwtVerify();
+        delete req.auth.iat;
     } catch (err) {
-        reply.send(err)
+        throw err;
     }
 }
 
