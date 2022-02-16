@@ -14,6 +14,5 @@ module.exports = async function privateRoutes(fastify){
             cosole.error(err);
             throw err;
         }
-        return null;
     })
 }
