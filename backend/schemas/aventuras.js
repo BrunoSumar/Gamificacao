@@ -1,5 +1,5 @@
-const GET = {
-    querystring: {
+const POST = {
+    body: {
         type: 'object',
         properties: {
             exemplo: {
@@ -7,22 +7,10 @@ const GET = {
             }
         },
         additionalProperties: false,
-    },
-    params: {
-        type: 'object',
-        properties: {
-            id: {
-                type: 'integer'
-            },
-            size: {
-                type: 'integer'
-            }
-        },
-        additionalProperties: false,
         required: [],
-    }
+    },
 };
 
 module.exports = {
-    GET,
+    POST,
 };

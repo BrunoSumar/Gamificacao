@@ -1,7 +1,7 @@
 
 module.exports = {
     PORT: process.env['PORT'] ? parseInt(process.env['PORT']) : 3000,
-    SECRET: process.env['SECRET'] || 'tccGamificacao',
+    SECRET: process.env['SECRET'] || null,
     DB_URL: process.env['DB_URL'] || null,
     DB_NAME: process.env['DB_NAME'] || null,
     DB_PASSWORD: process.env['DB_PASSWORD'] || null,
