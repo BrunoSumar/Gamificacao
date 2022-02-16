@@ -15,6 +15,7 @@ async function privateRoutes(fastify){
 
     // Exemplo adição de rota aqui
     // fastify.register(require('./nome_rota'), { prefix: 'nome_rota' });
+    fastify.register(require('./aventuras'), { prefix: 'aventuras' });
 
     fastify.get('/ping', async () => ({ status: 200 }));
     fastify.get('/token', async req => req.auth);
