@@ -1,25 +1,9 @@
 const path = require('path');
 const config = require('./config');
-const pg = require('pg');
 
 const fastify = require('fastify')();
 
-// TODO: Adicionar suporte front-end
-// fastify.register(require('fastify-static'), {
-//     // TODO: trocar pasta raiz para padrão do react
-//     root: path.join(__dirname, './dist'),
-//     prefix: '/',
-// });
-// fastify.get('/', (req, reply) => reply.sendFile('index.html'));
-
-fastify.decorate('pg', new pg.Pool({
-    user: config.DB_NAME,
-    host: config.DB_IP,
-    database: config.DB_NAME,
-    password: config.DB_PASSWORD,
-    port: '5432',
-    max: 6,
-}));
+fastify.decorate('pg', require('./db/banco'));
 
 fastify.register(async (fastify) => {
     fastify.pg.on('error', (err) => {
@@ -35,7 +19,7 @@ fastify.register(async (fastify) => {
 });
 
 fastify.register(require('fastify-jwt'), {
-    secret: config.SECRET
+    secret: config.SECRET,
 });
 
 fastify.register(require('./auth'));
@@ -49,3 +33,8 @@ fastify.listen(config.PORT, (err) => {
     }
     console.log(`Listening at ${config.PORT}`);
 });
+
+// Exemplo de uso bem mal feito
+// let alunoDAO = require('./DAO/AlunoDAO');
+// alunoDAO = (new alunoDAO(fastify.pg));
+// ( async () => console.log(await alunoDAO.buscaAluno()) )();
