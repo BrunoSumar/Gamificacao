@@ -1,18 +1,16 @@
 class AlunoDAO {
-  constructor(conn) {
-    this._conn = conn;
+  constructor(db) {
+    this._db = db;
   }
 
   async buscaAluno() {
     // resp = conn.query("select * from aluno");
-    const resp = this._conn.query("select 1 as num");
+    const resp = this._db.query("select 1 as num");
     if (resp)
       return resp;
     else
       throw "Aluno não encontrado";
   }
 }
-
-new AlunoDAO;
 
 module.exports = AlunoDAO;

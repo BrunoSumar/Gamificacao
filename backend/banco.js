@@ -1,5 +1,5 @@
 const pg = require('pg');
-const config = require('../config');
+const config = require('./config');
 
 module.exports = new pg.Pool({
     user: config.DB_NAME,

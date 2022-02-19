@@ -3,7 +3,8 @@ const config = require('./config');
 
 const fastify = require('fastify')();
 
-fastify.decorate('pg', require('./db/banco'));
+// Conexão com o banco
+fastify.decorate('pg', require('./banco'));
 
 fastify.register(async (fastify) => {
     fastify.pg.on('error', (err) => {
@@ -18,14 +19,17 @@ fastify.register(async (fastify) => {
     });
 });
 
+// Token JWT
 fastify.register(require('fastify-jwt'), {
     secret: config.SECRET,
 });
 
 fastify.register(require('./auth'));
 
+// Rotas da aplicação
 fastify.register(require('./api/api'), { prefix: 'api' });
 
+// Iniciando servidor
 fastify.listen(config.PORT, (err) => {
     if(err){
         console.error(err);
@@ -33,8 +37,3 @@ fastify.listen(config.PORT, (err) => {
     }
     console.log(`Listening at ${config.PORT}`);
 });
-
-// Exemplo de uso bem mal feito
-// let alunoDAO = require('./DAO/AlunoDAO');
-// alunoDAO = (new alunoDAO(fastify.pg));
-// ( async () => console.log(await alunoDAO.buscaAluno()) )();
