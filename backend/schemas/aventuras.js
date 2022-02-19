@@ -25,7 +25,7 @@ const POST = {
             },
         },
         additionalProperties: false,
-        required: [ Name, Description ],
+        required: [ 'Name', 'Description' ],
     },
 };
 
