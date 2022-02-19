@@ -1,22 +1,20 @@
 class AventuraDAO {
-  constructor(db) {
+  constructor( db ) {
     this._db = db;
   }
 
-  async adiciona( aventura) {
-    const colunas = Object.keys(aventura);
-    const values = Object.values(aventura);
-
-    console.log(`
-      INSERT INTO aventura ( ${ colunas.map((_, i) => '$' + (i + 1))} )
-      VALUES ( ${ colunas.map((_, i) => '$' + (i + colunas.length))} )
-    `);
+  async adiciona( aventura ) {
+    const colunas = Object.keys(aventura).map( x => `"${ x }"` );
+    const valores = Object.values(aventura);
 
     try{
-      // const { rows } = this._db.query(`
-      //   INSERT INTO aventura ( ${ colunas.map((_, i) => i + 1)} )
-      //   VALUES ( ${ colunas.map((_, i) => i + colunas.length)} } )
-      // `, colunas.concat(values) );
+      const { rows } = await this._db.query( `
+        INSERT INTO "Aventura" ( ${ colunas.join(', ') })
+        VALUES ( ${ colunas.map((_, i) => '$' + (i + 1)) } )
+        RETURNING *
+    `, valores);
+
+      return rows[0];
     }
     catch( err ){
       console.error( err );
@@ -26,12 +24,3 @@ class AventuraDAO {
 }
 
 module.exports = AventuraDAO;
-
-// idAventura
-// FK_Professor
-// Name
-// Description
-// isEvent
-// ClassNumber
-// dataInicio
-// dataTermino
