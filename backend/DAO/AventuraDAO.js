@@ -30,9 +30,10 @@ class AventuraDAO {
       const { rows } = await this._db.query( `
         SELECT idAventura, FK_Professor, Name, Description, isEvent, ClassNumber, dataInicio, dataTermino
         FROM "Aventura"
-        ${ is_aluno ? 'JOIN "Aluno_Aventura" aa ON av.idAventura = aa.FK_Aventura' }
-        WHERE ${ is_aluno ? 'FK_Aluno' : 'FK_Professor' } = $1
-        ${ !!id ? 'idAventura = $2' : }
+        ${ is_aluno ? 'JOIN "Aluno_Aventura" ON idAventura = FK_Aventura' : '' }
+        WHERE
+        ${ is_aluno ? 'FK_Aluno' : 'FK_Professor' } = $1
+        ${ !!id ? 'AND idAventura = $2' : '' }
         ORDER BY dataInicio
       `, [ req.auth.id ].concat( id || [] ));
 
