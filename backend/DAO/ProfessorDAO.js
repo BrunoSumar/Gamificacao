@@ -1,30 +1,30 @@
-class AlunoDAO {
+class ProfessorDAO {
   constructor(db) {
     this._db = db;
   }
 
-  async InsereAluno(aluno) {
+  async InsereProfessor(aluno) {
     const colunas = Object.keys(aluno).map((values) => `\"${values}\"`);
     const values = Object.values(aluno);
 
     const query = {
       text: `
-        INSERT INTO "Aluno" ( ${colunas.join(", ")})
-        VALUES ( ${colunas.map((_, i) => "$" + (i + 1))} )
-        RETURNING *
-    `,
+          INSERT INTO "Professor" ( ${colunas.join(", ")})
+          VALUES ( ${colunas.map((_, i) => "$" + (i + 1))} )
+          RETURNING *
+      `,
       values: values,
     };
     try {
       let { rows } = await this._db.query(query);
       return {
-        msg: "Aluno inserido no banco",
+        msg: "Professor inserido no banco",
         rows: rows[0],
         err: false,
       };
     } catch (e) {
       throw {
-        msg: "Erro ao inserir aluno no banco",
+        msg: "Erro ao inserir professor no banco",
         rows: null,
         err: e,
       };
@@ -32,4 +32,4 @@ class AlunoDAO {
   }
 }
 
-module.exports = AlunoDAO;
+module.exports = ProfessorDAO;
