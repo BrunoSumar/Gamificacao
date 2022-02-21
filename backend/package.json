@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index",
-    "dev": "SET NODE_ENV=dev&& nodemon index"
+    "dev": "set NODE_ENV=dev&& nodemon index"
   },
   "repository": {
     "type": "git",

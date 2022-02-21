@@ -23,10 +23,8 @@ class AventuraDAO {
     }
   }
 
-  async busca( id = null ){
+  async busca( is_aluno, id = null ){
     try{
-      const is_aluno = req.auth.tipo === 1;
-
       const { rows } = await this._db.query( `
         SELECT idAventura, FK_Professor, Name, Description, isEvent, ClassNumber, dataInicio, dataTermino
         FROM "Aventura"
@@ -47,6 +45,9 @@ class AventuraDAO {
       throw err;
     }
   }
+
+
+
 }
 
 module.exports = AventuraDAO;

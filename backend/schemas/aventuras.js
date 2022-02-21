@@ -1,3 +1,19 @@
+const GET = {};
+
+const GET_ID = {
+    params: {
+        type: 'object',
+        properties: {
+            id: {
+                type: 'string',
+                maxLength: 10,
+            },
+        },
+        additionalProperties: false,
+        required: [ 'id' ],
+    },
+};
+
 const POST = {
     body: {
         type: 'object',
@@ -30,5 +46,7 @@ const POST = {
 };
 
 module.exports = {
+    GET,
+    GET_ID,
     POST,
 };

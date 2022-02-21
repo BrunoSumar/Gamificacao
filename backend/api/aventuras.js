@@ -6,6 +6,30 @@ module.exports = async function privateRoutes(fastify){
 
     const pg =  fastify.pg;
 
+    fastify.get('/', { schema: schemas.GET }, async (req, reply) => {
+        try{
+            const DAO = new AventuraDAO( pg );
+
+            return await DAO.busca( req.auth.tipo === 1 );
+        }
+        catch( err ){
+            console.error(err);
+            throw err;
+        }
+    })
+
+    fastify.get('/:id', { schema: schemas.GET_ID }, async (req, reply) => {
+        try{
+            const DAO = new AventuraDAO( pg );
+
+            return await DAO.busca( req.auth.tipo === 1, req.params.id );
+        }
+        catch( err ){
+            console.error(err);
+            throw err;
+        }
+    })
+
     fastify.post('/', { schema: schemas.POST }, async (req, reply) => {
         // TODO: verificar se professor existe antes de criar aventura
         if( req.auth.tipo !== 0 )
