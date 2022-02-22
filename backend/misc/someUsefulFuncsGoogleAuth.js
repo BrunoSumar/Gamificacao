@@ -10,11 +10,7 @@ async function verify(token) {
       audience: process.env.CLIENT_ID,
     });
     const payload = ticket.getPayload();
-    //googleid
-    const userid = payload["sub"];
-    //verificar se é o iduff
-    const domain = payload["hd"];
-    console.log({ userid, domain });
+    return { dados: payload, err: false, msg: "Usuario autenticado" };
   } catch (error) {
     throw {
       err: error,
@@ -22,3 +18,7 @@ async function verify(token) {
     };
   }
 }
+
+module.exports = {
+  verify,
+};

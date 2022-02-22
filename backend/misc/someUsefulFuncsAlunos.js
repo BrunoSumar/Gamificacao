@@ -12,7 +12,11 @@ function criaAluno(googleId, FirstName, LastName, Coins = 0) {
     Coins,
   };
 }
-
-module.exports = {
-    criaAluno
+function tryToRegisterOrGetUser(googleData, DAO) {
+  //escrever func
+  return true;
 }
+module.exports = {
+  criaAluno,
+  tryToRegisterOrGetUser,
+};

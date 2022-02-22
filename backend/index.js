@@ -22,7 +22,6 @@ fastify.register(async (fastify) => {
 });
 
 // Token JWT
-console.log(process.env);
 fastify.register(require("fastify-jwt"), {
   secret: config.SECRET,
 });
