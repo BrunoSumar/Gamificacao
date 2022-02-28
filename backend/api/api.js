@@ -1,4 +1,7 @@
 const { AlunoDAO } = require("../DAO/AlunoDAO");
+const {
+  verify: verifyAccessTokenGoogle,
+} = require("../misc/someUsefulFuncsGoogleAuth");
 /** @param {import('fastify').FastifyInstance} fastify */
 module.exports = async function routes(fastify) {
   const { post: SchemaLoginPost } = require("../schemas/login");
@@ -12,8 +15,11 @@ module.exports = async function routes(fastify) {
       let userGoogleData = verifyAccessTokenGoogle(accessToken);
       let user = tryToRegisterOrGetUser(userGoogleData, alunoDao);
       const token = fastify.jwt.sign(user);
+
+      //TODO Registrar login do usuario
       reply.send({ token });
     } catch (error) {
+      //Olhar como fazer status
       reply.statusCode(401).send({
         err: error,
         msg: "Não Foi possivel Criar ou logar nesse usuario, tente novamente em alguns segundos",
