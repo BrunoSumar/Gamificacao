@@ -1,40 +1,14 @@
-const { AlunoDAO } = require("../DAO/AlunoDAO");
-const {
-  verify: verifyAccessTokenGoogle,
-} = require("../misc/someUsefulFuncsGoogleAuth");
-/** @param {import('fastify').FastifyInstance} fastify */
-module.exports = async function routes(fastify) {
-  const { post: SchemaLoginPost } = require("../schemas/login");
-  fastify.post("/login/aluno", { schema: SchemaLoginPost }, (req, reply) => {
-    const alunoDao = new AlunoDAO(fastify.pg);
-    try {
-      // TODO: alterar lógica de criação do token
-      // TODO: colorar tempo de expiração do token
-      // Coloquei o tipo (aluno ou professor) assim temporariamente
-      const { accessToken } = req.body;
-      let userGoogleData = verifyAccessTokenGoogle(accessToken);
-      let user = tryToRegisterOrGetUser(userGoogleData, alunoDao);
-      const token = fastify.jwt.sign(user);
 
-      //TODO Registrar login do usuario
-      reply.send({ token });
-    } catch (error) {
-      //Olhar como fazer status
-      reply.statusCode(401).send({
-        err: error,
-        msg: "Não Foi possivel Criar ou logar nesse usuario, tente novamente em alguns segundos",
-      });
-    }
-  });
+module.exports = async function routes(fastify) {
+  fastify.register(require("./login"), { prefix: "login" });
+
   fastify.register(privateRoutes);
 };
 
-/** @param {import('fastify').FastifyInstance} fastify */
 async function privateRoutes(fastify) {
   fastify.verifyJWT(fastify);
 
   // Exemplo adição de rota aqui
-  // fastify.register(require('./nome_rota'), { prefix: 'nome_rota' });
   fastify.register(require("./aventuras"), { prefix: "aventuras" });
 
   fastify.get("/ping", async () => ({ status: 200 }));

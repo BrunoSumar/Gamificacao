@@ -3,12 +3,16 @@ import GoogleLogin from "react-google-login";
 const fetchAccessTokenToServer = async (response) => {
   let customHeader = new Headers();
   try {
-    let responseFetch = await fetch(`${process.env.REACT_APP_SERVER_URL}login`, {
+    // let responseFetch = await fetch(`${process.env.REACT_APP_SERVER_URL}login`, {
+    console.log('TEntou logar', 'a');
+    const body = JSON.stringify({
+        AccessToken: response.accessToken,
+    });
+
+    let responseFetch = await fetch('/api/login/aluno', {
       method: "POST",
       headers: customHeader,
-      body: {
-        AccessToken: response.accessToken,
-      },
+      body,
     });
     if (responseFetch.ok) {
       let jsonResponse = await responseFetch.json();

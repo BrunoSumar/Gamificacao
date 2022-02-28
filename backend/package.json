@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index",
-    "dev": "set NODE_ENV=dev&& nodemon index"
+    "dev": "set NODE_ENV=dev&& nodemon index",
+    "linuxDev": "export NODE_ENV=dev&& nodemon index"
   },
   "repository": {
     "type": "git",
@@ -26,5 +27,8 @@
     "fastify-static": "^4.5.0",
     "google-auth-library": "^7.12.0",
     "pg": "^8.7.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }
