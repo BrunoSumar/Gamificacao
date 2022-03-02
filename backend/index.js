@@ -4,6 +4,19 @@ require("dotenv").config({
 const path = require("path");
 const config = require("./config");
 const fastify = require("fastify")();
+//CORS
+fastify.register(require("fastify-cors"), {
+  origin: (origin, cb) => {
+    const hostname = new URL(origin).hostname;
+    if (hostname === "localhost") {
+      //  Request from localhost will pass
+      cb(null, true);
+      return;
+    }
+    // Generate an error on other origins, disabling access
+    cb(new Error("Not allowed"));
+  },
+});
 
 // Conexão com o banco
 fastify.decorate("pg", require("./banco"));

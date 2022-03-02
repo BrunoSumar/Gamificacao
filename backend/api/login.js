@@ -5,20 +5,20 @@ const {
 } = require("../misc/someUsefulFuncsGoogleAuth");
 
 module.exports = async function routes(fastify) {
-
-  fastify.post("/aluno", { schema: SchemaLoginPost }, (req, reply) => {
+  fastify.post("/aluno", { schema: SchemaLoginPost }, async (req, reply) => {
     const alunoDao = new AlunoDAO(fastify.pg);
     try {
       // TODO: alterar lógica de criação do token
       // TODO: colorar tempo de expiração do token
       // Coloquei o tipo (aluno ou professor) assim temporariamente
-      const { accessToken } = req.body;
-      let userGoogleData = verifyAccessTokenGoogle(accessToken);
-      let user = tryToRegisterOrGetUser(userGoogleData, alunoDao);
-      const token = fastify.jwt.sign(user);
+      const { accessToken } = JSON.parse(req.body);
+      let userGoogleData = await verifyAccessTokenGoogle(accessToken);
+      console.log(userGoogleData);
+      //let user = tryToRegisterOrGetUser(userGoogleData, alunoDao);
+      //const token = fastify.jwt.sign(user);
 
       //TODO Registrar login do usuario
-      reply.send({ token });
+      //reply.send({ token });
     } catch (error) {
       reply.code(401).send({
         err: error,
@@ -26,5 +26,4 @@ module.exports = async function routes(fastify) {
       });
     }
   });
-
 };
