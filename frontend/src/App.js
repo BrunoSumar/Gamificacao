@@ -1,6 +1,7 @@
 import React from "react";
 import GoogleLogin from "react-google-login";
 const fetchAccessTokenToServer = async (response) => {
+  console.log(response)
   let customHeader = new Headers();
   try {
     let responseFetch = await fetch(
@@ -9,7 +10,7 @@ const fetchAccessTokenToServer = async (response) => {
         method: "POST",
         headers: customHeader,
         body: JSON.stringify({
-          AccessToken: response.accessToken,
+          AccessToken: response.tokenId,
         }),
       }
     );

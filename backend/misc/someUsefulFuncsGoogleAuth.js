@@ -10,12 +10,21 @@ async function verify(token) {
       audience: process.env.CLIENT_ID,
     });
     const payload = ticket.getPayload();
-    return { dados: payload, err: false, msg: "Usuario autenticado" };
+    if (payload["hd"] === "id.uff.br") {
+      return { dados: payload, err: false, msg: "Usuario autenticado" };
+    } else {
+      throw {
+        msg: 'Você deve usar uma conta "id.uff.br" para continuar ',
+      };
+    }
   } catch (error) {
-    throw {
-      err: error,
-      msg: error.msg || "Não foi possivel verificar usuario tente novamente!",
-    };
+    throw error.msg
+      ? {
+          err: true,
+          msg:
+            error.msg || "Não foi possivel verificar usuario tente novamente!",
+        }
+      : { error };
   }
 }
 

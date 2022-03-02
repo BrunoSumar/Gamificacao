@@ -4,6 +4,8 @@ const {
   verify: verifyAccessTokenGoogle,
 } = require("../misc/someUsefulFuncsGoogleAuth");
 
+const { tryToRegisterOrGetUser } = require("../misc/someUsefulFuncsAlunos"); 
+
 module.exports = async function routes(fastify) {
   fastify.post("/aluno", { schema: SchemaLoginPost }, async (req, reply) => {
     const alunoDao = new AlunoDAO(fastify.pg);
@@ -11,18 +13,27 @@ module.exports = async function routes(fastify) {
       // TODO: alterar lógica de criação do token
       // TODO: colorar tempo de expiração do token
       // Coloquei o tipo (aluno ou professor) assim temporariamente
-      const { accessToken } = JSON.parse(req.body);
-      let userGoogleData = await verifyAccessTokenGoogle(accessToken);
-      console.log(userGoogleData);
-      //let user = tryToRegisterOrGetUser(userGoogleData, alunoDao);
-      //const token = fastify.jwt.sign(user);
-
-      //TODO Registrar login do usuario
-      //reply.send({ token });
+      const { AccessToken } = JSON.parse(req.body);
+      let userGoogleData = await verifyAccessTokenGoogle(AccessToken);
+      if (userGoogleData.err) {
+        throw userGoogleData;
+      }
+      userGoogleData = userGoogleData.dados;
+      let user = await tryToRegisterOrGetUser(
+        {
+          ID_google: `${userGoogleData.sub}`,
+          first_name: `${userGoogleData.given_name}`,
+          last_name: `${userGoogleData.family_name}`,
+          coins: 0,
+        },
+        alunoDao
+      );
+      const token = fastify.jwt.sign(user);
+      reply.send({ token });
     } catch (error) {
       reply.code(401).send({
         err: error,
-        msg: "Não Foi possivel Criar ou logar nesse usuario, tente novamente em alguns segundos",
+        msg: "Não Foi possivel criar ou logar nesse usuario, tente novamente em alguns segundos",
       });
     }
   });

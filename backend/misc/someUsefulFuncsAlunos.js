@@ -12,9 +12,21 @@ function criaAluno(googleId, FirstName, LastName, Coins = 0) {
     Coins,
   };
 }
-function tryToRegisterOrGetUser(googleData, DAO) {
-  //escrever func
-  return true;
+async function tryToRegisterOrGetUser(googleData, DAO) {
+  try {
+    let aluno = await DAO.buscaAluno(googleData.ID_google).row;
+    console.log("Buscou "+aluno)
+    if (!aluno) {
+      aluno = await DAO.insereAluno(googleData).row;
+      console.log("Inseriu "+aluno)
+    }
+    return {
+      err: false,
+      aluno,
+    };
+  } catch (error) {
+    throw error;
+  }
 }
 module.exports = {
   criaAluno,
