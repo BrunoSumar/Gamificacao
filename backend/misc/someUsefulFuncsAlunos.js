@@ -14,11 +14,13 @@ function criaAluno(googleId, FirstName, LastName, Coins = 0) {
 }
 async function tryToRegisterOrGetUser(googleData, DAO) {
   try {
-    let aluno = await DAO.buscaAluno(googleData.ID_google).row;
-    console.log("Buscou "+aluno)
+    let aluno = await DAO.buscaAluno(googleData.ID_google);
+    console.log("Buscou: ")
+    console.log(aluno)
     if (!aluno) {
-      aluno = await DAO.insereAluno(googleData).row;
-      console.log("Inseriu "+aluno)
+      aluno = await DAO.insereAluno(googleData);
+      console.log("inseriu: ")
+      console.log(aluno)
     }
     return {
       err: false,

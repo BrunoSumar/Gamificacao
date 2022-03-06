@@ -1,7 +1,6 @@
 import React from "react";
 import GoogleLogin from "react-google-login";
 const fetchAccessTokenToServer = async (response) => {
-  console.log(response)
   let customHeader = new Headers();
   try {
     let responseFetch = await fetch(

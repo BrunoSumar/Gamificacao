@@ -9,7 +9,7 @@ class AlunoDAO {
       const query = {
         text: `
           INSERT INTO "Alunos" ("ID_google", first_name, last_name, coins)
-          VALUES ($1 $2 $3 $4)
+          VALUES ($1, $2, $3, $4)
           RETURNING *
       `,
         values,
