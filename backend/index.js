@@ -4,11 +4,13 @@ require("dotenv").config({
 const path = require("path");
 const config = require("./config");
 const fastify = require("fastify")();
+
 //CORS
 fastify.register(require("fastify-cors"), {
   origin: (origin, cb) => {
-    const hostname = new URL(origin).hostname;
-    if (hostname === "localhost") {
+    //   cb(null, true);
+    const hostname = origin && new URL(origin).hostname;
+    if (hostname === "localhost" || config.DEV_MODE) {
       //  Request from localhost will pass
       cb(null, true);
       return;

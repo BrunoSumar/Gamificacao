@@ -5,4 +5,5 @@ module.exports = {
   DB_NAME: process.env.DB_NAME || null,
   DB_PASSWORD: process.env.DB_PASSWORD || null,
   DB_IP: process.env.DB_IP || null,
+  DEV_MODE: process.env.NODE_ENV == 'dev' || false,
 };
