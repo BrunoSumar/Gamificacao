@@ -28,7 +28,7 @@ module.exports = async function routes(fastify) {
         },
         alunoDao
       );
-      const token = fastify.jwt.sign(user);
+      const token = fastify.jwt.sign(user.aluno.row);
       reply.send({ token });
     } catch (error) {
       reply.code(401).send({

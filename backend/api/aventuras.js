@@ -8,9 +8,10 @@ module.exports = async function privateRoutes(fastify){
 
     fastify.get('/', { schema: schemas.GET }, async (req, reply) => {
         try{
+            console.log('auth: ', req.auth)
             const DAO = new AventuraDAO( pg );
 
-            return await DAO.busca( req.auth.tipo === 1 );
+            return await DAO.busca( req.auth.tipo === 1, req.auth.ID_aluno || req.auth.ID_professor );
         }
         catch( err ){
             console.error(err);
@@ -22,7 +23,7 @@ module.exports = async function privateRoutes(fastify){
         try{
             const DAO = new AventuraDAO( pg );
 
-            return await DAO.busca( req.auth.tipo === 1, req.params.id );
+            return await DAO.busca( req.auth.tipo === 1, req.auth.ID_aluno || req.auth.ID_professor, req.params.id  );
         }
         catch( err ){
             console.error(err);

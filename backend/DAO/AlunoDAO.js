@@ -39,6 +39,10 @@ class AlunoDAO {
         values: [googleId],
       };
       let { rows } = await this._db.query(query);
+
+      if( !rows || rows.length < 1 )
+        return null;
+
       return {
         msg: "Aluno encontrado",
         row: rows[0],

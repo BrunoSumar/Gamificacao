@@ -22,6 +22,9 @@ async function tryToRegisterOrGetUser(googleData, DAO) {
       console.log("inseriu: ")
       console.log(aluno)
     }
+    aluno.row.tipo = 1; // tipo dele é aluno
+    console.log( 'aluno: ', aluno )
+    // TODO: pensar numa maneira melhor de diferenciar o tipo do usuário pelo toke
     return {
       err: false,
       aluno,
