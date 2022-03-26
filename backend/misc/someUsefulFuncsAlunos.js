@@ -22,7 +22,7 @@ async function tryToRegisterOrGetUser(googleData, DAO) {
       console.log("inseriu: ")
       console.log(aluno)
     }
-    aluno.row.tipo = 1; // tipo dele é aluno
+    aluno.row.type = 1; // tipo dele é aluno
     console.log( 'aluno: ', aluno )
     return {
       err: false,

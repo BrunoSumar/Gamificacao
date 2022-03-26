@@ -23,12 +23,7 @@ class AlunoDAO {
         err: false,
       };
     } catch (e) {
-      console.log(e)
-      throw {
-        msg: "Erro ao inserir aluno no banco",
-        rows: null,
-        err: e,
-      };
+      throw e
     }
   }
 
@@ -41,7 +36,7 @@ class AlunoDAO {
       let { rows } = await this._db.query(query);
 
       if( !rows || rows.length < 1 )
-        return null;
+        throw {msg:"Aluno não encontrado"};
 
       return {
         msg: "Aluno encontrado",
