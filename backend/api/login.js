@@ -15,9 +15,6 @@ module.exports = async function routes(fastify) {
       // Coloquei o tipo (aluno ou professor) assim temporariamente
       const { AccessToken } = JSON.parse(req.body);
       let userGoogleData = await verifyAccessTokenGoogle(AccessToken);
-      if (userGoogleData.err) {
-        throw userGoogleData;
-      }
       userGoogleData = userGoogleData.dados;
       let user = await tryToRegisterOrGetUser(
         {
@@ -29,12 +26,13 @@ module.exports = async function routes(fastify) {
         alunoDao
       );
       const token = fastify.jwt.sign(user.aluno.row);
-      reply.send({ token });
+      return { token };
     } catch (error) {
-      reply.code(401).send({
+      reply.code(401)
+      return {
         err: error,
         msg: "Não Foi possivel criar ou logar nesse usuario, tente novamente em alguns segundos",
-      });
+      };
     }
   });
 };

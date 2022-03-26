@@ -18,13 +18,7 @@ async function verify(token) {
       };
     }
   } catch (error) {
-    throw error.msg
-      ? {
-          err: true,
-          msg:
-            error.msg || "Não foi possivel verificar usuario tente novamente!",
-        }
-      : { error };
+    throw error;
   }
 }
 
