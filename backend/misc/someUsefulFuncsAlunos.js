@@ -15,15 +15,11 @@ function criaAluno(googleId, FirstName, LastName, Coins = 0) {
 async function tryToRegisterOrGetUser(googleData, DAO) {
   try {
     let aluno = await DAO.buscaAluno(googleData.ID_google);
-    console.log("Buscou: ")
-    console.log(aluno)
+   
     if (!aluno) {
       aluno = await DAO.insereAluno(googleData);
-      console.log("inseriu: ")
-      console.log(aluno)
     }
     aluno.row.type = 1; // tipo dele é aluno
-    console.log( 'aluno: ', aluno )
     return {
       err: false,
       aluno,

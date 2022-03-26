@@ -4,7 +4,7 @@ const config = require('./config');
 
 const oauth2Client = new OAuth2Client(
     process.env.CLIENT_ID,
-    process.env.CLIENT_SECRET
+    process.env.CLIENT_SECRET,
 );
 
 // const SCOPES = ['https://www.googleapis.com/auth/classroom.courses.readonly'];

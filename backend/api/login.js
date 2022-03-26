@@ -11,8 +11,9 @@ module.exports = async function routes(fastify) {
     const alunoDao = new AlunoDAO(fastify.pg);
     try {
       // TODO: colorar tempo de expiração do token
-      const { AccessToken } = JSON.parse(req.body);
-      let userGoogleData = await verifyAccessTokenGoogle(AccessToken);
+      const { accessToken, tokenId } = JSON.parse(req.body);
+      console.log(tokenId)
+      let userGoogleData = await verifyAccessTokenGoogle(tokenId);
       userGoogleData = userGoogleData.dados;
       let user = await tryToRegisterOrGetUser(
         {
@@ -23,9 +24,10 @@ module.exports = async function routes(fastify) {
         },
         alunoDao
       );
-      console.log( userGoogleData );
       // user.aluno.row.google_token = userGoogleData;
-      user.aluno.row.code = AccessToken;
+      user.aluno.row.accessToken = accessToken;
+      user.aluno.row.tokenId = tokenId;
+      //console.log(user.aluno.row)
       const token = fastify.jwt.sign(user.aluno.row);
       return { token };
     } catch (error) {

@@ -14,9 +14,7 @@ class AlunoDAO {
       `,
         values,
       };
-      console.log(query);
       let { rows } = await this._db.query(query);
-      console.log(rows);
       return {
         msg: "Aluno inserido no banco",
         row: rows,

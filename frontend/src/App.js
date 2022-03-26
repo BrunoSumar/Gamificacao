@@ -3,13 +3,15 @@ import GoogleLogin from "react-google-login";
 const fetchAccessTokenToServer = async (response) => {
   let customHeader = new Headers();
   try {
+    console.log(response);
     let responseFetch = await fetch(
       `${process.env.REACT_APP_SERVER_URL}api/login/aluno`,
       {
         method: "POST",
         headers: customHeader,
         body: JSON.stringify({
-          AccessToken: response.tokenId,
+          accessToken: response.accessToken,
+          tokenId: response.tokenId,
         }),
       }
     );
@@ -31,6 +33,8 @@ function App() {
         onFailure={(err) => alert(err)}
         cookiePolicy={"single_host_origin"}
         theme="dark"
+        scope={"https://www.googleapis.com/auth/classroom.courses.readonly"}
+        accessType='offline'
       />
     </div>
   );
