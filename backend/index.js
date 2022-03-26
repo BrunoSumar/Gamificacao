@@ -2,8 +2,8 @@ require("dotenv").config({
   path: process.env.NODE_ENV == "dev" ? ".env.development" : ".env",
 });
 const path = require("path");
-const config = require("./config");
 const fastify = require("fastify")();
+const config = require("./config");
 
 //CORS
 fastify.register(require("fastify-cors"), {
@@ -40,8 +40,10 @@ fastify.register(async (fastify) => {
 fastify.register(require("fastify-jwt"), {
   secret: config.SECRET,
 });
-
 fastify.register(require("./auth"));
+
+// OAuth2
+fastify.decorate("oauth", require("./OAuth"));
 
 // Rotas da aplicação
 fastify.register(require("./api/api"), { prefix: "api" });

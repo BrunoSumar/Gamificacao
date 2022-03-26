@@ -1,10 +1,12 @@
 const schemas = require('../schemas/aventuras');
 const AventuraDAO = require('../DAO/AventuraDAO');
-
+const { google } = require('googleapis');
 
 module.exports = async function privateRoutes(fastify){
 
     const pg =  fastify.pg;
+
+    const oauth =  fastify.oauth;
 
     fastify.get('/', { schema: schemas.GET }, async (req, reply) => {
         try{
@@ -30,6 +32,40 @@ module.exports = async function privateRoutes(fastify){
             throw err;
         }
     })
+
+    fastify.get('/import', async (req, reply) => {
+        try{
+            const auth = req.auth.code;
+            console.log( req.auth, '\n\n' );
+            const token = await oauth.getToken( auth );
+            // console.log( token )
+
+            // listCourses( token );
+            return null;
+        }
+        catch( err ){
+            console.error(err);
+            throw err;
+        }
+    })
+
+    async function listCourses(auth) {
+        const classroom = await google.classroom({version: 'v1', auth});
+        classroom.courses.list({
+            pageSize: 10,
+        }, (err, res) => {
+            if (err) return console.error('The API returned an error: ' + err);
+            const courses = res.data.courses;
+            if (courses && courses.length) {
+                console.log('Courses:');
+                courses.forEach((course) => {
+                    console.log(`${course.name} (${course.id})`);
+                });
+            } else {
+                console.log('No courses found.');
+            }
+        });
+    }
 
     fastify.post('/', { schema: schemas.POST }, async (req, reply) => {
         // TODO: verificar se professor existe antes de criar aventura
