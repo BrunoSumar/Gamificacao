@@ -28,7 +28,8 @@ const fetchAccessTokenToServer = async (response) => {
         method: "POST",
         headers: customHeader,
         body: JSON.stringify({
-          tokenId: token.id_token,
+          id_token: token.id_token,
+          access_token: token.access_token,
         }),
       }
     );

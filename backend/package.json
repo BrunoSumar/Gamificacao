@@ -28,6 +28,7 @@
     "fastify-static": "^4.5.0",
     "google-auth-library": "^7.12.0",
     "googleapis": "^95.0.0",
+    "node-fetch": "^2.6.7",
     "pg": "^8.7.3"
   },
   "devDependencies": {

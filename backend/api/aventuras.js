@@ -1,6 +1,7 @@
+const { google } = require("googleapis");
+const fetch = require('node-fetch');
 const schemas = require("../schemas/aventuras");
 const AventuraDAO = require("../DAO/AventuraDAO");
-const { google } = require("googleapis");
 const { verify: VerifyToken } = require('../misc/someUsefulFuncsGoogleAuth')
 
 module.exports = async function privateRoutes(fastify) {
@@ -39,13 +40,31 @@ module.exports = async function privateRoutes(fastify) {
 
   fastify.get("/import", async (req, reply) => {
     try {
-      const auth = req.auth.accessToken;
-      console.log(req.auth, "\n\n");
-      if(await VerifyToken(req.auth.tokenId)){
-        const token = await oauth.getToken(  );
-        listCourses(token);
-      }
-      return null;
+
+      let courses = [];
+      let next_page = null;
+      const now = new Date();
+      const creation_time = 1000*60*60*24*30*5 ; // aproximadante 1296*10^9 milisegundos ou 5 meses
+
+      const response = await fetch(
+        `https://classroom.googleapis.com/v1/courses?courseStates=ACTIVE&pageSize=0${ next_page ? '&pageToken=' + next_page : '' }`,
+        {
+          method: "GET",
+          headers: { Authorization: `Bearer ${ req.auth.access_token }` },
+        }
+      );
+
+      if( !response.ok )
+        throw { msg: 'Erro ao buscar turmas' };
+
+      const body = await response.json();
+      courses = courses.concat(
+        body.courses
+          .filter( course => /^[A-z]{3}[0-9]{5}/.test( course.name ) )
+          .filter( course =>  creation_time > (now - new Date( course.creationTime )) )
+      );
+
+      return courses;
     } catch (err) {
       console.error(err);
       throw err;
