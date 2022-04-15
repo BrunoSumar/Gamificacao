@@ -4,18 +4,32 @@ class AventuraDAO {
     this._db = db;
   }
 
-  async adiciona( aventura ) {
-    const colunas = Object.keys(aventura).map( x => `"${ x }"` );
-    const valores = Object.values(aventura);
+  async adiciona( aventuras ) {
+    if( !aventuras )
+      return;
+    aventuras = [].concat( aventuras );
+
+    const colunas = Object
+          .keys( aventuras[0] )
+          .map( chave => `"${ chave.trim() }"` );
+
+    const valores = aventuras
+          .map( aventura => Object.values(aventura) )
+          .reduce( (acc, aventura) => acc.concat( aventura ) );
+
+    const tam = colunas.length;
+    const valores_query = aventuras
+          .map( (_, i) => colunas.map((_, j) => '$' + (tam * i + j + 1)) )
+          .map( val => `(${ val })` );
 
     try{
       const { rows } = await this._db.query( `
-        INSERT INTO "Aventuras" ( ${ colunas.join(', ') })
-        VALUES ( ${ colunas.map((_, i) => '$' + (i + 1)) } )
-        RETURNING *
-    `, valores);
-
-      return rows[0];
+        INSERT INTO "Aventuras" ( ${ colunas } )
+        VALUES ${ valores_query }
+        ON CONFLICT ("ID_google") DO NOTHING
+        RETURNING "ID_aventura"
+      `, valores);
+      return rows.map( row => row.ID_aventura );
     }
     catch( err ){
       console.error( err );

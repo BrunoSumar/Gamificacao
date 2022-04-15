@@ -40,7 +40,6 @@ module.exports = async function privateRoutes(fastify) {
 
   fastify.get("/import", async (req, reply) => {
     try {
-
       let courses = [];
       let next_page = null;
       const now = new Date();
@@ -54,17 +53,27 @@ module.exports = async function privateRoutes(fastify) {
         }
       );
 
-      if( !response.ok )
-        throw { msg: 'Erro ao buscar turmas' };
-
       const body = await response.json();
-      courses = courses.concat(
-        body.courses
-          .filter( course => /^[A-z]{3}[0-9]{5}/.test( course.name ) )
-          .filter( course =>  creation_time > (now - new Date( course.creationTime )) )
+      if( !response.ok )
+        throw body.error;
+
+      courses = courses
+        .concat(
+          body.courses
+            .filter( course => /^[A-z]{3}[0-9]{5}/.test( course.name ) )
+            .filter( course => /@id\.uff\.br$/.test( course.teacherGroupEmail ) )
+            .filter( course => course.courseState === 'ACTIVE' )
+            .filter( course => creation_time > (now - new Date( course.creationTime )) )
+            .map( course => ({
+              name: course.name.split('-')[1].trim(),
+              class_number: course.name.split('-')[0].trim(),
+              ID_google: parseInt( course.id ),
+              is_event: false,
+            }))
       );
 
-      return courses;
+      const DAO = new AventuraDAO( pg );
+      return await DAO.adiciona( courses );
     } catch (err) {
       console.error(err);
       throw err;
