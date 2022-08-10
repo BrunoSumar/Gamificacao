@@ -1,5 +1,5 @@
 import React, { createContext } from "react";
-import GoogleLogin from "react-google-login";
+import { useGoogleLogin } from '@react-oauth/google';
 import { OAuth2Client } from "google-auth-library";
 import crypto from "crypto-js";
 const client = new OAuth2Client(
@@ -52,20 +52,16 @@ async function getAuthAndRefreshToken(code) {
 }
 
 function App() {
+  const login = useGoogleLogin({
+    onSuccess: (codeResponse) => fetchAccessTokenToServer(codeResponse),
+    flow: "auth-code",
+    scopes:"https://www.googleapis.com/auth/classroom.courses.readonly"
+  });
+
   return (
-    <div className="App" style={{ backgroundColor: "#f0f0f0" }}>
-      <GoogleLogin
-        clientId={process.env.REACT_APP_CLIENT_ID}
-        buttonText="Login"
-        onSuccess={fetchAccessTokenToServer}
-        onFailure={(err) => alert(err)}
-        cookiePolicy={"single_host_origin"}
-        theme="dark"
-        scopes={["https://www.googleapis.com/auth/classroom.courses.readonly"]}
-        accessType="offline"
-        responseType="code"
-        prompt="consent"
-      />
+    <div className="App" style={{ backgroundColor: "#f0f0f0" }}>g
+      {process.env.REACT_APP_CLIENT_ID}
+      <button onClick={() => login()} />
     </div>
   );
 }

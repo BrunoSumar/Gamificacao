@@ -10,7 +10,7 @@ module.exports = async function routes(fastify) {
   fastify.post("/aluno", { schema: SchemaLoginPost }, async (req, reply) => {
     const alunoDao = new AlunoDAO(fastify.pg);
     try {
-      // TODO: colorar tempo de expiração do token
+      // TODO: colocar tempo de expiração do token
       const { id_token, access_token } = JSON.parse(req.body);
       let userGoogleData = await verifyAccessTokenGoogle(id_token);
       userGoogleData = userGoogleData.dados;
