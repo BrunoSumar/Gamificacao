@@ -10,13 +10,12 @@ module.exports = async function routes(fastify) {
   fastify.post("/aluno", { schema: SchemaLoginPost }, async (req, reply) => {
     const alunoDao = new AlunoDAO(fastify.pg);
     try {
-      // TODO: colocar tempo de expiração do token
-      const { id_token, access_token } = JSON.parse(req.body);
+      const { access_token: id_token } = JSON.parse(req.body);
       let userGoogleData = await verifyAccessTokenGoogle(id_token);
       userGoogleData = userGoogleData.dados;
       let user = await tryToRegisterOrGetUser(
         {
-          ID_google: `${userGoogleData.sub}`,
+          ID_google: `${userGoogleData.id}`,
           first_name: `${userGoogleData.given_name}`,
           last_name: `${userGoogleData.family_name}`,
           coins: 0,
@@ -24,10 +23,10 @@ module.exports = async function routes(fastify) {
         alunoDao
       );
       user.aluno.row.id_token = id_token;
-      user.aluno.row.access_token = access_token;
       const token = fastify.jwt.sign(user.aluno.row);
       return { token };
     } catch (error) {
+      console.log(error)
       reply.code(401)
       return {
         err: error,
