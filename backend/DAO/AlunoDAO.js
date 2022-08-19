@@ -21,7 +21,7 @@ class AlunoDAO {
         err: false,
       };
     } catch (e) {
-      throw e
+      throw e;
     }
   }
 
@@ -33,8 +33,7 @@ class AlunoDAO {
       };
       let { rows } = await this._db.query(query);
 
-      if( !rows || rows.length < 1 )
-        throw {msg:"Aluno não encontrado"};
+      if (!rows || rows.length < 1) return null;
 
       return {
         msg: "Aluno encontrado",
