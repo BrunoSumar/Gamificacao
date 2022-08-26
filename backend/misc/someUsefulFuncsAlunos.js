@@ -1,34 +1,32 @@
-function criaAluno(googleId, FirstName, LastName, Coins = 0) {
-  if (!(googleId || FirstName || LastName)) {
-    throw {
-      err: true,
-      msg: "Não foi possivel criar aluno, verifique parametros!",
-    };
-  }
-  return {
-    FirstName,
-    googleId,
-    LastName,
-    Coins,
+async function tryToRegisterOrGetUser(userType, googleData, DAO) {
+  const obj_type = {
+    Aluno: 1,
+    Professor: 2,
+    Admin: 0,
   };
-}
-async function tryToRegisterOrGetUser(googleData, DAO) {
+
   try {
-    let aluno = await DAO.buscaAluno(googleData.ID_google);
-   
-    if (!aluno) {
-      aluno = await DAO.insereAluno(googleData);
+    let user = await DAO.busca(googleData.ID_google);
+
+    if (!user) {
+      user = await DAO.insere(googleData);
     }
-    aluno.row.type = 1; // tipo dele é aluno
+
+    user.row.type = obj_type[userType] || null;
+
+    if (!user.row.type) {
+      throw error;
+    }
+
     return {
       err: false,
-      aluno,
+      user,
     };
   } catch (error) {
     throw error;
   }
 }
+
 module.exports = {
-  criaAluno,
   tryToRegisterOrGetUser,
 };
