@@ -8,7 +8,7 @@ class ProfessorDAO {
 
     const query = {
       text: `
-          INSERT INTO "Professor" ("ID_google","TXT_num_professor","TXT_ultimo_nome","FL_validado")
+          INSERT INTO "Professores" ("ID_google","TXT_primeiro_nome","TXT_ultimo_nome","FL_validado")
           VALUES ($1, $2, $3, $4)
           RETURNING *
       `,
@@ -19,13 +19,13 @@ class ProfessorDAO {
       let { rows } = await this._db.query(query);
       return {
         msg: "Professor inserido no banco",
-        rows: rows[0],
+        row: rows[0],
         err: false,
       };
     } catch (e) {
       throw {
         msg: "Erro ao inserir professor no banco",
-        rows: null,
+        row: null,
         err: e,
       };
     }

@@ -8,7 +8,7 @@ class AlunoDAO {
       const values = Object.values(aluno);
       const query = {
         text: `
-          INSERT INTO "Alunos" ("ID_google", TXT_primeiro_nome, TXT_ultimo_nome, NR_moedas)
+          INSERT INTO "Alunos" ("ID_google", "TXT_primeiro_nome", "TXT_ultimo_nome", "NR_moedas")
           VALUES ($1, $2, $3, $4)
           RETURNING *
       `,
