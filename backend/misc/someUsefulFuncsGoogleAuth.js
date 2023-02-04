@@ -1,15 +1,18 @@
 const { OAuth2Client } = require("google-auth-library");
 // should have a client-id
-const client = new OAuth2Client(process.env.CLIENT_ID);
-//TODO create a service in google
+const fetch = require("node-fetch");
+//TODO Fazer chamada com o access token nesse link https://www.googleapis.com/oauth2/v1/userinfo
+
 async function verify(token) {
   try {
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.CLIENT_ID,
-    });
-    const payload = ticket.getPayload();
+    const response = await fetch(
+      "https://www.googleapis.com/oauth2/v1/userinfo",
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    const payload = await response.json();
     console.log(payload);
+
     if (payload["hd"] === "id.uff.br") {
       return { dados: payload, err: false, msg: "Usuario autenticado" };
     } else {

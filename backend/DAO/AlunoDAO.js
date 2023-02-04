@@ -3,17 +3,18 @@ class AlunoDAO {
     this._db = db;
   }
 
-  async insereAluno(aluno) {
+  async insere(aluno) {
     try {
       const values = Object.values(aluno);
       const query = {
         text: `
-          INSERT INTO "Alunos" ("ID_google", first_name, last_name, coins)
+          INSERT INTO "Alunos" ("ID_google", "TXT_primeiro_nome", "TXT_ultimo_nome", "NR_moedas")
           VALUES ($1, $2, $3, $4)
           RETURNING *
       `,
         values,
       };
+
       let { rows } = await this._db.query(query);
       return {
         msg: "Aluno inserido no banco",
@@ -21,11 +22,11 @@ class AlunoDAO {
         err: false,
       };
     } catch (e) {
-      throw e
+      throw e;
     }
   }
 
-  async buscaAluno(googleId) {
+  async busca(googleId) {
     try {
       const query = {
         text: `SELECT * from "Alunos" where "ID_google" = $1`,
@@ -33,8 +34,7 @@ class AlunoDAO {
       };
       let { rows } = await this._db.query(query);
 
-      if( !rows || rows.length < 1 )
-        throw {msg:"Aluno não encontrado"};
+      if (!rows || rows.length < 1) return null;
 
       return {
         msg: "Aluno encontrado",
