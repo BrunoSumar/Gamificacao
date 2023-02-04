@@ -1,47 +1,43 @@
-import React, { useEffect } from "react";
+import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
+import crypto from "crypto-js";
 
-function App() {
-  const fetchAccessTokenToServer = async (response) => {
-    let customHeader = new Headers();
-    try {
-      console.log(response);
-      let responseFetch = await fetch(
-        `${process.env.REACT_APP_SERVER_URL}api/login/aluno`,
-        {
-          method: "POST",
-          headers: customHeader,
-          body: JSON.stringify({
-            access_token: response.access_token,
+import React from "react";
+
+const Test = () => {
+  const onSuccess = async (token) => {
+    console.log(token)
+    await fetch(`${process.env.REACT_APP_SERVER_URL}api/login/aluno`, {
+      method: "POST",
+      body: JSON.stringify({
+        access_token: token.access_token,
+      })
+    }).then((response) => {
+      if(response.ok){
+        localStorage.setItem('googleTokens',crypto.AES.encrypt(
+          JSON.stringify({
+            access_token: token.access_token,
           }),
-        }
-      );
-      if (responseFetch.ok) {
-        let jsonResponse = await responseFetch.json();
-        console.log(jsonResponse);
-      } else throw false;
-    } catch (error) {
-      console.log(error);
-    }
+          process.env.REACT_APP_CRYPTO_CODE))
+      }
+    });
   };
 
-  /* global google*/
-  const client = google.accounts.oauth2.initTokenClient({
-    client_id: process.env.REACT_APP_CLIENT_ID,
+  const login = useGoogleLogin({
+    onSuccess: onSuccess,
+    onError: (tokenResponse) => console.log("Erro"),
     scope:
-      "https://www.googleapis.com/auth/classroom.courses.readonly \
-      https://www.googleapis.com/auth/userinfo.profile \
-      openid \
-      email",
-    callback: fetchAccessTokenToServer,
+      "profile email https://www.googleapis.com/auth/classroom.courses.readonly",
   });
 
-  return (
-    <div>
-      <button onClick={() => client.requestAccessToken()} id="signInDiv">
-        Google Login
-      </button>
-    </div>
-  );
-}
+  return <div onClick={() => login()}>Sign in with Google 🚀 </div>;
+};
 
-export default App;
+const app = () => {
+  return (
+    <GoogleOAuthProvider clientId={process.env.REACT_APP_CLIENT_ID}>
+      <Test />
+    </GoogleOAuthProvider>
+  );
+};
+
+export default app;
