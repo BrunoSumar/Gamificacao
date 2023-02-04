@@ -13,6 +13,7 @@ const Test = () => {
       })
     }).then((response) => {
       if(response.ok){
+        response.json().then( x => console.log( x ) )
         localStorage.setItem('googleTokens',crypto.AES.encrypt(
           JSON.stringify({
             access_token: token.access_token,

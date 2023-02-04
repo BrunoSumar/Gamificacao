@@ -45,11 +45,14 @@ module.exports = async function privateRoutes(fastify) {
       const now = new Date();
       const creation_time = 1000*60*60*24*30*5 ; // aproximadante 1296*10^9 milisegundos ou 5 meses
 
+      // console.log( req.auth.id )
+
       const response = await fetch(
-        `https://classroom.googleapis.com/v1/courses?courseStates=ACTIVE&pageSize=0${ next_page ? '&pageToken=' + next_page : '' }`,
+        // `https://classroom.googleapis.com/v1/courses?courseStates=ACTIVE&pageSize=0${ next_page ? '&pageToken=' + next_page : '' }`,
+        `https://classroom.googleapis.com/v1/courses`,
         {
           method: "GET",
-          headers: { Authorization: `Bearer ${ req.auth.access_token }` },
+          headers: { Authorization: `Bearer ${ req.auth.id_token }` },
         }
       );
 
@@ -61,9 +64,9 @@ module.exports = async function privateRoutes(fastify) {
         .concat(
           body.courses
             .filter( course => /^[A-z]{3}[0-9]{5}/.test( course.name ) )
-            .filter( course => /@id\.uff\.br$/.test( course.teacherGroupEmail ) )
-            .filter( course => course.courseState === 'ACTIVE' )
-            .filter( course => creation_time > (now - new Date( course.creationTime )) )
+            // .filter( course => /@id\.uff\.br$/.test( course.teacherGroupEmail ) )
+            // .filter( course => course.courseState === 'ACTIVE' )
+            // .filter( course => creation_time > (now - new Date( course.creationTime )) )
             .map( course => ({
               name: course.name.split('-')[1].trim(),
               class_number: course.name.split('-')[0].trim(),
@@ -72,8 +75,11 @@ module.exports = async function privateRoutes(fastify) {
             }))
       );
 
+      console.log( courses )
+
+      return courses;
       const DAO = new AventuraDAO( pg );
-      return await DAO.adiciona( courses );
+      // return await DAO.adiciona( courses );
     } catch (err) {
       console.error(err);
       throw err;
