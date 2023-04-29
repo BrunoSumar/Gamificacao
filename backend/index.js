@@ -40,7 +40,6 @@ fastify.register(async (fastify) => {
 fastify.register(require("fastify-jwt"), {
   secret: config.SECRET,
 });
-fastify.register(require("./auth"));
 
 // OAuth2
 fastify.decorate("oauth", require("./OAuth"));

@@ -11,9 +11,8 @@ const {
 } = require("./medalha")
 
 async function privateRoutes(fastify) {
-  fastify.verifyJWT(fastify);
+  fastify.register(require("../auth"));
 
-  // Exemplo adição de rota aqui
   fastify.register(require("./aventuras"), { prefix: "aventuras" });
   fastify.register(require("./perfil"), { prefix: "perfil" });
   fastify.register(routes, { prefix: "medalhas" });
