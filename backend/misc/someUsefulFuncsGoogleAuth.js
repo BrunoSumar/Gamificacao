@@ -9,10 +9,7 @@ async function verify(token) {
       "https://www.googleapis.com/oauth2/v1/userinfo",
       { headers: { Authorization: `Bearer ${token}` } }
     );
-
     const payload = await response.json();
-    console.log(payload);
-
     if (payload["hd"] === "id.uff.br") {
       return { dados: payload, err: false, msg: "Usuario autenticado" };
     } else {

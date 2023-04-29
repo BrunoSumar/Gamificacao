@@ -12,7 +12,6 @@ async function tryToRegisterOrGetUser(userType, googleData, DAO) {
       user = await DAO.insere(googleData);
     }
 
-    console.log(user);
     user.row.type = obj_type[userType] || null;
 
     if (!user?.row.type) {

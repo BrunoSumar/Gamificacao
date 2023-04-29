@@ -1,5 +1,6 @@
 const AlunoDAO = require("../DAO/AlunoDAO");
 const ProfessorDAO = require("../DAO/ProfessorDAO");
+const LoginRegisterDAO = require("../DAO/LoginRegisterDAO");
 const { post: SchemaLoginPost } = require("../schemas/login");
 const {
   verify: verifyAccessTokenGoogle,
@@ -22,7 +23,6 @@ module.exports = async function routes(fastify) {
       const token = fastify.jwt.sign(user.user);
       return { token };
     } catch (error) {
-      console.log(error);
       reply.code(401);
       return {
         err: error,
@@ -44,12 +44,10 @@ module.exports = async function routes(fastify) {
           buildUserPayload("Professor", userGoogleData.dados),
           professorDAO
         );
-        console.log(user);
         user.user.id_token = id_token;
         const token = fastify.jwt.sign(user.user);
         return { token };
       } catch (error) {
-        console.log(error);
         reply.code(401);
         return {
           err: error,
@@ -59,15 +57,20 @@ module.exports = async function routes(fastify) {
     }
   );
 
-  fastify.addHook("onResponse", (request, reply, done) => {
+  fastify.addHook("onSend", async (request, reply, payload) => {
     if (
       reply.statusCode === 200 &&
       request.method === "POST" &&
       ["/api/login/aluno", "/api/login/professor"].includes(request.url)
     ) {
-      console.log("É so salvar o log");
+      loginDAO = new LoginRegisterDAO(fastify.pg);
+      try {
+        await loginDAO.insere(JSON.parse(payload).token);
+      } catch (error) {
+        payload = null;
+        reply.statusCode = 500;
+      }
     }
-    done();
   });
 };
 

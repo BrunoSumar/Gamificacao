@@ -24,8 +24,8 @@ CREATE TABLE "Aventuras" (
   "TXT_descricao" text,
   "FL_evento" boolean,
   "TXT_numero_classe" varchar(10),
-  "DT_inicio" date,
-  "DT_termino" date
+  "DT_inicio" timestamp,
+  "DT_termino" timestamp
 );
 
 CREATE TABLE "Avatar" (
@@ -40,21 +40,21 @@ CREATE TABLE "Itens" (
   "TXT_name" varchar(50),
   "TXT_descricao" text,
   "NR_custo" int,
-  "DT_criacao" date
+  "DT_criacao" timestamp
 );
 
 CREATE TABLE "Conquistas" (
   "ID_conquista" SERIAL PRIMARY KEY,
   "TXT_nome" varchar(50),
   "TXT_descricao" text,
-  "DT_criacao" date
+  "DT_criacao" timestamp
 );
 
 CREATE TABLE "Conquistas_Alunos" (
   "ID_conquistaAluno" SERIAL PRIMARY KEY,
   "FK_conqusita" bigint,
   "FK_aluno" bigint,
-  "DT_conquista" date,
+  "DT_conquista" timestamp,
   "TXT_info" text
 );
 
@@ -63,8 +63,8 @@ CREATE TABLE "Itens_Alunos_Desafios" (
   "FK_item" bigint,
   "FK_aluno" bigint,
   "FK_desafio" bigint,
-  "DT_compra" date,
-  "DT_uso" date
+  "DT_compra" timestamp,
+  "DT_uso" timestamp
 );
 
 CREATE TABLE "Alunos_Aventuras" (
@@ -80,7 +80,7 @@ CREATE TABLE "Missoes" (
   "TXT_titulo" varchar(50),
   "TXT_descricao" text,
   "FL_grupo" boolean,
-  "DT_entrega_maxima" date
+  "DT_entrega_maxima" timestamp
 );
 
 CREATE TABLE "Alunos_Missoes_Concluidas" (
@@ -88,20 +88,17 @@ CREATE TABLE "Alunos_Missoes_Concluidas" (
   "FK_aluno" bigint,
   "FK_missao" bigint,
   "FK_grupo" bigint,
-  "DT_concluido" date,
+  "DT_concluido" timestamp,
   "NR_porcentagem_conclusao" float
 );
 
 CREATE TABLE "Grupos" (
   "ID_grupo" SERIAL PRIMARY KEY,
   "FK_missao" bigint,
-  "DT_criacao" date
+  "DT_criacao" timestamp
 );
 
-CREATE TABLE "Grupos_Alunos" (
-  "FK_grupo" bigint,
-  "FK_aluno" bigint
-);
+CREATE TABLE "Grupos_Alunos" ("FK_grupo" bigint, "FK_aluno" bigint);
 
 CREATE TABLE "Desafios" (
   "NR_indice" int,
@@ -122,9 +119,9 @@ CREATE TABLE "Opcoes" (
 CREATE TABLE "Conteudos" (
   "ID_conteudo" SERIAL PRIMARY KEY,
   "FK_desafio" bigint,
-  "BLOB_arquivo" bytea,
+  "TXT_path_arquivo" text,
   "TXT_video" text,
-  "DT_inclusao" date
+  "DT_inclusao" timestamp
 );
 
 CREATE TABLE "Respostas" (
@@ -133,8 +130,8 @@ CREATE TABLE "Respostas" (
   "FK_aluno" bigint,
   "FK_desafio" bigint,
   "FK_opcao" bigint,
-  "BLOB_arquivo" bytea,
-  "DT_resposta" date
+  "TXT_path_arquivo" text,
+  "DT_resposta" timestamp
 );
 
 CREATE TABLE "Medalhas" (
@@ -150,7 +147,7 @@ CREATE TABLE "Comentarios" (
   "FK_professor" bigint,
   "FK_aventura" bigint,
   "TXT_comentario" text,
-  "DT_criacao" date,
+  "DT_criacao" timestamp,
   "FK_referencia" bigint
 );
 
@@ -158,55 +155,136 @@ CREATE TABLE "Login" (
   "ID_login" SERIAL PRIMARY KEY,
   "FK_aluno" bigint,
   "FK_professor" bigint,
-  "DT_criacao" date
+  "DT_criacao" timestamp
 );
 
-ALTER TABLE "Login" ADD FOREIGN KEY ("FK_aluno") REFERENCES "Alunos" ("ID_aluno");
+CREATE TABLE "Administrador" (
+  "ID_Administrador" SERIAL PRIMARY KEY,
+  "TXT_USER" bigint,
+  "TXT_HASH_PASSWORD" bigint,
+);
 
-ALTER TABLE "Login" ADD FOREIGN KEY ("FK_professor") REFERENCES "Professores" ("ID_professor");
+ALTER TABLE
+  "Login"
+ADD
+  FOREIGN KEY ("FK_aluno") REFERENCES "Alunos" ("ID_aluno");
 
-ALTER TABLE "Comentarios" ADD FOREIGN KEY ("FK_aluno") REFERENCES "Alunos" ("ID_aluno");
+ALTER TABLE
+  "Login"
+ADD
+  FOREIGN KEY ("FK_professor") REFERENCES "Professores" ("ID_professor");
 
-ALTER TABLE "Comentarios" ADD FOREIGN KEY ("FK_professor") REFERENCES "Professores" ("ID_professor");
+ALTER TABLE
+  "Comentarios"
+ADD
+  FOREIGN KEY ("FK_aluno") REFERENCES "Alunos" ("ID_aluno");
 
-ALTER TABLE "Comentarios" ADD FOREIGN KEY ("FK_aventura") REFERENCES "Aventuras" ("ID_aventura");
+ALTER TABLE
+  "Comentarios"
+ADD
+  FOREIGN KEY ("FK_professor") REFERENCES "Professores" ("ID_professor");
 
-ALTER TABLE "Comentarios" ADD FOREIGN KEY ("FK_referencia") REFERENCES "Comentarios" ("ID_comentario");
+ALTER TABLE
+  "Comentarios"
+ADD
+  FOREIGN KEY ("FK_aventura") REFERENCES "Aventuras" ("ID_aventura");
 
-ALTER TABLE "Respostas" ADD FOREIGN KEY ("FK_grupo") REFERENCES "Grupos" ("ID_grupo");
+ALTER TABLE
+  "Comentarios"
+ADD
+  FOREIGN KEY ("FK_referencia") REFERENCES "Comentarios" ("ID_comentario");
 
-ALTER TABLE "Respostas" ADD FOREIGN KEY ("FK_aluno") REFERENCES "Alunos" ("ID_aluno");
+ALTER TABLE
+  "Respostas"
+ADD
+  FOREIGN KEY ("FK_grupo") REFERENCES "Grupos" ("ID_grupo");
 
-ALTER TABLE "Respostas" ADD FOREIGN KEY ("FK_desafio") REFERENCES "Desafios" ("ID_desafio");
+ALTER TABLE
+  "Respostas"
+ADD
+  FOREIGN KEY ("FK_aluno") REFERENCES "Alunos" ("ID_aluno");
 
-ALTER TABLE "Respostas" ADD FOREIGN KEY ("FK_opcao") REFERENCES "Opcoes" ("ID_opcao");
+ALTER TABLE
+  "Respostas"
+ADD
+  FOREIGN KEY ("FK_desafio") REFERENCES "Desafios" ("ID_desafio");
 
-ALTER TABLE "Desafios" ADD FOREIGN KEY ("FK_missao") REFERENCES "Missoes" ("ID_missao");
+ALTER TABLE
+  "Respostas"
+ADD
+  FOREIGN KEY ("FK_opcao") REFERENCES "Opcoes" ("ID_opcao");
 
-ALTER TABLE "Conteudos" ADD FOREIGN KEY ("FK_desafio") REFERENCES "Desafios" ("ID_desafio");
+ALTER TABLE
+  "Desafios"
+ADD
+  FOREIGN KEY ("FK_missao") REFERENCES "Missoes" ("ID_missao");
 
-ALTER TABLE "Opcoes" ADD FOREIGN KEY ("FK_desafio") REFERENCES "Desafios" ("ID_desafio");
+ALTER TABLE
+  "Conteudos"
+ADD
+  FOREIGN KEY ("FK_desafio") REFERENCES "Desafios" ("ID_desafio");
 
-ALTER TABLE "Grupos" ADD FOREIGN KEY ("FK_missao") REFERENCES "Missoes" ("ID_missao");
+ALTER TABLE
+  "Opcoes"
+ADD
+  FOREIGN KEY ("FK_desafio") REFERENCES "Desafios" ("ID_desafio");
 
-ALTER TABLE "Alunos_Missoes_Concluidas" ADD FOREIGN KEY ("FK_missao") REFERENCES "Missoes" ("ID_missao");
+ALTER TABLE
+  "Grupos"
+ADD
+  FOREIGN KEY ("FK_missao") REFERENCES "Missoes" ("ID_missao");
 
-ALTER TABLE "Alunos_Missoes_Concluidas" ADD FOREIGN KEY ("FK_aluno") REFERENCES "Alunos" ("ID_aluno");
+ALTER TABLE
+  "Alunos_Missoes_Concluidas"
+ADD
+  FOREIGN KEY ("FK_missao") REFERENCES "Missoes" ("ID_missao");
 
-ALTER TABLE "Avatar" ADD FOREIGN KEY ("FK_aluno") REFERENCES "Alunos" ("ID_aluno");
+ALTER TABLE
+  "Alunos_Missoes_Concluidas"
+ADD
+  FOREIGN KEY ("FK_aluno") REFERENCES "Alunos" ("ID_aluno");
 
-ALTER TABLE "Aventuras" ADD FOREIGN KEY ("FK_professor") REFERENCES "Professores" ("ID_professor");
+ALTER TABLE
+  "Avatar"
+ADD
+  FOREIGN KEY ("FK_aluno") REFERENCES "Alunos" ("ID_aluno");
 
-ALTER TABLE "Conquistas_Alunos" ADD FOREIGN KEY ("FK_conqusita") REFERENCES "Conquistas" ("ID_conquista");
+ALTER TABLE
+  "Aventuras"
+ADD
+  FOREIGN KEY ("FK_professor") REFERENCES "Professores" ("ID_professor");
 
-ALTER TABLE "Conquistas_Alunos" ADD FOREIGN KEY ("FK_aluno") REFERENCES "Alunos" ("ID_aluno");
+ALTER TABLE
+  "Conquistas_Alunos"
+ADD
+  FOREIGN KEY ("FK_conqusita") REFERENCES "Conquistas" ("ID_conquista");
 
-ALTER TABLE "Itens_Alunos_Desafios" ADD FOREIGN KEY ("FK_aluno") REFERENCES "Alunos" ("ID_aluno");
+ALTER TABLE
+  "Conquistas_Alunos"
+ADD
+  FOREIGN KEY ("FK_aluno") REFERENCES "Alunos" ("ID_aluno");
 
-ALTER TABLE "Itens_Alunos_Desafios" ADD FOREIGN KEY ("FK_item") REFERENCES "Itens" ("ID_item");
+ALTER TABLE
+  "Itens_Alunos_Desafios"
+ADD
+  FOREIGN KEY ("FK_aluno") REFERENCES "Alunos" ("ID_aluno");
 
-ALTER TABLE "Alunos_Aventuras" ADD FOREIGN KEY ("FK_aluno") REFERENCES "Alunos" ("ID_aluno");
+ALTER TABLE
+  "Itens_Alunos_Desafios"
+ADD
+  FOREIGN KEY ("FK_item") REFERENCES "Itens" ("ID_item");
 
-ALTER TABLE "Alunos_Aventuras" ADD FOREIGN KEY ("FK_aventura") REFERENCES "Aventuras" ("ID_aventura");
+ALTER TABLE
+  "Alunos_Aventuras"
+ADD
+  FOREIGN KEY ("FK_aluno") REFERENCES "Alunos" ("ID_aluno");
 
-ALTER TABLE "Missoes" ADD FOREIGN KEY ("FK_aventura") REFERENCES "Aventuras" ("ID_aventura");
+ALTER TABLE
+  "Alunos_Aventuras"
+ADD
+  FOREIGN KEY ("FK_aventura") REFERENCES "Aventuras" ("ID_aventura");
+
+ALTER TABLE
+  "Missoes"
+ADD
+  FOREIGN KEY ("FK_aventura") REFERENCES "Aventuras" ("ID_aventura");
