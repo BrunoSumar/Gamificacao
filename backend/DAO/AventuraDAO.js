@@ -105,13 +105,12 @@ class AventuraDAO {
         SELECT "ID_aventura", "FK_professor", "TXT_nome", "TXT_descricao", "FL_evento",
           "TXT_numero_classe", "DT_inicio", "DT_termino"
         FROM "Aventuras"
-        ${ !!id_aluno ? 'JOIN "Alunos_Aventuras" ON "ID_aventura" = "FK_aventura"' : '' }
+        ${ !!id_aluno ? 'JOIN "Alunos_Aventuras" ON ("ID_aventura" = "FK_aventura")' : '' }
         WHERE
         ${ !!id_aluno ? '"FK_aluno"' : '"FK_professor"' } = $1
         ${ !!id_aventura ? 'AND "ID_aventura" = $2' : '' }
         ORDER BY "DT_inicio"
     `;
-
     const values = [ id_aluno, id_professor, id_aventura ].filter( x => x );
 
     try{

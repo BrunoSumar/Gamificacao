@@ -11,7 +11,5 @@ async function verify(req, reply) {
 }
 
 module.exports = fp(async function (fastify, opts) {
-  fastify.decorate("verifyJWT", async function (fastify) {
     fastify.addHook("onRequest", verify);
-  });
 });

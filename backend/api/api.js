@@ -6,9 +6,8 @@ module.exports = async function routes(fastify) {
 };
 
 async function privateRoutes(fastify) {
-  fastify.verifyJWT(fastify);
+  fastify.register(require("../auth"));
 
-  // Exemplo adição de rota aqui
   fastify.register(require("./aventuras"), { prefix: "aventuras" });
 
   fastify.get("/ping", async () => ({ status: 200 }));
