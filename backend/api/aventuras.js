@@ -143,4 +143,17 @@ async function routesProfessores(fastify) {
       throw err;
     }
   });
+
+  fastify.delete("/:id_aventura", { schema: schemas.GET_ID }, async (req, reply) => {
+    try {
+      const DAO = new AventuraDAO(pg);
+
+      const aventura = await DAO.delete( req.params.id_aventura, req.auth.ID_professor );
+
+      return { status: 200, message: "Aventura removida", aventura };
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  });
 };

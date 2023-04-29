@@ -175,6 +175,31 @@ class AventuraDAO {
       throw err;
     }
   }
+
+  async delete( id_aventura, id_professor ) {
+    if( !id_aventura )
+      return;
+
+    const values = [ id_aventura, id_professor ];
+    const text =  `
+        DELETE FROM "Aventuras"
+        WHERE "ID_aventura" = $1
+        AND "FK_professor" = $2
+        RETURNING *
+    `;
+
+    try{
+      const { rows: aventuras } = await this._db.query({ text, values });
+      if( aventuras.length < 1 )
+        return
+
+      return aventuras[0];
+    }
+    catch( err ){
+      console.error( err );
+      throw err;
+    }
+  }
 }
 
 module.exports = AventuraDAO;
