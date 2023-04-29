@@ -74,15 +74,16 @@ class AventuraDAO {
       if( aventuras.length < 1 )
         return null;
 
-      const aluno_aventuras = aventuras
-            .map( aventura => `(${ id_aluno }, ${ aventura.ID_aventura }, 0)` )
-            .join(',');
-      console.log( aluno_aventuras )
+      if( id_aluno ){
+        const aluno_aventuras = aventuras
+              .map( aventura => `(${ id_aluno }, ${ aventura.ID_aventura }, 0)` )
+              .join(',');
 
-      const { rows } = await connection.query( `
-        INSERT INTO "Alunos_Aventuras" ( "FK_aluno", "FK_aventura", "NR_porcentagem_conclusao" )
-        VALUES ${ aluno_aventuras } RETURNING *
-      `);
+        const { rows } = await connection.query( `
+          INSERT INTO "Alunos_Aventuras" ( "FK_aluno", "FK_aventura", "NR_porcentagem_conclusao" )
+          VALUES ${ aluno_aventuras } RETURNING *
+        `);
+      }
 
       await connection.query('COMMIT');
       return aventuras.map( row => row.ID_aventura );
@@ -168,6 +169,56 @@ class AventuraDAO {
         return null;
 
       return aventuras[0].ID_aventura;
+    }
+    catch( err ){
+      console.error( err );
+      throw err;
+    }
+  }
+
+  async delete( id_aventura, id_professor ) {
+    if( !id_aventura )
+      return;
+
+    const values = [ id_aventura, id_professor ];
+    const text =  `
+        DELETE FROM "Aventuras"
+        WHERE "ID_aventura" = $1
+        AND  "FK_professor" = $2
+        RETURNING *
+    `;
+
+    try{
+      const { rows: aventuras } = await this._db.query({ text, values });
+      if( aventuras.length < 1 )
+        return;
+
+      return aventuras[0];
+    }
+    catch( err ){
+      console.error( err );
+      throw err;
+    }
+  }
+
+  async deleteAluno( id_aventura, id_aluno ) {
+    if( !id_aventura )
+      return;
+
+    const values = [ id_aventura, id_aluno ];
+    const text =  `
+      DELETE FROM "Alunos_Aventuras"
+      WHERE "FK_aventura" = $1
+      AND      "FK_aluno" = $2
+      RETURNING *
+    `;
+
+    try{
+      const { rows } = await this._db.query({ text, values });
+      if( rows.length < 1 )
+        return null;
+
+      return rows[0];
     }
     catch( err ){
       console.error( err );

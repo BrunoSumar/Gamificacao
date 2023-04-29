@@ -61,9 +61,9 @@ module.exports = async function routes(fastify) {
       courses = courses
         .concat(
           body.courses
+            .filter( course => course.courseState === 'ACTIVE' )
             .filter( course => /^[A-z]{3}[0-9]{5}/.test( course.name ) )
             .filter( course => /@id\.uff\.br$/.test( course.teacherGroupEmail ) )
-            .filter( course => course.courseState === 'ACTIVE' )
             .filter( course => creation_time > (now - new Date( course.creationTime )) )
             .map( course => ({
               TXT_nome: course.name.split('-')[1].trim(),
@@ -72,6 +72,9 @@ module.exports = async function routes(fastify) {
               FL_evento: false,
             }))
       );
+
+      if( req.auth.ID_professor )
+        courses = courses.map( c => ({ FK_professor: req.quth.professor, ...c }) );
 
       const DAO = new AventuraDAO( pg );
 
@@ -121,7 +124,7 @@ async function routesProfessores(fastify) {
     }
   });
 
-  fastify.patch("/:id_aventura/alunos/:id_aluno", { schema: schemas.PATCH }, async (req, reply) => {
+  fastify.patch("/:id_aventura/alunos/:id_aluno", { schema: schemas.PATCH_ALUNO }, async (req, reply) => {
     try {
       const DAO = new AventuraDAO(pg);
 
@@ -135,6 +138,39 @@ async function routesProfessores(fastify) {
       }
 
       return { status: 200, message: "Aluno adicionado a aventura" };
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  });
+
+  fastify.delete("/:id_aventura", { schema: schemas.DELETE }, async (req, reply) => {
+    try {
+      const DAO = new AventuraDAO(pg);
+
+      const aventura = await DAO.delete( req.params.id_aventura, req.auth.ID_professor );
+
+      return { status: 200, message: "Aventura removida", aventura };
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  });
+
+  fastify.delete("/:id_aventura/alunos/:id_aluno", { schema: schemas.DELETE_ALUNO }, async (req, reply) => {
+    try {
+      const DAO = new AventuraDAO(pg);
+
+      const aluno = await DAO.deleteAluno( req.params.id_aventura, req.params.id_aluno );
+
+      if( !aluno ){
+        throw {
+          status: 500,
+          message: "Erro ao remover aluno da aventura",
+        };
+      }
+
+      return { status: 200, message: "Aluno removido da aventura" };
     } catch (err) {
       console.error(err);
       throw err;

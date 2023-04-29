@@ -47,7 +47,7 @@ const POST = {
 
 const PATCH = { ...POST, required: [] };
 
-const PATCH_aluno = {
+const PATCH_ALUNO = {
     params: {
         type: 'object',
         properties: {
@@ -65,10 +65,16 @@ const PATCH_aluno = {
     },
 };
 
+const DELETE = GET_ID;
+
+const DELETE_ALUNO = PATCH_ALUNO;
+
 module.exports = {
     GET,
     GET_ID,
     POST,
     PATCH,
-    PATCH_aluno,
+    PATCH_ALUNO,
+    DELETE,
+    DELETE_ALUNO,
 };
