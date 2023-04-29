@@ -124,7 +124,7 @@ async function routesProfessores(fastify) {
     }
   });
 
-  fastify.patch("/:id_aventura/alunos/:id_aluno", { schema: schemas.PATCH }, async (req, reply) => {
+  fastify.patch("/:id_aventura/alunos/:id_aluno", { schema: schemas.PATCH_ALUNO }, async (req, reply) => {
     try {
       const DAO = new AventuraDAO(pg);
 
@@ -144,13 +144,33 @@ async function routesProfessores(fastify) {
     }
   });
 
-  fastify.delete("/:id_aventura", { schema: schemas.GET_ID }, async (req, reply) => {
+  fastify.delete("/:id_aventura", { schema: schemas.DELETE }, async (req, reply) => {
     try {
       const DAO = new AventuraDAO(pg);
 
       const aventura = await DAO.delete( req.params.id_aventura, req.auth.ID_professor );
 
       return { status: 200, message: "Aventura removida", aventura };
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  });
+
+  fastify.delete("/:id_aventura/alunos/:id_aluno", { schema: schemas.DELETE_ALUNO }, async (req, reply) => {
+    try {
+      const DAO = new AventuraDAO(pg);
+
+      const aluno = await DAO.deleteAluno( req.params.id_aventura, req.params.id_aluno );
+
+      if( !aluno ){
+        throw {
+          status: 500,
+          message: "Erro ao remover aluno da aventura",
+        };
+      }
+
+      return { status: 200, message: "Aluno removido da aventura" };
     } catch (err) {
       console.error(err);
       throw err;

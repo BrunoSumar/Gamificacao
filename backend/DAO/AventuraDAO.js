@@ -184,16 +184,42 @@ class AventuraDAO {
     const text =  `
         DELETE FROM "Aventuras"
         WHERE "ID_aventura" = $1
-        AND "FK_professor" = $2
+        AND  "FK_professor" = $2
         RETURNING *
     `;
 
     try{
       const { rows: aventuras } = await this._db.query({ text, values });
       if( aventuras.length < 1 )
-        return
+        return;
 
       return aventuras[0];
+    }
+    catch( err ){
+      console.error( err );
+      throw err;
+    }
+  }
+
+  async deleteAluno( id_aventura, id_aluno ) {
+    if( !id_aventura )
+      return;
+
+    const values = [ id_aventura, id_aluno ];
+    const text =  `
+      DELETE FROM "Alunos_Aventuras"
+      WHERE "FK_aventura" = $1
+      AND      "FK_aluno" = $2
+      RETURNING *
+    `;
+    console.log( values )
+
+    try{
+      const { rows } = await this._db.query({ text, values });
+      if( rows.length < 1 )
+        return null;
+
+      return rows[0];
     }
     catch( err ){
       console.error( err );
