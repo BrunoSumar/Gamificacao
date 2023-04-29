@@ -30,7 +30,7 @@ CREATE TABLE "Aventuras" (
 
 CREATE TABLE "Avatar" (
   "ID_avatar" SERIAL PRIMARY KEY,
-  "FK_aluno" bigint,
+  "FK_aluno" bigint UNIQUE,
   "TXT_cor_rgb" varchar(11),
   "TP_avatar" int
 );
@@ -69,9 +69,10 @@ CREATE TABLE "Itens_Alunos_Desafios" (
 
 CREATE TABLE "Alunos_Aventuras" (
   "ID_aluno_aventura" SERIAL PRIMARY KEY,
-  "FK_aluno" bigint,
+  "FK_aluno" bigint ,
   "FK_aventura" bigint,
-  "NR_porcentagem_conclusao" float
+  "NR_porcentagem_conclusao" float,
+  UNIQUE ("ID_aluno_aventura", "FK_aluno")
 );
 
 CREATE TABLE "Missoes" (
