@@ -61,9 +61,9 @@ module.exports = async function routes(fastify) {
       courses = courses
         .concat(
           body.courses
+            .filter( course => course.courseState === 'ACTIVE' )
             .filter( course => /^[A-z]{3}[0-9]{5}/.test( course.name ) )
             .filter( course => /@id\.uff\.br$/.test( course.teacherGroupEmail ) )
-            .filter( course => course.courseState === 'ACTIVE' )
             .filter( course => creation_time > (now - new Date( course.creationTime )) )
             .map( course => ({
               TXT_nome: course.name.split('-')[1].trim(),
@@ -72,6 +72,9 @@ module.exports = async function routes(fastify) {
               FL_evento: false,
             }))
       );
+
+      if( req.auth.ID_professor )
+        courses = courses.map( c => ({ FK_professor: req.quth.professor, ...c }) );
 
       const DAO = new AventuraDAO( pg );
 

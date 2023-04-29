@@ -74,15 +74,16 @@ class AventuraDAO {
       if( aventuras.length < 1 )
         return null;
 
-      const aluno_aventuras = aventuras
-            .map( aventura => `(${ id_aluno }, ${ aventura.ID_aventura }, 0)` )
-            .join(',');
-      console.log( aluno_aventuras )
+      if( id_aluno ){
+        const aluno_aventuras = aventuras
+              .map( aventura => `(${ id_aluno }, ${ aventura.ID_aventura }, 0)` )
+              .join(',');
 
-      const { rows } = await connection.query( `
-        INSERT INTO "Alunos_Aventuras" ( "FK_aluno", "FK_aventura", "NR_porcentagem_conclusao" )
-        VALUES ${ aluno_aventuras } RETURNING *
-      `);
+        const { rows } = await connection.query( `
+          INSERT INTO "Alunos_Aventuras" ( "FK_aluno", "FK_aventura", "NR_porcentagem_conclusao" )
+          VALUES ${ aluno_aventuras } RETURNING *
+        `);
+      }
 
       await connection.query('COMMIT');
       return aventuras.map( row => row.ID_aventura );
