@@ -3,52 +3,50 @@ const fetch = require('node-fetch');
 const schemas = require("../schemas/aventuras");
 const AventuraDAO = require("../DAO/AventuraDAO");
 const { verify: VerifyToken } = require('../misc/someUsefulFuncsGoogleAuth')
+const { user_type_code } = require("../misc/someUsefulFuncsUsers");
 
-module.exports = async function privateRoutes(fastify) {
+module.exports = async function routes(fastify) {
   const pg = fastify.pg;
 
-  const oauth = fastify.oauth;
+  fastify.register( routesProfessores );
 
   fastify.get("/", { schema: schemas.GET }, async (req, reply) => {
     try {
       const DAO = new AventuraDAO(pg);
 
-      return await DAO.busca(
-        req.auth.tipo === 1,
-        req.auth.ID_aluno || req.auth.ID_professor
-      );
+      return await DAO.read({
+        id_aluno: req.auth.ID_aluno || null,
+        id_professor: req.auth.ID_professor || null,
+      });
     } catch (err) {
       console.error(err);
       throw err;
     }
   });
 
-  fastify.get("/:id", { schema: schemas.GET_ID }, async (req, reply) => {
+  fastify.get("/:id_aventura", { schema: schemas.GET_ID }, async (req, reply) => {
     try {
       const DAO = new AventuraDAO(pg);
 
-      return await DAO.busca(
-        req.auth.tipo === 1,
-        req.auth.ID_aluno || req.auth.ID_professor,
-        req.params.id
-      );
+      return await DAO.read({
+        id_aluno: req.auth.ID_aluno || null,
+        id_professor: req.auth.ID_professor || null,
+        id_aventura: req.params.id_aventura,
+      });
     } catch (err) {
       console.error(err);
       throw err;
     }
   });
 
-  fastify.get("/import", async (req, reply) => {
+  fastify.post("/import", async (req, reply) => {
     try {
       let courses = [];
       let next_page = null;
       const now = new Date();
-      const creation_time = 1000*60*60*24*30*5 ; // aproximadante 1296*10^9 milisegundos ou 5 meses
-
-      // console.log( req.auth.id )
+      const creation_time = 1000*60*60*24*30*5.5 ; // aproximadante 5.5 meses
 
       const response = await fetch(
-        // `https://classroom.googleapis.com/v1/courses?courseStates=ACTIVE&pageSize=0${ next_page ? '&pageToken=' + next_page : '' }`,
         `https://classroom.googleapis.com/v1/courses`,
         {
           method: "GET",
@@ -64,65 +62,79 @@ module.exports = async function privateRoutes(fastify) {
         .concat(
           body.courses
             .filter( course => /^[A-z]{3}[0-9]{5}/.test( course.name ) )
-            // .filter( course => /@id\.uff\.br$/.test( course.teacherGroupEmail ) )
-            // .filter( course => course.courseState === 'ACTIVE' )
-            // .filter( course => creation_time > (now - new Date( course.creationTime )) )
+            .filter( course => /@id\.uff\.br$/.test( course.teacherGroupEmail ) )
+            .filter( course => course.courseState === 'ACTIVE' )
+            .filter( course => creation_time > (now - new Date( course.creationTime )) )
             .map( course => ({
-              name: course.name.split('-')[1].trim(),
-              class_number: course.name.split('-')[0].trim(),
+              TXT_nome: course.name.split('-')[1].trim(),
+              TXT_numero_classe: course.name.split('-')[0].trim(),
               ID_google: parseInt( course.id ),
-              is_event: false,
+              FL_evento: false,
             }))
       );
 
-      console.log( courses )
-
-      return courses;
       const DAO = new AventuraDAO( pg );
-      // return await DAO.adiciona( courses );
+
+      return await DAO.createFromClassroom( req.auth.ID_aluno, courses );
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  });
+};
+
+async function routesProfessores(fastify) {
+  const pg = fastify.pg;
+
+  fastify.addHook( "onRequest", async req => {
+    if ( user_type_code['Professor'] !== req.auth.type || user_type_code['Admin'] !== req.auth.type ){
+      throw {
+        status: 403,
+        message: "Operação restrita para professores",
+      };
+    }
+  });
+
+  fastify.post("/", { schema: schemas.POST }, async (req, reply) => {
+    try {
+      const DAO = new AventuraDAO(pg);
+
+      const id_aventura = await DAO.create( req.body );
+
+      return { status: 200, message: "Aventura criada com sucesso", id_aventura };
     } catch (err) {
       console.error(err);
       throw err;
     }
   });
 
-  async function listCourses(auth) {
-    const classroom = await google.classroom();
-    classroom.courses.list(
-      {
-        pageSize: 10,
-      },
-      (err, res) => {
-        if (err) return console.error("The API returned an error: " + err);
-        const courses = res.data.courses;
-        if (courses && courses.length) {
-          console.log("Courses:");
-          courses.forEach((course) => {
-            console.log(`${course.name} (${course.id})`);
-          });
-        } else {
-          console.log("No courses found.");
-        }
-      }
-    );
-  }
-
-  fastify.post("/", { schema: schemas.POST }, async (req, reply) => {
-    // TODO: verificar se professor existe antes de criar aventura
-    if (req.auth.tipo !== 0)
-      throw {
-        status: 403,
-        message: "Apenas professores podem criar aventuras",
-      };
-
+  fastify.patch("/:id_aventura", { schema: schemas.PATCH }, async (req, reply) => {
     try {
       const DAO = new AventuraDAO(pg);
 
-      req.body.FK_Professor = req.auth.id;
+      const id_aventura = await DAO.update( req.params.id_aventura, req.body );
 
-      await DAO.adiciona(req.body);
+      return { status: 200, message: "Aventura editada com sucesso", id_aventura };
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  });
 
-      return { status: 200, message: "Aventura criada com sucesso" };
+  fastify.patch("/:id_aventura/alunos/:id_aluno", { schema: schemas.PATCH }, async (req, reply) => {
+    try {
+      const DAO = new AventuraDAO(pg);
+
+      const aventura_aluno = await DAO.insertAluno( req.params.id_aventura, req.params.id_aluno );
+
+      if( !aventura_aluno ){
+        throw {
+          status: 500,
+          message: "Erro ao adicionar aluno na aventura",
+        };
+      }
+
+      return { status: 200, message: "Aluno adicionado a aventura" };
     } catch (err) {
       console.error(err);
       throw err;
