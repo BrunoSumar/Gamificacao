@@ -212,7 +212,6 @@ class AventuraDAO {
       AND      "FK_aluno" = $2
       RETURNING *
     `;
-    console.log( values )
 
     try{
       const { rows } = await this._db.query({ text, values });
