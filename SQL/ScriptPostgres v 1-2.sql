@@ -138,8 +138,7 @@ CREATE TABLE "Respostas" (
 CREATE TABLE "Medalhas" (
   "ID_medalha" SERIAL PRIMARY KEY,
   "TXT_titulo" varchar(50),
-  "NR_minimo" float,
-  "NR_maximo" float
+  "NR_minimo" float UNIQUE
 );
 
 CREATE TABLE "Comentarios" (
