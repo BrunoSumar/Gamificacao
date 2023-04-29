@@ -1,9 +1,12 @@
+const user_type_code = {
+  Admin: 0,
+  Aluno: 1,
+  Professor: 2,
+};
+
+const user_type_code_reverse = Object.fromEntries( Object.entries( user_type_code ).map( x => x.reverse() ) );
+
 async function tryToRegisterOrGetUser(userType, googleData, DAO) {
-  const obj_type = {
-    Aluno: 1,
-    Professor: 2,
-    Admin: 0,
-  };
 
   try {
     let user = await DAO.busca(googleData.ID_google);
@@ -13,7 +16,7 @@ async function tryToRegisterOrGetUser(userType, googleData, DAO) {
     }
 
     console.log(user);
-    user.row.type = obj_type[userType] || null;
+    user.row.type = user_type_code[userType] || null;
 
     if (!user?.row.type) {
       throw error;
@@ -30,4 +33,6 @@ async function tryToRegisterOrGetUser(userType, googleData, DAO) {
 
 module.exports = {
   tryToRegisterOrGetUser,
+  user_type_code,
+  user_type_code_reverse,
 };
