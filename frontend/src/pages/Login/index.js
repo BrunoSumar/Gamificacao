@@ -6,6 +6,7 @@ const LoginPage = () => {
   return (
     <GoogleProvider clientId={process.env.REACT_APP_CLIENT_ID}>
       <GoogleLoginButton />
+      
     </GoogleProvider>
   );
 };

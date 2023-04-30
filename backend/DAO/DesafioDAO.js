@@ -1,25 +1,35 @@
+const {
+
+} = require('../misc/someUsefulFuncsDesafio')
 class DesafioDAO {
   constructor(db) {
     this._db = db;
   }
-  async create(payload, id_missao) {
-    const values = Object.values(payload);
-    const keys = Object.keys(payload);
-    const query = {
-      text: `
-                        INSERT INTO "Desafios" (${keys.map(
-                          (value) => `"${value}"`
-                        )},"FK_missao") 
-                        VALUES(${keys.map((value, idx) => `$${idx + 1}`)})
-                        RETURNING *
-                    `,
-      values: [...values, id_missao],
-    };
-    let { rows } = await this._db.query(query);
+  async create(payload, id_missao, id_professor) {
+
+    if (await __verificaMissaoProfessor(id_missao, id_professor)) {
+      const values = Object.values(payload);
+      const keys = Object.keys(payload);
+
+      const query = {
+        text: `
+                          INSERT INTO "Desafios" (${keys.map((value) => `"${value}"`)},"FK_missao") 
+                          VALUES(${keys.map((value, idx) => `$${idx + 1}`)},$${keys.length+1})
+                          RETURNING *
+                      `,
+        values: [...values, id_missao],
+      };
+
+      let { rows } = await this._db.query(query);
+      return {
+        msg: "Desafio criado com sucesso",
+        row: rows,
+      };
+    }
     return {
-      msg: "Desafio criado com sucesso",
-      row: rows,
+      msg: "Você não é professor dessa aventura, não é possivel criar missão",
     };
+
   }
 
   async read(id_missao) {
