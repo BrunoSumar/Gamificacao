@@ -80,12 +80,12 @@ class MissaoDAO {
     if (isProfessorAventura(this._db, id_professor, id_aventura)) {
       const query = {
         text: `
-                      DELETE FROM "Missoes" WHERE "ID_missao" = ${id_missao}
-                  `,
+            DELETE FROM "Missoes" WHERE "ID_missao" = ${id_missao}
+        `,
       };
       await this._db.query(query);
       return {
-        msg: "Medalha deletada do banco",
+        msg: "Missao deletada do banco",
       };
     }
   }
