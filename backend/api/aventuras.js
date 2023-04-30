@@ -104,7 +104,7 @@ async function routesProfessores(fastify) {
 
       const id_aventura = await DAO.create( req.body );
 
-      return { status: 200, message: "Aventura criada com sucesso", id_aventura };
+      return { message: "Aventura criada com sucesso", id_aventura };
     } catch (err) {
       console.error(err);
       throw err;
@@ -117,7 +117,7 @@ async function routesProfessores(fastify) {
 
       const id_aventura = await DAO.update( req.params.id_aventura, req.body );
 
-      return { status: 200, message: "Aventura editada com sucesso", id_aventura };
+      return { message: "Aventura editada com sucesso", id_aventura };
     } catch (err) {
       console.error(err);
       throw err;
@@ -137,7 +137,7 @@ async function routesProfessores(fastify) {
         };
       }
 
-      return { status: 200, message: "Aluno adicionado a aventura" };
+      return { message: "Aluno adicionado a aventura" };
     } catch (err) {
       console.error(err);
       throw err;
@@ -150,7 +150,7 @@ async function routesProfessores(fastify) {
 
       const aventura = await DAO.delete( req.params.id_aventura, req.auth.ID_professor );
 
-      return { status: 200, message: "Aventura removida", aventura };
+      return { message: "Aventura removida", aventura };
     } catch (err) {
       console.error(err);
       throw err;
@@ -170,7 +170,7 @@ async function routesProfessores(fastify) {
         };
       }
 
-      return { status: 200, message: "Aluno removido da aventura" };
+      return { message: "Aluno removido da aventura" };
     } catch (err) {
       console.error(err);
       throw err;
