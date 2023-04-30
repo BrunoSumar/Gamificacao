@@ -1,7 +1,11 @@
 async function isMissaoEmGrupo(db, id_missao) {
   const query = `SELECT * from "Missoes" WHERE "ID_missao" = ${id_missao} AND "FL_grupo" = TRUE`;
   const { rows } = db.query(query);
-  return rows.length ? true : false;
+  if (rows.length) {
+    return true;
+  } else {
+    throw "Essa Missão não é em grupo";
+  }
 }
 
 async function isDeletaGrupo(db, id_grupo) {
@@ -20,11 +24,15 @@ async function hasGrupo(db, id_missao, id_aluno) {
     on "Grupos_Alunos.FK_grupo" = "Grupos.ID_GRUPOS"
     WHERE "MissoesID_missao." = ${id_missao} AND "Grupos_Alunos.FK_aluno" = ${id_aluno} ;`;
   const { rows } = db.query(query);
-  return rows.length ? true : false;
+  if (rows.length) {
+    return true;
+  } else {
+    throw "Esse aluno já possui um grupo";
+  }
 }
 
 module.exports = {
-    isMissaoEmGrupo,
-    hasGrupo,
-    isDeletaGrupo
-}
+  isMissaoEmGrupo,
+  hasGrupo,
+  isDeletaGrupo,
+};
