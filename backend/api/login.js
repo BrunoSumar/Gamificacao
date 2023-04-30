@@ -24,7 +24,7 @@ module.exports = async function routes(fastify) {
         alunoDao
       );
       user.user.id_token = id_token;
-      perfilDao.create({
+      await perfilDao.create({
         FK_aluno: user.user.ID_aluno,
         TXT_cor_rgb: "0, 0, 255",
         TP_avatar: 1,
@@ -33,7 +33,7 @@ module.exports = async function routes(fastify) {
       resp = {
         Avatar: perfil.row.TP_avatar,
         Cor_RGB: perfil.row.TXT_cor_rgb
-    }
+      }
       const token = fastify.jwt.sign(user.user);
       return { token, Perfil:resp };
     } catch (error) {

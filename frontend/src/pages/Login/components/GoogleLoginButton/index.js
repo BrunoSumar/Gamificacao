@@ -36,8 +36,8 @@ const GoogleLoginButton = (props) => {
 
   const onError = (error) => alert("Error OnError!!");
 
-  const scope =
-    "profile email https://www.googleapis.com/auth/classroom.courses.readonly"; //TODO Avaliar colocar isso como env
+  // const scope = "profile email https://www.googleapis.com/auth/classroom.courses.readonly https://www.googleapis.com/auth/classroom.rosters.readonly https://www.googleapis.com/auth/classroom.profile.emails"; //TODO Avaliar colocar isso como env
+  const scope = "profile email https://www.googleapis.com/auth/classroom.courses.readonly https://www.googleapis.com/auth/classroom.rosters.readonly"; //TODO Avaliar colocar isso como env
 
   const login = useGoogleLogin({
     onSuccess: onSuccess,

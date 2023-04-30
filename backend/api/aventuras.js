@@ -39,7 +39,7 @@ module.exports = async function routes(fastify) {
     }
   });
 
-  fastify.post("/import", async (req, reply) => {
+  fastify.patch("/import", async (req, reply) => {
     try {
       let courses = [];
       let next_page = null;
@@ -56,7 +56,7 @@ module.exports = async function routes(fastify) {
 
       const body = await response.json();
       if( !response.ok )
-        throw body.error;
+        throw { status: 401, message: 'Falha ao utilizar api Classromm', error: body.error };
 
       courses = courses
         .concat(
@@ -78,7 +78,7 @@ module.exports = async function routes(fastify) {
 
       const DAO = new AventuraDAO( pg );
 
-      return await DAO.createFromClassroom( req.auth.ID_aluno, courses );
+      return await DAO.insertFromClassroom( req.auth.ID_aluno, courses );
     } catch (err) {
       console.error(err);
       throw err;
@@ -90,7 +90,6 @@ async function routesProfessores(fastify) {
   const pg = fastify.pg;
 
   fastify.addHook( "onRequest", async req => {
-    console.log( req.auth )
     if ( user_type_code['Professor'] !== req.auth.type && user_type_code['Admin'] !== req.auth.type ){
       throw {
         status: 403,
@@ -103,9 +102,55 @@ async function routesProfessores(fastify) {
     try {
       const DAO = new AventuraDAO(pg);
 
-      const id_aventura = await DAO.create( req.body, req.auth.ID_professor );
+      req.body.FK_professor = req.auth.ID_professor;
+      const id_aventura = await DAO.create( req.body );
 
       return { message: "Aventura criada com sucesso", id_aventura };
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  });
+
+  fastify.post("/import", async (req, reply) => {
+    try {
+      let next_page = null;
+      const now = new Date();
+      const creation_time = 1000*60*60*24*30*5.5 ; // aproximadante 5.5 meses
+
+      const response = await fetch(
+        `https://classroom.googleapis.com/v1/courses?teacherId=me`,
+        {
+          method: "GET",
+          headers: { Authorization: `Bearer ${ req.auth.id_token }` },
+        }
+      );
+
+      const body = await response.json();
+      if( !response.ok )
+        throw { status: 401, message: 'Falha ao utilizar api Classromm', error: body.error };
+
+      const courses = body.courses
+            .filter( course => course.courseState === 'ACTIVE' )
+            .filter( course => /^[A-z]{3}[0-9]{5}/.test( course.name ) )
+            .filter( course => /@id\.uff\.br$/.test( course.teacherGroupEmail ) )
+            .filter( course => creation_time > (now - new Date( course.creationTime )) )
+            .map( course => ({
+              TXT_nome: course.name.split('-')[1].trim(),
+              TXT_numero_classe: course.name.split('-')[0].trim(),
+              ID_google: parseInt( course.id ),
+              FL_evento: false,
+              FK_professor: req.auth.ID_professor,
+            }));
+
+      if( courses.length < 1 )
+        throw { status: 500, message: 'Nenhuma aventura válida encontrada', error: body.error };
+
+      const DAO = new AventuraDAO( pg );
+
+      const aventuras = await DAO.createFromClassroom( courses );
+
+      return Promise.all( aventuras.map( a => updateAlunosFromClassroom( DAO, req.auth.id_token, a ) ) )
     } catch (err) {
       console.error(err);
       throw err;
@@ -177,4 +222,24 @@ async function routesProfessores(fastify) {
       throw err;
     }
   });
+};
+
+async function updateAlunosFromClassroom( DAO, token, aventura ) {
+
+  const { ID_google, ID_aventura } = aventura;
+
+  const response = await fetch(
+    `https://classroom.googleapis.com/v1/courses/${ ID_google }/students`,
+    {
+      method: "GET",
+      headers: { Authorization: `Bearer ${ token }` },
+    }
+  );
+  const body = await response.json();
+
+  const alunos = body.students.map( x => x.profile.id );
+
+  return DAO.updateFromClassroom( ID_aventura, alunos );
+
+  return alunos;
 };

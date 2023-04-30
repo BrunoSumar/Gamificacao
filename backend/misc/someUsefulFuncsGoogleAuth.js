@@ -10,13 +10,12 @@ async function verify(token) {
       { headers: { Authorization: `Bearer ${token}` } }
     );
     const payload = await response.json();
-    if (payload["hd"] === "id.uff.br") {
-      return { dados: payload, err: false, msg: "Usuario autenticado" };
-    } else {
-      throw {
-        msg: 'Você deve usar uma conta "id.uff.br" para continuar ',
-      };
-    }
+    // if (payload["hd"] !== "id.uff.br") {
+    //   throw {
+    //     msg: 'Você deve usar uma conta "id.uff.br" para continuar ',
+    //   };
+    // }
+    return { dados: payload, err: false, msg: "Usuario autenticado" };
   } catch (error) {
     throw error;
   }
