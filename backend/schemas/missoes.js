@@ -5,8 +5,7 @@ const GET = {
     type: "object",
     properties: {
       id_aventura: {
-        type: "string",
-        maxLength: 10,
+        type: "integer",
       },
     },
     additionalProperties: false,
@@ -19,8 +18,7 @@ const POST = {
     type: "object",
     properties: {
       id_aventura: {
-        type: "string",
-        maxLength: 10,
+        type: "integer",
       },
     },
     additionalProperties: false,
@@ -56,12 +54,10 @@ const PATCH = {
     type: "object",
     properties: {
       id_aventura: {
-        type: "string",
-        maxLength: 10,
+        type: "integer",
       },
       id_missao: {
-        type: "string",
-        maxLength: 10,
+        type: "integer",
       },
     },
     additionalProperties: false,
@@ -97,12 +93,10 @@ const DELETE = {
     type: "object",
     properties: {
       id_aventura: {
-        type: "string",
-        maxLength: 10,
+        type: "integer",
       },
       id_missao: {
-        type: "string",
-        maxLength: 10,
+        type: "integer",
       },
     },
     additionalProperties: false,
