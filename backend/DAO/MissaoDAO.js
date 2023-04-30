@@ -17,7 +17,7 @@ class MissaoDAO {
                 INSERT INTO "Missoes" ("FK_aventura", "TXT_titulo", "TXT_descricao", "FL_grupo", "DT_entrega_maxima")
                 VALUES ($1, $2, $3, $4, $5)
             `,
-        values: [id_professor, ...values],
+        values: [id_aventura, ...values],
       };
       let { rows } = await this._db.query(query);
       return {
@@ -31,7 +31,7 @@ class MissaoDAO {
     }
   }
 
-  async read(id_aventura, id_aluno = null, id_professor = null) {
+  async read(id_aventura, { id_aluno = null, id_professor = null }) {
     if (
       isProfessorAventura(this._db, id_professor, id_aventura) ||
       isAlunoAventura(this._db, id_aluno, id_aventura)

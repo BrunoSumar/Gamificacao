@@ -2,25 +2,17 @@ const { onRequest } = require("../misc/someUsefulFuncsHooks");
 const MissaoDAO = require("../DAO/MissaoDAO");
 const { GET, POST, DELETE, PATCH } = require("../schemas/missoes");
 async function routes(fastify) {
+
+  const pg = fastify.pg;
   fastify.register(routesProfessor);
 
   fastify.get("/", { schema: GET }, async (req, res) => {
     try {
-      const missaoDAO = new MissaoDAO();
-      const obj_read = {
-        0: null,
-        1: missaoDAO.read(
-          req.body,
-          req.params.id_aventura,
-          (id_aluno = req.auth?.ID_aluno)
-        ),
-        2: missaoDAO.read(
-          req.body,
-          req.params.id_aventura,
-          (id_professor = req.auth?.ID_professor)
-        ),
-      };
-      const resp = await obj_read[req.auth.type];
+      const missaoDAO = new MissaoDAO(pg);
+      const res = await missaoDAO.read(
+        req.params.id_aventura,
+        { id_aluno: req.auth?.ID_aluno, id_professor: req.auth?.ID_professor }
+      );
       res.code(200);
 
       return { resp };
@@ -32,18 +24,18 @@ async function routes(fastify) {
 }
 
 async function routesProfessor(fastify) {
+  const pg = fastify.pg;
+
   fastify.post("/", { schema: POST }, async (req, res) => {
     try {
-      const missaoDAO = new MissaoDAO();
+      const missaoDAO = new MissaoDAO(pg);
       let resp = await missaoDAO.create(
         req.body,
         req.params.id_aventura,
         req.auth.ID_professor
       );
       res.code(200);
-      {
-        resp;
-      }
+      return resp;
     } catch (error) {
       res.code(500);
       return { message: "Não foi possivel criar missão", error };
@@ -52,7 +44,7 @@ async function routesProfessor(fastify) {
 
   fastify.patch("/:id_missao", { schema: PATCH }, async (req, res) => {
     try {
-      const missaoDAO = new MissaoDAO();
+      const missaoDAO = new MissaoDAO(pg);
       let resp = await missaoDAO.update(
         req.body,
         req.params.id_aventura,
@@ -71,7 +63,7 @@ async function routesProfessor(fastify) {
 
   fastify.delete("/:id_missao", { schema: DELETE }, async (req, res) => {
     try {
-      const missaoDAO = new MissaoDAO();
+      const missaoDAO = new MissaoDAO(pg);
       let resp = await missaoDAO.delete(
         req.params.id_missao,
         req.auth.ID_professor,

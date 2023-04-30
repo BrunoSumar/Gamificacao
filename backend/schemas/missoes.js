@@ -40,7 +40,7 @@ const POST = {
       },
       DT_entrega_maxima: {
         type: "string",
-        maxLength: 10,
+        maxLength: 50,
       },
     },
     additionalProperties: false,
@@ -80,7 +80,7 @@ const PATCH = {
       },
       DT_entrega_maxima: {
         type: "string",
-        maxLength: 10,
+        maxLength: 50,
       },
     },
     additionalProperties: false,
