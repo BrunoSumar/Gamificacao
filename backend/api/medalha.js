@@ -1,5 +1,6 @@
 const MedalhasDAO = require("../DAO/MedalhasDAO");
 const { deleteMedal, patch, post } = require("../schemas/medalhas");
+
 async function routes(fastify) {
   fastify.get("/", async (req, reply) => {
     try {
@@ -21,10 +22,10 @@ async function routesADMIN(fastify) {
       reply.code(200);
       return { rows: resp.row, msg: resp.msg };
     } catch (error) {
-        reply.code(500);
-        return {
-            error
-        }
+      reply.code(500);
+      return {
+        error
+      }
     }
   });
 
@@ -36,11 +37,11 @@ async function routesADMIN(fastify) {
       reply.code(200);
       return { msg: resp.msg };
     } catch (error) {
-        reply.code(500);
-        console.log(error)
-        return {
-            error
-        }
+      reply.code(500);
+      console.log(error)
+      return {
+        error
+      }
     }
   });
 
@@ -51,10 +52,10 @@ async function routesADMIN(fastify) {
       reply.code(200);
       return { rows: resp.row, msg: resp.msg };
     } catch (error) {
-        reply.code(500);
-        return {
-            error
-        }
+      reply.code(500);
+      return {
+        error
+      }
     }
   });
 

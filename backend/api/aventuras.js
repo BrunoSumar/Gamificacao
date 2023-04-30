@@ -90,7 +90,8 @@ async function routesProfessores(fastify) {
   const pg = fastify.pg;
 
   fastify.addHook( "onRequest", async req => {
-    if ( user_type_code['Professor'] !== req.auth.type || user_type_code['Admin'] !== req.auth.type ){
+    console.log( req.auth )
+    if ( user_type_code['Professor'] !== req.auth.type && user_type_code['Admin'] !== req.auth.type ){
       throw {
         status: 403,
         message: "Operação restrita para professores",
@@ -102,7 +103,7 @@ async function routesProfessores(fastify) {
     try {
       const DAO = new AventuraDAO(pg);
 
-      const id_aventura = await DAO.create( req.body );
+      const id_aventura = await DAO.create( req.body, req.auth.ID_professor );
 
       return { message: "Aventura criada com sucesso", id_aventura };
     } catch (err) {
@@ -115,7 +116,7 @@ async function routesProfessores(fastify) {
     try {
       const DAO = new AventuraDAO(pg);
 
-      const id_aventura = await DAO.update( req.params.id_aventura, req.body );
+      const id_aventura = await DAO.update( req.params.id_aventura, req.auth.ID_professor, req.body );
 
       return { message: "Aventura editada com sucesso", id_aventura };
     } catch (err) {
@@ -128,7 +129,7 @@ async function routesProfessores(fastify) {
     try {
       const DAO = new AventuraDAO(pg);
 
-      const aventura_aluno = await DAO.insertAluno( req.params.id_aventura, req.params.id_aluno );
+      const aventura_aluno = await DAO.insertAluno( req.params.id_aventura, req.auth.ID_professor, req.params.id_aluno );
 
       if( !aventura_aluno ){
         throw {
@@ -161,7 +162,7 @@ async function routesProfessores(fastify) {
     try {
       const DAO = new AventuraDAO(pg);
 
-      const aluno = await DAO.deleteAluno( req.params.id_aventura, req.params.id_aluno );
+      const aluno = await DAO.deleteAluno( req.params.id_aventura, req.auth.ID_professor, req.params.id_aluno );
 
       if( !aluno ){
         throw {

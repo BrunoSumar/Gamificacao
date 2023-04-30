@@ -3,16 +3,16 @@ class AventuraDAO {
     this._db = db;
   }
 
-  async create( aventura ) {
+  async create( aventura, id_professor ) {
     if( !aventura )
       return;
 
     const colunas = Object.keys( aventura ).map( chave => `"${ chave.trim() }"` );
-    const values = Object.values(aventura);
+    const values = [ id_professor, ...Object.values(aventura) ];
     const values_query = `(${ values.map( (_, i) => `$${ i+1 }` ) })`;
 
     const text =  `
-        INSERT INTO "Aventuras" ( ${ colunas } )
+        INSERT INTO "Aventuras" ( "FK_professor", ${ colunas } )
         VALUES ${ values_query }
         ON CONFLICT ("ID_google") DO NOTHING
         RETURNING "ID_aventura"
@@ -128,18 +128,24 @@ class AventuraDAO {
     }
   }
 
-  async insertAluno( id_aventura, id_aluno ) {
+  async insertAluno( id_aventura, id_professor, id_aluno ) {
     if( !id_aventura || !id_aluno )
       return null;
 
+    // const values = [ id_professor, id_aventura, id_aluno ];
+    const values = [ 2, id_aventura, id_aluno ];
+    console.log( values )
     const text =  `
-      INSERT INTO "Alunos_Aventuras" ( "FK_aluno", "FK_aventura", "NR_porcentagem_conclusao" )
-      VALUES (${ id_aluno }, ${ id_aventura }, 0)
+      INSERT INTO "Alunos_Aventuras" ( "FK_aventura", "FK_aluno", "NR_porcentagem_conclusao" )
+      SELECT $2::INT4, $3::INT4, 0
+      WHERE EXISTS (
+        SELECT 1 FROM "Aventuras" WHERE "FK_professor" = $1 AND "ID_aventura" = $2
+      )
       RETURNING *
     `;
 
     try{
-      const { rows } = await this._db.query( text );
+      const { rows } = await this._db.query( text, values );
 
       return rows[0];
     }
@@ -149,16 +155,17 @@ class AventuraDAO {
     }
   }
 
-  async update( id_aventura, aventura ) {
+  async update( id_aventura, id_professor, aventura ) {
     if( !aventura )
       return;
 
-    const keys = Object.keys( aventura ).map((value, index) => `"${value}"=$${index + 2}`);
-    const values = [ id_aventura, ...Object.values( aventura ) ];
+    const values = [ id_aventura, id_professor, ...Object.values( aventura ) ];
+    const keys = Object.keys( aventura ).map((value, index) => `"${value}"=$${index + 3}`);
     const text =  `
         UPDATE "Aventuras"
         SET ${ keys }
         WHERE "ID_aventura" = $1
+        AND  "FK_professor" = $2
         RETURNING "ID_aventura"
     `;
 
@@ -205,11 +212,12 @@ class AventuraDAO {
     if( !id_aventura )
       return;
 
-    const values = [ id_aventura, id_aluno ];
+    const values = [ id_aventura, id_professor, id_aluno ];
     const text =  `
       DELETE FROM "Alunos_Aventuras"
       WHERE "FK_aventura" = $1
-      AND      "FK_aluno" = $2
+      AND  "FK_professor" = $2
+      AND      "FK_aluno" = $3
       RETURNING *
     `;
 
