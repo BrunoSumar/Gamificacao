@@ -1,6 +1,6 @@
 const { onRequest } = require("../misc/someUsefulFuncsHooks");
-const grupoDAO = require("../DAO/gruposDAO");
-const { GET, POST, DELETE, PATCH } = require("../schemas/grupos");
+const gruposDAO = require("../DAO/GruposDAO");
+const { GET, POST, POST_PARTICIPAR, DELETE } = require("../schemas/grupos");
 
 async function routes(fastify) {
     const pg = fastify.pg;
@@ -10,11 +10,10 @@ async function routes(fastify) {
     fastify.get("/", { schema: GET }, async (req, res) => {
         try {
             const DAO = new grupoDAO(pg);
-            return await DAO.create( req.params.id_aventura, {
-                ID_missao: req.params.id_missao,
+            return await DAO.read( req.params.id_aventura, req.params.id_missao, {
                 ID_professor: req.auth.ID_professor,
                 ID_aluno: req.auth.ID_aluno,
-            );
+            });
         } catch (error) {
             res.code(500);
             return { message: "Falha ao buscar grupos", error };
