@@ -1,14 +1,7 @@
-
-module.exports = async function routes(fastify) {
-  fastify.register(require("./login"), { prefix: "login" });
-
-  fastify.register(privateRoutes);
-};
-
 const {
   routes,
   routesADMIN
-} = require("./medalha")
+} = require("./medalha");
 
 async function privateRoutes(fastify) {
   fastify.register(require("../auth"));
@@ -20,4 +13,10 @@ async function privateRoutes(fastify) {
 
   fastify.get("/ping", async () => ({ status: 200 }));
   fastify.get("/token", async (req) => req.auth);
-}
+};
+
+module.exports = async function routes(fastify) {
+  fastify.register(require("./login"), { prefix: "login" });
+
+  fastify.register(privateRoutes);
+};

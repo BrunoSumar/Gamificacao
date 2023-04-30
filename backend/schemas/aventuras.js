@@ -5,8 +5,7 @@ const GET_ID = {
         type: 'object',
         properties: {
             id_aventura: {
-                type: 'string',
-                maxLength: 10,
+                type: 'integer',
             },
         },
         additionalProperties: false,
@@ -52,12 +51,10 @@ const PATCH_ALUNO = {
         type: 'object',
         properties: {
             id_aventura: {
-                type: 'string',
-                maxLength: 10,
+                type: 'integer',
             },
             id_aluno: {
-                type: 'string',
-                maxLength: 10,
+                type: 'integer',
             },
         },
         additionalProperties: false,
