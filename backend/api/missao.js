@@ -1,55 +1,93 @@
-module.exports = async function routes(fastify) {
-    fastify.patch(
-      "/",
-      { schema: SchemaPerfilPatch },
-      async (req, reply) => {
-        try {
-          const perfilDAO = new PerfilDAO(fastify.pg);
-          perfil = await perfilDAO.update(req.body, req.auth.ID_aluno);
-          resp = {
-              Avatar: perfil.row.TP_avatar,
-              Cor_RGB: perfil.row.TXT_cor_rgb
-          }
-          reply.code(200);
-          return resp
-        } catch (error) {
-          reply.code(500);
-          return {
-            err: error,
-            msg: "Não foi possivel editar o perfil, tente novamente",
-          };
-        }
+const { onRequest } = require("../misc/someUsefulFuncsHooks");
+const MissaoDAO = require("../DAO/MissaoDAO");
+const { GET, POST, DELETE, PATCH } = require("../schemas/missoes");
+async function routes(fastify) {
+  fastify.register(routesProfessor);
+
+  fastify.get("/", { schema: GET }, async (req, res) => {
+    try {
+      const missaoDAO = new MissaoDAO();
+      const obj_read = {
+        0: null,
+        1: missaoDAO.read(
+          req.body,
+          req.params.id_aventura,
+          (id_aluno = req.auth?.ID_aluno)
+        ),
+        2: missaoDAO.read(
+          req.body,
+          req.params.id_aventura,
+          (id_professor = req.auth?.ID_professor)
+        ),
+      };
+      const resp = await obj_read[req.auth.type];
+      res.code(200);
+
+      return { resp };
+    } catch (error) {
+      res.code(500);
+      return { message: "Não foi possivel buscar missão", error };
+    }
+  });
+}
+
+async function routesProfessor(fastify) {
+  fastify.post("/", { schema: POST }, async (req, res) => {
+    try {
+      const missaoDAO = new MissaoDAO();
+      let resp = await missaoDAO.create(
+        req.body,
+        req.params.id_aventura,
+        req.auth.ID_professor
+      );
+      res.code(200);
+      {
+        resp;
       }
-    );
-  
-    fastify.get(
-      "/",
-      async (req, reply) => {
-        try {
-          const perfilDAO = new PerfilDAO(fastify.pg);
-          perfil = await  perfilDAO.read(req.auth.ID_aluno);
-          resp = {
-              Avatar: perfil.row.TP_avatar,
-              Cor_RGB: perfil.row.TXT_cor_rgb
-          }
-          reply.code(200);
-          return resp
-        } catch (error) {
-          reply.code(500);
-          return {
-            err: error,
-            msg: "Não foi possivel encontrar o perfil, tente novamente",
-          };
-        }
+    } catch (error) {
+      res.code(500);
+      return { message: "Não foi possivel criar missão", error };
+    }
+  });
+
+  fastify.patch("/:id_missao", { schema: PATCH }, async (req, res) => {
+    try {
+      const missaoDAO = new MissaoDAO();
+      let resp = await missaoDAO.update(
+        req.body,
+        req.params.id_aventura,
+        req.auth.ID_professor,
+        req.params.id_missao
+      );
+      res.code(200);
+      {
+        resp;
       }
-    );
-  
-    fastify.addHook("onRequest", (req, res, done) => {
-      if (req.auth.type != 1) {
-        res.code(401);
-        throw new Error("O Usuario precisa ser um aluno");
+    } catch (error) {
+      res.code(500);
+      return { message: "Não foi atualizar missão", error };
+    }
+  });
+
+  fastify.delete("/:id_missao", { schema: DELETE }, async (req, res) => {
+    try {
+      const missaoDAO = new MissaoDAO();
+      let resp = await missaoDAO.delete(
+        req.params.id_missao,
+        req.auth.ID_professor,
+        req.params.id_aventura
+      );
+      res.code(200);
+      {
+        resp;
       }
-      done()
-    });
-  };
-  
+    } catch (error) {
+      res.code(500);
+      return { message: "Não foi deletar missão", error };
+    }
+  });
+
+  fastify.addHook("onRequest", onRequest.somente_professor);
+}
+
+module.exports = routes;

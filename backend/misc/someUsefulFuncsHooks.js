@@ -1,7 +1,8 @@
 const { user_type_code } = require("./someUsefulFuncsUsers");
+const LoginRegisterDAO = require("../DAO/LoginRegisterDAO");
 
 const onRequest = {
-  somente_professor: async (req) => {
+  somente_professor: (req, res, done) => {
     console.log(req.auth);
     if (
       user_type_code["Professor"] !== req.auth.type &&
@@ -12,6 +13,7 @@ const onRequest = {
         message: "Operação restrita para professores",
       };
     }
+    done();
   },
   somente_administrador: (req, res, done) => {
     if (user_type_code["Admin"] !== req.auth.type) {
@@ -39,16 +41,17 @@ const onRequest = {
 };
 
 const onSend = {
-  registra_login: async (request, reply, payload) => {
+  registra_login: (pg) => async (request, reply, payload) => {
     if (
       reply.statusCode === 200 &&
       request.method === "POST" &&
       ["/api/login/aluno", "/api/login/professor"].includes(request.url)
     ) {
-      loginDAO = new LoginRegisterDAO(fastify.pg);
+      loginDAO = new LoginRegisterDAO(pg);
       try {
         await loginDAO.insere(JSON.parse(payload).token);
       } catch (error) {
+        console.log(error);
         payload = null;
         reply.statusCode = 500;
       }
@@ -58,5 +61,5 @@ const onSend = {
 
 module.exports = {
   onRequest,
-  onSend
-}
+  onSend,
+};

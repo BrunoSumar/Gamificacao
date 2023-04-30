@@ -1,6 +1,5 @@
 const AlunoDAO = require("../DAO/AlunoDAO");
 const ProfessorDAO = require("../DAO/ProfessorDAO");
-const LoginRegisterDAO = require("../DAO/LoginRegisterDAO");
 const PerfilDAO = require("../DAO/PerfilDAO");
 const { post: SchemaLoginPost } = require("../schemas/login");
 const {
@@ -72,7 +71,7 @@ module.exports = async function routes(fastify) {
     }
   );
 
-  fastify.addHook("onSend", onSend.registra_login);
+  fastify.addHook("onSend", onSend.registra_login(fastify.pg));
 };
 
 function buildUserPayload(userType, googleData) {
