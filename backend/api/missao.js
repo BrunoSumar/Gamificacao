@@ -2,17 +2,16 @@ const { onRequest } = require("../misc/someUsefulFuncsHooks");
 const MissaoDAO = require("../DAO/MissaoDAO");
 const { GET, POST, DELETE, PATCH } = require("../schemas/missoes");
 async function routes(fastify) {
-
   const pg = fastify.pg;
   fastify.register(routesProfessor);
 
   fastify.get("/", { schema: GET }, async (req, res) => {
     try {
       const missaoDAO = new MissaoDAO(pg);
-      const res = await missaoDAO.read(
-        req.params.id_aventura,
-        { id_aluno: req.auth?.ID_aluno, id_professor: req.auth?.ID_professor }
-      );
+      const resp = await missaoDAO.read(req.params.id_aventura, {
+        id_aluno: req.auth?.ID_aluno,
+        id_professor: req.auth?.ID_professor,
+      });
       res.code(200);
 
       return { resp };
@@ -52,9 +51,7 @@ async function routesProfessor(fastify) {
         req.params.id_missao
       );
       res.code(200);
-      {
-        resp;
-      }
+      return resp;
     } catch (error) {
       res.code(500);
       return { message: "Não foi atualizar missão", error };
@@ -70,9 +67,7 @@ async function routesProfessor(fastify) {
         req.params.id_aventura
       );
       res.code(200);
-      {
-        resp;
-      }
+      return resp;
     } catch (error) {
       res.code(500);
       return { message: "Não foi deletar missão", error };

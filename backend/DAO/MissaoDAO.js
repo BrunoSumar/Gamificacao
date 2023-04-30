@@ -12,9 +12,10 @@ class MissaoDAO {
   async create(payload, id_aventura, id_professor) {
     if (isProfessorAventura(this._db, id_professor, id_aventura)) {
       const values = Object.values(payload);
+      const keys = Object.keys(payload);
       const query = {
         text: `
-                INSERT INTO "Missoes" ("FK_aventura", "TXT_titulo", "TXT_descricao", "FL_grupo", "DT_entrega_maxima")
+                INSERT INTO "Missoes" ("FK_aventura",${keys.map((value) => `"${value}"`)})
                 VALUES ($1, $2, $3, $4, $5)
             `,
         values: [id_aventura, ...values],
@@ -51,6 +52,7 @@ class MissaoDAO {
   async update(payload, id_aventura, id_professor, id_missao) {
     if (isProfessorAventura(this._db, id_professor, id_aventura)) {
       const values = Object.values(payload);
+      const keys = Object.keys(payload);
       const query = {
         text: `
                 UPDATE "Missoes" SET ${keys.map(
