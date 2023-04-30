@@ -1,3 +1,5 @@
+const regex_data = '^\\d{4}-\\d{2}-\\d{2}T([01]\\d|2[0-3]):([0-5]\\d):([0-5]\\d)$';
+
 const GET = {
   params: {
     type: "object",
@@ -41,7 +43,7 @@ const POST = {
       DT_entrega_maxima: {
         type: "string",
         maxLength: 50,
-        pattern: "^(d{4})-(d{2})-(d{2})T([01]d|2[0-3]):([0-5]d):([0-5]d)$",
+        pattern: regex_data,
       },
     },
     additionalProperties: false,
@@ -82,11 +84,11 @@ const PATCH = {
       DT_entrega_maxima: {
         type: "string",
         maxLength: 50,
-        pattern: "^(d{4})-(d{2})-(d{2})T([01]d|2[0-3]):([0-5]d):([0-5]d)$",
+        pattern: regex_data,
       },
     },
     additionalProperties: false,
-    required: [""],
+    required: [],
   },
 };
 
