@@ -22,3 +22,9 @@ async function hasGrupo(db, id_missao, id_aluno) {
   const { rows } = db.query(query);
   return rows.length ? true : false;
 }
+
+module.exports = {
+    isMissaoEmGrupo,
+    hasGrupo,
+    isDeletaGrupo
+}
