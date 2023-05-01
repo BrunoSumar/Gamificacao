@@ -9,7 +9,7 @@ async function routes(fastify) {
 
     fastify.get("/", { schema: GET }, async (req, res) => {
         try {
-            const DAO = new grupoDAO(pg);
+            const DAO = new gruposDAO(pg);
             return await DAO.read( req.params.id_aventura, req.params.id_missao, {
                 ID_professor: req.auth.ID_professor,
                 ID_aluno: req.auth.ID_aluno,
@@ -17,6 +17,7 @@ async function routes(fastify) {
         } catch (error) {
             console.error( error );
             res.code(500);
+            console.log(error)
             return { message: "Falha ao buscar grupos", error };
         }
     });
