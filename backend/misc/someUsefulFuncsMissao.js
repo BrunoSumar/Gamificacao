@@ -34,7 +34,6 @@ async function isMissaoAventura(db, id_missao, id_aventura) {
   return !!rows.length;
 };
 
-
 module.exports = {
   isProfessorAventura,
   isAlunoAventura,
