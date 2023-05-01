@@ -18,8 +18,7 @@ async function isAlunoAventura(db, id_aluno, id_aventura) {
   `;
   const values = [ id_aluno, id_aventura ];
   let { rows } = await db.query({ text, values });
-  console.log( rows, values )
-  
+
   return !!rows.length;
 };
 
