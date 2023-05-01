@@ -62,12 +62,9 @@ const DELETE = {
       id_missao: {
         type: "integer",
       },
-      id_grupo: {
-        type: "integer",
-      },
     },
     additionalProperties: false,
-      required: ["id_aventura", "id_missao", "id_grupo"],
+      required: [ "id_aventura", "id_missao" ],
   },
 };
 

@@ -50,7 +50,7 @@ async function routesAlunos(fastify) {
         }
     });
 
-    fastify.delete("/:id_grupo", { schema: DELETE }, async (req, res) => {
+    fastify.delete("/", { schema: DELETE }, async (req, res) => {
         try {
             const DAO = new grupoDAO(pg);
             return await DAO.delete( req.params.id_aventura, req.params.id_missao, req.auth.ID_aluno );

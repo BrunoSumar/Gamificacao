@@ -22,7 +22,21 @@ async function isAlunoAventura(db, id_aluno, id_aventura) {
   return !!rows.length;
 };
 
+async function isMissaoAventura(db, id_missao, id_aventura) {
+  const text = `
+    SELECT 1 FROM "Missoes"
+    WHERE "ID_missao" = $1
+    AND "FK_aventura" = $2
+  `;
+  const values = [ id_missao, id_aventura ];
+  let { rows } = await db.query({ text, values });
+
+  return !!rows.length;
+};
+
+
 module.exports = {
   isProfessorAventura,
-  isAlunoAventura
+  isAlunoAventura,
+  isMissaoAventura,
 };
