@@ -130,6 +130,7 @@ class GruposDAO {
     if (ID_aluno) {
       if (!(await isAlunoAventura(this._db, ID_aluno, id_aventura)))
         throw { status: 403, message: "Aluno não pertence a aventura" };
+
       const query = {
         text: `WITH temp_table AS (
         SELECT * FROM "Missoes" AS m
@@ -154,7 +155,7 @@ class GruposDAO {
     }
 
     if (ID_professor) {
-      if (!(await isProfessorAventura(this._db, ID_aluno, id_aventura)))
+      if (!(await isProfessorAventura(this._db, ID_professor, id_aventura)))
         throw { status: 403, message: "Professor não pertence a aventura" };
       const query = {
         text: `SELECT g."ID_grupo", g."FK_missao", a."ID_aluno",a."TXT_primeiro_nome", a."TXT_ultimo_nome", g."DT_criacao" 
