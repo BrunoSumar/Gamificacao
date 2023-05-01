@@ -1,3 +1,8 @@
+const {
+  isAlunoAventura,
+  isProfessorAventura,
+} = require("../misc/someUsefulFuncsMissao");
+
 class AventuraDAO {
   constructor( db ) {
     this._db = db;
@@ -165,6 +170,12 @@ class AventuraDAO {
   async insertAluno( id_aventura, id_professor, id_aluno ) {
     if( !id_aventura || !id_aluno )
       return null;
+
+    if( !(await isProfessorAventura(this._db, id_professor, id_aventura)) )
+      throw { status: 403, message: 'Professor não comanda a aventura' };
+
+    if( !(await isAlunoAventura(this._db, ID_aluno, id_aventura)) )
+      throw { status: 403, message: 'Aluno não pertence a aventura' };
 
     const values = [ id_professor, id_aventura, id_aluno ];
     const text =  `

@@ -29,7 +29,7 @@ async function routesAlunos(fastify) {
 
     fastify.post("/", { schema: POST }, async (req, res) => {
         try {
-            const DAO = new grupoDAO(pg);
+            const DAO = new gruposDAO(pg);
             return await DAO.create( req.params.id_aventura, req.params.id_missao, req.auth.ID_aluno );
         } catch (error) {
             res.code(500);
