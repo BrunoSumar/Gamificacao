@@ -42,7 +42,7 @@ async function routesAlunos(fastify) {
 
     fastify.post("/:id_grupo", { schema: POST_PARTICIPAR }, async (req, res) => {
         try {
-            const DAO = new grupoDAO(pg);
+            const DAO = new gruposDAO(pg);
             return await DAO.update( req.params.id_aventura, req.params.id_missao, req.auth.ID_aluno );
         } catch (error) {
             console.error( error );
@@ -53,7 +53,7 @@ async function routesAlunos(fastify) {
 
     fastify.delete("/", { schema: DELETE }, async (req, res) => {
         try {
-            const DAO = new grupoDAO(pg);
+            const DAO = new gruposDAO(pg);
             return await DAO.delete( req.params.id_aventura, req.params.id_missao, req.auth.ID_aluno );
         } catch (error) {
             console.error( error );
