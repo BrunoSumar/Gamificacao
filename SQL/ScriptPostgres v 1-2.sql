@@ -1,3 +1,4 @@
+--Feito
 CREATE TABLE "Alunos" (
   "ID_aluno" SERIAL PRIMARY KEY,
   "ID_google" varchar(30) UNIQUE,
@@ -7,6 +8,7 @@ CREATE TABLE "Alunos" (
   "NR_moedas" int default 0
 );
 
+--Feito
 CREATE TABLE "Professores" (
   "ID_professor" SERIAL PRIMARY KEY,
   "ID_google" varchar(30) UNIQUE,
@@ -16,6 +18,7 @@ CREATE TABLE "Professores" (
   "FL_validado" boolean
 );
 
+--Feito
 CREATE TABLE "Aventuras" (
   "ID_aventura" SERIAL PRIMARY KEY,
   "FK_professor" bigint,
@@ -28,6 +31,7 @@ CREATE TABLE "Aventuras" (
   "DT_termino" timestamp
 );
 
+--Feito
 CREATE TABLE "Avatar" (
   "ID_avatar" SERIAL PRIMARY KEY,
   "FK_aluno" bigint UNIQUE,
@@ -35,7 +39,8 @@ CREATE TABLE "Avatar" (
   "TP_avatar" int
 );
 
-CREATE TABLE "Itens" (
+--Pendente planejamento
+CREATE TABLE "Itens" ( 
   "ID_item" SERIAL PRIMARY KEY,
   "TXT_name" varchar(50),
   "TXT_descricao" text,
@@ -43,6 +48,7 @@ CREATE TABLE "Itens" (
   "DT_criacao" timestamp
 );
 
+--Pendente planejamento (provavelmente não)
 CREATE TABLE "Conquistas" (
   "ID_conquista" SERIAL PRIMARY KEY,
   "TXT_nome" varchar(50),
@@ -50,6 +56,7 @@ CREATE TABLE "Conquistas" (
   "DT_criacao" timestamp
 );
 
+--Pendente planejamento (provavelmente não)
 CREATE TABLE "Conquistas_Alunos" (
   "ID_conquistaAluno" SERIAL PRIMARY KEY,
   "FK_conqusita" bigint,
@@ -58,6 +65,7 @@ CREATE TABLE "Conquistas_Alunos" (
   "TXT_info" text
 );
 
+--Pendente planejamento
 CREATE TABLE "Itens_Alunos_Desafios" (
   "ID_item_aluno_desafio" SERIAL PRIMARY KEY,
   "FK_item" bigint,
@@ -67,6 +75,7 @@ CREATE TABLE "Itens_Alunos_Desafios" (
   "DT_uso" timestamp
 );
 
+-- Precisa terminar (PROCENTAGEM)
 CREATE TABLE "Alunos_Aventuras" (
   "ID_aluno_aventura" SERIAL PRIMARY KEY,
   "FK_aluno" bigint ,
@@ -75,6 +84,7 @@ CREATE TABLE "Alunos_Aventuras" (
   UNIQUE ("ID_aluno_aventura", "FK_aluno")
 );
 
+--Feito
 CREATE TABLE "Missoes" (
   "ID_missao" SERIAL PRIMARY KEY,
   "FK_aventura" bigint,
@@ -84,6 +94,7 @@ CREATE TABLE "Missoes" (
   "DT_entrega_maxima" timestamp
 );
 
+-- Precisa fazer
 CREATE TABLE "Alunos_Missoes_Concluidas" (
   "ID_aluno_missao_concluida" SERIAL PRIMARY KEY,
   "FK_aluno" bigint,
@@ -93,14 +104,17 @@ CREATE TABLE "Alunos_Missoes_Concluidas" (
   "NR_porcentagem_conclusao" float
 );
 
+--Feito
 CREATE TABLE "Grupos" (
   "ID_grupo" SERIAL PRIMARY KEY,
   "FK_missao" bigint,
   "DT_criacao" timestamp
 );
 
+--Feito
 CREATE TABLE "Grupos_Alunos" ("FK_grupo" bigint, "FK_aluno" bigint);
 
+--Precisa Fazer
 CREATE TABLE "Desafios" (
   "NR_indice" int,
   "ID_desafio" SERIAL PRIMARY KEY,
@@ -110,6 +124,7 @@ CREATE TABLE "Desafios" (
   "FL_grande_desafio" boolean
 );
 
+--Precisa fazer
 CREATE TABLE "Opcoes" (
   "ID_opcao" SERIAL PRIMARY KEY,
   "TXT_descricao" text,
@@ -117,6 +132,7 @@ CREATE TABLE "Opcoes" (
   "FK_desafio" bigint
 );
 
+--Precisa fazer
 CREATE TABLE "Conteudos" (
   "ID_conteudo" SERIAL PRIMARY KEY,
   "FK_desafio" bigint,
@@ -125,6 +141,7 @@ CREATE TABLE "Conteudos" (
   "DT_inclusao" timestamp
 );
 
+--Precisa fazer 
 CREATE TABLE "Respostas" (
   "ID_resposta" SERIAL PRIMARY KEY,
   "FK_grupo" bigint,
@@ -135,12 +152,14 @@ CREATE TABLE "Respostas" (
   "DT_resposta" timestamp
 );
 
+--Feito
 CREATE TABLE "Medalhas" (
   "ID_medalha" SERIAL PRIMARY KEY,
   "TXT_titulo" varchar(50),
   "NR_minimo" float UNIQUE
 );
 
+--Pendente planejamento (provavelmente não)
 CREATE TABLE "Comentarios" (
   "ID_comentario" SERIAL PRIMARY KEY,
   "FK_aluno" bigint,
@@ -151,6 +170,7 @@ CREATE TABLE "Comentarios" (
   "FK_referencia" bigint
 );
 
+--Feito
 CREATE TABLE "Login" (
   "ID_login" SERIAL PRIMARY KEY,
   "FK_aluno" bigint,
@@ -158,6 +178,7 @@ CREATE TABLE "Login" (
   "DT_criacao" timestamp
 );
 
+--Precisa fazer 
 CREATE TABLE "Administrador" (
   "ID_Administrador" SERIAL PRIMARY KEY,
   "TXT_USER" bigint,
