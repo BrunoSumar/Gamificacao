@@ -1,73 +1,95 @@
+const {
+  isProfessorAventura,
+  isAlunoAventura,
+} = require("../misc/someUsefulFuncsMissao");
+
 class MissaoDAO {
-  constructor( db ) {
+  constructor(db) {
     this._db = db;
   }
 
-  async adiciona( aventuras ) {
-    if( !aventuras )
-      return;
-    aventuras = [].concat( aventuras );
-
-    const colunas = Object
-          .keys( aventuras[0] )
-          .map( chave => `"${ chave.trim() }"` );
-
-    const valores = aventuras
-          .map( aventura => Object.values(aventura) )
-          .reduce( (acc, aventura) => acc.concat( aventura ) );
-
-    const tam = colunas.length;
-    const valores_query = aventuras
-          .map( (_, i) => colunas.map((_, j) => '$' + (tam * i + j + 1)) )
-          .map( val => `(${ val })` );
-
-    try{
-      const { rows } = await this._db.query( `
-        INSERT INTO "Aventuras" ( ${ colunas } )
-        VALUES ${ valores_query }
-        ON CONFLICT ("ID_google") DO NOTHING
-        RETURNING "ID_aventura"
-      `, valores);
-      return rows.map( row => row.ID_aventura );
-    }
-    catch( err ){
-      console.error( err );
-      throw err;
+  //Somente professor
+  async create(payload, id_aventura, id_professor) {
+    if (isProfessorAventura(this._db, id_professor, id_aventura)) {
+      const values = Object.values(payload);
+      const keys = Object.keys(payload);
+      const query = {
+        text: `
+                INSERT INTO "Missoes" ("FK_aventura",${keys.map((value) => `"${value}"`)})
+                VALUES ($1, $2, $3, $4, $5)
+            `,
+        values: [id_aventura, ...values],
+      };
+      let { rows } = await this._db.query(query);
+      return {
+        message: "A Missão foi criada no banco",
+        rows,
+      };
+    } else {
+      throw {
+        message: "Esse professor não é mestre dessa aventura",
+      };
     }
   }
 
-  // async busca( is_aluno, id_usuario, id_aventura = null  ){
-  //   try{
-  //     const { rows } = await this._db.query( `
-  //       SELECT "ID_aventura", "FK_professor", "name", "description", "is_event", "class_number", "data_inicio", "data_termino"
-  //       FROM "Aventuras"
-  //       ${ is_aluno ? 'JOIN "Alunos_Aventuras" ON "ID_aventura" = "FK_aventura"' : '' }
-  //       WHERE
-  //       ${ is_aluno ? '"FK_aluno"' : '"FK_professor"' } = $1
-  //       ${ !!id_aventura ? 'AND "ID_aventura" = $2' : '' }
-  //       ORDER BY "data_inicio"
-  //     `, [ id_usuario ].concat( id_aventura || [] ));
+  async read(id_aventura, { id_aluno = null, id_professor = null }) {
+    if (
+      isProfessorAventura(this._db, id_professor, id_aventura) ||
+      isAlunoAventura(this._db, id_aluno, id_aventura)
+    ) {
+      const query = `select * from "Missoes" where "FK_aventura" = ${id_aventura}`;
+      console.log(id_aventura)
+      let { rows } = await this._db.query(query);
+      return {
+        message: "Missões recuperadas com sucesso",
+        rows,
+      };
+    } else {
+      throw { message: "Esse Usuario não participa dessa aventura" };
+    }
+  }
 
-  //     console.log(`
-  //       SELECT "ID_aventura", "FK_professor", "name", "description", "is_event", "class_number", "data_inicio", "data_termino"
-  //       FROM "Aventuras"
-  //       ${ is_aluno ? 'JOIN "Alunos_Aventuras" ON "ID_aventura" = "FK_aventura"' : '' }
-  //       WHERE
-  //       ${ is_aluno ? '"FK_aluno"' : '"FK_professor"' } = $1
-  //       ${ !!id_aventura ? 'AND "ID_aventura" = $2' : '' }
-  //       ORDER BY "data_inicio"
-  //     `, is_aluno, id_usuario)
-  //     if( rows.length < 1)
-  //       return null;
+  //somente professor
+  async update(payload, id_aventura, id_professor, id_missao) {
+    if (isProfessorAventura(this._db, id_professor, id_aventura)) {
+      const values = Object.values(payload);
+      const keys = Object.keys(payload);
+      const query = {
+        text: `
+                UPDATE "Missoes" SET ${keys.map(
+                  (value, index) => `"${value}"=$${index + 1}`
+                )}
+                WHERE "ID_missao" = $${values.length + 1}
+                RETURNING *
+            `,
+        values: [...values, id_missao],
+      };
+      let { rows } = await this._db.query(query);
+      return {
+        message: "A Missão foi alterada no banco",
+        rows,
+      };
+    } else {
+      throw {
+        message: "Esse professor não é mestre dessa aventura",
+      };
+    }
+  }
 
-  //     return !!id_aventura ? rows[0] : rows ;
-  //   }
-  //   catch( err ){
-  //     console.error( err );
-  //     throw err;
-  //   }
-  // }
-
+  //somente professor
+  async delete(id_missao, id_professor, id_aventura) {
+    if (isProfessorAventura(this._db, id_professor, id_aventura)) {
+      const query = {
+        text: `
+            DELETE FROM "Missoes" WHERE "ID_missao" = ${id_missao}
+        `,
+      };
+      await this._db.query(query);
+      return {
+        msg: "Missao deletada do banco",
+      };
+    }
+  }
 }
 
-module.exports = AventuraDAO;
+module.exports = MissaoDAO;

@@ -5,8 +5,7 @@ const GET_ID = {
         type: 'object',
         properties: {
             id_aventura: {
-                type: 'string',
-                maxLength: 10,
+                type: 'integer',
             },
         },
         additionalProperties: false,
@@ -47,17 +46,15 @@ const POST = {
 
 const PATCH = { ...POST, required: [] };
 
-const PATCH_aluno = {
+const PATCH_ALUNO = {
     params: {
         type: 'object',
         properties: {
             id_aventura: {
-                type: 'string',
-                maxLength: 10,
+                type: 'integer',
             },
             id_aluno: {
-                type: 'string',
-                maxLength: 10,
+                type: 'integer',
             },
         },
         additionalProperties: false,
@@ -65,10 +62,16 @@ const PATCH_aluno = {
     },
 };
 
+const DELETE = GET_ID;
+
+const DELETE_ALUNO = PATCH_ALUNO;
+
 module.exports = {
     GET,
     GET_ID,
     POST,
     PATCH,
-    PATCH_aluno,
+    PATCH_ALUNO,
+    DELETE,
+    DELETE_ALUNO,
 };

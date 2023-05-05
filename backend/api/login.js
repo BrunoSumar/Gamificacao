@@ -1,6 +1,5 @@
 const AlunoDAO = require("../DAO/AlunoDAO");
 const ProfessorDAO = require("../DAO/ProfessorDAO");
-const LoginRegisterDAO = require("../DAO/LoginRegisterDAO");
 const PerfilDAO = require("../DAO/PerfilDAO");
 const { post: SchemaLoginPost } = require("../schemas/login");
 const {
@@ -8,6 +7,7 @@ const {
 } = require("../misc/someUsefulFuncsGoogleAuth");
 
 const { tryToRegisterOrGetUser } = require("../misc/someUsefulFuncsUsers");
+const { onSend } = require("../misc/someUsefulFuncsHooks");
 
 module.exports = async function routes(fastify) {
   fastify.post("/aluno", { schema: SchemaLoginPost }, async (req, reply) => {
@@ -25,7 +25,7 @@ module.exports = async function routes(fastify) {
       );
       user.user.id_token = id_token;
 
-      perfilDao.create({
+      await perfilDao.create({
         FK_aluno: user.user.ID_aluno,
         TXT_cor_rgb: "0, 0, 255",
         TP_avatar: 1,
@@ -35,10 +35,10 @@ module.exports = async function routes(fastify) {
 
       resp = {
         Avatar: perfil.row.TP_avatar,
-        Cor_RGB: perfil.row.TXT_cor_rgb
-      }
+        Cor_RGB: perfil.row.TXT_cor_rgb,
+      };
       const token = fastify.jwt.sign(user.user);
-      return { token, Perfil:resp };
+      return { token, Perfil: resp };
     } catch (error) {
       reply.code(401);
       return {
@@ -74,21 +74,7 @@ module.exports = async function routes(fastify) {
     }
   );
 
-  fastify.addHook("onSend", async (request, reply, payload) => {
-    if (
-      reply.statusCode === 200 &&
-      request.method === "POST" &&
-      ["/api/login/aluno", "/api/login/professor"].includes(request.url)
-    ) {
-      loginDAO = new LoginRegisterDAO(fastify.pg);
-      try {
-        await loginDAO.insere(JSON.parse(payload).token);
-      } catch (error) {
-        payload = null;
-        reply.statusCode = 500;
-      }
-    }
-  });
+  fastify.addHook("onSend", onSend.registra_login(fastify.pg));
 };
 
 function buildUserPayload(userType, googleData) {

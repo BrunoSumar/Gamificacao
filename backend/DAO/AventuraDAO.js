@@ -1,9 +1,14 @@
+const {
+  isAlunoAventura,
+  isProfessorAventura,
+} = require("../misc/someUsefulFuncsMissao");
+
 class AventuraDAO {
   constructor( db ) {
     this._db = db;
   }
 
-  async create( aventura ) {
+  async create( aventura, id_professor ) {
     if( !aventura )
       return;
 
@@ -32,23 +37,64 @@ class AventuraDAO {
     }
   }
 
-  async createFromClassroom( id_aluno, aventuras ) {
-    if( !aventuras )
-      return;
+  async createFromClassroom( aventuras ) {
     aventuras = [].concat( aventuras );
+    if( !aventuras || aventuras.length < 1 )
+      return null;
 
-    const colunas = Object
-          .keys( aventuras[0] )
-          .map( chave => `"${ chave.trim() }"` );
-
-    const valores = aventuras
+    const values = aventuras
           .map( aventura => Object.values(aventura) )
           .reduce( (acc, aventura) => acc.concat( aventura ) );
 
-    const tam = colunas.length;
+    let _i = 1;
+    const colunas = Object
+          .keys( aventuras[0] )
+          .map( chave => `"${ chave.trim() }"` );
     const valores_query = aventuras
-          .map( (_, i) => colunas.map((_, j) => '$' + (tam * i + j + 1)) )
+          .map( _ => colunas.map( _ => `$${_i++}` ) )
           .map( val => `(${ val })` );
+    const text =  `
+      INSERT INTO "Aventuras" ( ${ colunas } )
+      VALUES ${ valores_query }
+      ON CONFLICT ("ID_google") DO NOTHING
+      RETURNING "ID_aventura", "ID_google"
+    `;
+
+    try{
+      const { rows: aventuras } = await this._db.query({ text, values });
+
+      return aventuras;
+    }
+    catch( err ){
+      console.error( err );
+      throw err;
+    }
+  }
+
+  async updateFromClassroom( id_aventura, alunos ) {
+    if( !id_aventura || !alunos || alunos.length < 1  )
+      return null;
+
+    const text =  `
+      INSERT INTO "Alunos_Aventuras" ( "FK_aluno", "FK_aventura", "NR_porcentagem_conclusao" )
+      SELECT "ID_aluno", ${ id_aventura }, 0 FROM "Alunos"
+      WHERE "ID_google" IN (${ alunos.map(a => `'${a}'`) })
+    `;
+
+    try{
+      const { rows } = await this._db.query( text );
+
+      return rows;
+    }
+    catch( err ){
+      console.error( err );
+    }
+  }
+
+  async insertFromClassroom( id_aluno, aventuras ) {
+    if( !aventuras )
+      return;
+    aventuras = [].concat( aventuras );
 
     const google_ids = aventuras.map( aventura => aventura.ID_google ).join();
 
@@ -57,13 +103,6 @@ class AventuraDAO {
       connection = await this._db.connect();
 
       await connection.query('BEGIN');
-
-      await connection.query( `
-        INSERT INTO "Aventuras" ( ${ colunas } )
-        VALUES ${ valores_query }
-        ON CONFLICT ("ID_google") DO NOTHING
-        RETURNING "ID_aventura"
-      `, valores);
 
       const { rows: aventuras } = await connection.query( `
         SELECT "ID_aventura"
@@ -74,15 +113,16 @@ class AventuraDAO {
       if( aventuras.length < 1 )
         return null;
 
-      const aluno_aventuras = aventuras
-            .map( aventura => `(${ id_aluno }, ${ aventura.ID_aventura }, 0)` )
-            .join(',');
-      console.log( aluno_aventuras )
+      if( id_aluno ){
+        const aluno_aventuras = aventuras
+              .map( aventura => `(${ id_aluno }, ${ aventura.ID_aventura }, 0)` )
+              .join(',');
 
-      const { rows } = await connection.query( `
-        INSERT INTO "Alunos_Aventuras" ( "FK_aluno", "FK_aventura", "NR_porcentagem_conclusao" )
-        VALUES ${ aluno_aventuras } RETURNING *
-      `);
+        const { rows } = await connection.query( `
+          INSERT INTO "Alunos_Aventuras" ( "FK_aluno", "FK_aventura", "NR_porcentagem_conclusao" )
+          VALUES ${ aluno_aventuras } RETURNING *
+        `);
+      }
 
       await connection.query('COMMIT');
       return aventuras.map( row => row.ID_aventura );
@@ -127,18 +167,25 @@ class AventuraDAO {
     }
   }
 
-  async insertAluno( id_aventura, id_aluno ) {
+  async insertAluno( id_aventura, id_professor, id_aluno ) {
     if( !id_aventura || !id_aluno )
       return null;
 
+    if( !(await isProfessorAventura(this._db, id_professor, id_aventura)) )
+      throw { status: 403, message: 'Professor não comanda a aventura' };
+
+    if( await isAlunoAventura(this._db, id_aluno, id_aventura) )
+      throw { status: 403, message: 'Aluno já pertence a aventura' };
+
+    const values = [ id_aventura, id_aluno ];
     const text =  `
-      INSERT INTO "Alunos_Aventuras" ( "FK_aluno", "FK_aventura", "NR_porcentagem_conclusao" )
-      VALUES (${ id_aluno }, ${ id_aventura }, 0)
+      INSERT INTO "Alunos_Aventuras" ( "FK_aventura", "FK_aluno", "NR_porcentagem_conclusao" )
+      VALUES ( $1, $2, 0 )
       RETURNING *
     `;
 
     try{
-      const { rows } = await this._db.query( text );
+      const { rows } = await this._db.query( text, values );
 
       return rows[0];
     }
@@ -148,16 +195,17 @@ class AventuraDAO {
     }
   }
 
-  async update( id_aventura, aventura ) {
+  async update( id_aventura, id_professor, aventura ) {
     if( !aventura )
       return;
 
-    const keys = Object.keys( aventura ).map((value, index) => `"${value}"=$${index + 2}`);
-    const values = [ id_aventura, ...Object.values( aventura ) ];
+    const values = [ id_aventura, id_professor, ...Object.values( aventura ) ];
+    const keys = Object.keys( aventura ).map((value, index) => `"${value}"=$${index + 3}`);
     const text =  `
         UPDATE "Aventuras"
         SET ${ keys }
         WHERE "ID_aventura" = $1
+        AND  "FK_professor" = $2
         RETURNING "ID_aventura"
     `;
 
@@ -168,6 +216,57 @@ class AventuraDAO {
         return null;
 
       return aventuras[0].ID_aventura;
+    }
+    catch( err ){
+      console.error( err );
+      throw err;
+    }
+  }
+
+  async delete( id_aventura, id_professor ) {
+    if( !id_aventura )
+      return;
+
+    const values = [ id_aventura, id_professor ];
+    const text =  `
+        DELETE FROM "Aventuras"
+        WHERE "ID_aventura" = $1
+        AND  "FK_professor" = $2
+        RETURNING *
+    `;
+
+    try{
+      const { rows: aventuras } = await this._db.query({ text, values });
+      if( aventuras.length < 1 )
+        return;
+
+      return aventuras[0];
+    }
+    catch( err ){
+      console.error( err );
+      throw err;
+    }
+  }
+
+  async deleteAluno( id_aventura, id_aluno ) {
+    if( !id_aventura )
+      return null;
+
+    const values = [ id_aventura, id_professor, id_aluno ];
+    const text =  `
+      DELETE FROM "Alunos_Aventuras"
+      WHERE "FK_aventura" = $1
+      AND  "FK_professor" = $2
+      AND      "FK_aluno" = $3
+      RETURNING *
+    `;
+
+    try{
+      const { rows } = await this._db.query({ text, values });
+      if( rows.length < 1 )
+        return null;
+
+      return rows[0];
     }
     catch( err ){
       console.error( err );

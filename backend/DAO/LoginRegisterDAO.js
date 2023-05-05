@@ -22,6 +22,7 @@ class LoginRegisterDAO {
         msg: "Login registrado com sucesso",
       };
     } catch (error) {
+      console.log(error)
       throw {
         msg: "Erro ao registrar login",
       };

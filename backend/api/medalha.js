@@ -1,5 +1,6 @@
 const MedalhasDAO = require("../DAO/MedalhasDAO");
 const { deleteMedal, patch, post } = require("../schemas/medalhas");
+const { onRequest } = require("../misc/someUsefulFuncsHooks");
 async function routes(fastify) {
   fastify.get("/", async (req, reply) => {
     try {
@@ -21,26 +22,26 @@ async function routesADMIN(fastify) {
       reply.code(200);
       return { rows: resp.row, msg: resp.msg };
     } catch (error) {
-        reply.code(500);
-        return {
-            error
-        }
+      reply.code(500);
+      return {
+        error,
+      };
     }
   });
 
   fastify.delete("/:id", { schema: deleteMedal }, async (req, reply) => {
     try {
       const medalhasDAO = new MedalhasDAO(fastify.pg);
-      console.log(req.params.id)
+      console.log(req.params.id);
       resp = await medalhasDAO.delete(req.params.id);
       reply.code(200);
       return { msg: resp.msg };
     } catch (error) {
-        reply.code(500);
-        console.log(error)
-        return {
-            error
-        }
+      reply.code(500);
+      console.log(error);
+      return {
+        error,
+      };
     }
   });
 
@@ -51,20 +52,14 @@ async function routesADMIN(fastify) {
       reply.code(200);
       return { rows: resp.row, msg: resp.msg };
     } catch (error) {
-        reply.code(500);
-        return {
-            error
-        }
+      reply.code(500);
+      return {
+        error,
+      };
     }
   });
 
-  fastify.addHook("onRequest", (req, res, done) => {
-    // if (req.auth.type != 0) {
-    //   res.code(401);
-    //   throw new Error("O Usuario precisa ser um administrador");
-    // }
-    done();
-  });
+  fastify.addHook("onRequest", onRequest.somente_administrador);
 }
 
 module.exports = {

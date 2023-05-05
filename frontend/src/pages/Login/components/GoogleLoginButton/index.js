@@ -2,7 +2,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 
 import React, { useEffect, useState } from "react";
 import { GoogleButtonCustom } from "./styles";
-const GoogleLoginButton = () => {
+const GoogleLoginButton = (props) => {
   const [isLogged, setLogged] = useState(false);
 
   useEffect(() => {
@@ -14,7 +14,7 @@ const GoogleLoginButton = () => {
   const onSuccess = async (token) => {
     try {
       let response = await fetch(
-        `${process.env.REACT_APP_SERVER_URL}api/login/aluno`,
+        `${process.env.REACT_APP_SERVER_URL}${props.successPath}`,
         {
           method: "POST",
           body: JSON.stringify({
@@ -36,8 +36,8 @@ const GoogleLoginButton = () => {
 
   const onError = (error) => alert("Error OnError!!");
 
-  const scope =
-    "profile email https://www.googleapis.com/auth/classroom.courses.readonly"; //TODO Avaliar colocar isso como env
+  // const scope = "profile email https://www.googleapis.com/auth/classroom.courses.readonly https://www.googleapis.com/auth/classroom.rosters.readonly https://www.googleapis.com/auth/classroom.profile.emails"; //TODO Avaliar colocar isso como env
+  const scope = "profile email https://www.googleapis.com/auth/classroom.courses.readonly https://www.googleapis.com/auth/classroom.rosters.readonly"; //TODO Avaliar colocar isso como env
 
   const login = useGoogleLogin({
     onSuccess: onSuccess,
@@ -55,7 +55,7 @@ const GoogleLoginButton = () => {
           Sign in with Google
         </GoogleButtonCustom>
       ) : (
-        <>{"Usuario Logado"}</>
+        <button onClick={_ => {localStorage.removeItem('app_jwt'); setLogged(false)}}> Logout </button>
       )}
     </>
   );
