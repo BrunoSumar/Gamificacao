@@ -1,3 +1,8 @@
+const {
+  isAlunoAventura,
+  isProfessorAventura,
+} = require("../misc/someUsefulFuncsMissao");
+
 class AventuraDAO {
   constructor( db ) {
     this._db = db;
@@ -166,13 +171,16 @@ class AventuraDAO {
     if( !id_aventura || !id_aluno )
       return null;
 
-    const values = [ id_professor, id_aventura, id_aluno ];
+    if( !(await isProfessorAventura(this._db, id_professor, id_aventura)) )
+      throw { status: 403, message: 'Professor não comanda a aventura' };
+
+    if( await isAlunoAventura(this._db, id_aluno, id_aventura) )
+      throw { status: 403, message: 'Aluno já pertence a aventura' };
+
+    const values = [ id_aventura, id_aluno ];
     const text =  `
       INSERT INTO "Alunos_Aventuras" ( "FK_aventura", "FK_aluno", "NR_porcentagem_conclusao" )
-      SELECT $2::INT4, $3::INT4, 0
-      WHERE EXISTS (
-        SELECT 1 FROM "Aventuras" WHERE "FK_professor" = $1 AND "ID_aventura" = $2
-      )
+      VALUES ( $1, $2, 0 )
       RETURNING *
     `;
 
