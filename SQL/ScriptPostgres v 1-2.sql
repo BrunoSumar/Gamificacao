@@ -40,7 +40,7 @@ CREATE TABLE "Avatar" (
 );
 
 --Pendente planejamento
-CREATE TABLE "Itens" ( 
+CREATE TABLE "Itens" (
   "ID_item" SERIAL PRIMARY KEY,
   "TXT_name" varchar(50),
   "TXT_descricao" text,
@@ -78,7 +78,7 @@ CREATE TABLE "Itens_Alunos_Desafios" (
 -- Precisa terminar (PROCENTAGEM)
 CREATE TABLE "Alunos_Aventuras" (
   "ID_aluno_aventura" SERIAL PRIMARY KEY,
-  "FK_aluno" bigint ,
+  "FK_aluno" bigint,
   "FK_aventura" bigint,
   "NR_porcentagem_conclusao" float,
   UNIQUE ("ID_aluno_aventura", "FK_aluno")
@@ -167,7 +167,9 @@ CREATE TABLE "Comentarios" (
   "FK_aventura" bigint,
   "TXT_comentario" text,
   "DT_criacao" timestamp,
-  "FK_referencia" bigint
+  "FK_referencia" bigint,
+  "FL_editado" boolean,
+  "DT_editado" timestamp,
 );
 
 --Feito
