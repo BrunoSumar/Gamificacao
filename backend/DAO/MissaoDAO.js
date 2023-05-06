@@ -38,7 +38,6 @@ class MissaoDAO {
       isAlunoAventura(this._db, id_aluno, id_aventura)
     ) {
       const query = `select * from "Missoes" where "FK_aventura" = ${id_aventura}`;
-      console.log(id_aventura)
       let { rows } = await this._db.query(query);
       return {
         message: "Missões recuperadas com sucesso",

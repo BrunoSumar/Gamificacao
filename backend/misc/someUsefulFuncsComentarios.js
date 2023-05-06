@@ -21,7 +21,31 @@ async function isComentarioAventura(db, id_comentario, id_aventura) {
   return !!(rows[0].FK_aventura == id_aventura);
 }
 
+async function isComentarioDeletado(db, id_comentario) {
+  const query = `
+          Select * from "Comentarios" where "ID_comentario" = ${id_comentario} AND "FL_deletado" IS NOT NULL
+      `;
+  const { rows } = await db.query(query);
+  return !!(rows.length);
+}
+
+function buildCommentTree(comments, parentId) {
+  const parentComments = comments.filter((c) => c.FK_referencia == parentId);
+  const tree = [];
+  parentComments.forEach((parent) => {
+    const children = buildCommentTree(comments, parent.ID_comentario);
+    const node = {
+      ...parent,
+      children,
+    };
+    tree.push(node);
+  });
+
+  return tree;
+}
 module.exports = {
   isUserComentario,
-  isComentarioAventura
+  isComentarioAventura,
+  buildCommentTree,
+  isComentarioDeletado,
 };

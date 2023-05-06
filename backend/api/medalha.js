@@ -32,13 +32,11 @@ async function routesADMIN(fastify) {
   fastify.delete("/:id", { schema: deleteMedal }, async (req, reply) => {
     try {
       const medalhasDAO = new MedalhasDAO(fastify.pg);
-      console.log(req.params.id);
       resp = await medalhasDAO.delete(req.params.id);
       reply.code(200);
       return { msg: resp.msg };
     } catch (error) {
       reply.code(500);
-      console.log(error);
       return {
         error,
       };

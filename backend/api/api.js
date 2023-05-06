@@ -8,6 +8,7 @@ async function privateRoutes(fastify) {
 
   fastify.register(require("./aventuras"), { prefix: "aventuras" });
   fastify.register(require("./missao"), { prefix: "aventuras/:id_aventura/missoes" });
+  fastify.register(require("./comentarios"), { prefix: "aventuras/:id_aventura/comentarios" });
   fastify.register(require("./grupos"), { prefix: "aventuras/:id_aventura/missoes/:id_missao/grupos" });
   fastify.register(require("./perfil"), { prefix: "perfil" });
   fastify.register(routes, { prefix: "medalhas" });

@@ -1,5 +1,5 @@
 --Feito
-CREATE TABLE "Alunos" (
+CREATE TABLE IF NOT EXISTS "Alunos" (
   "ID_aluno" SERIAL PRIMARY KEY,
   "ID_google" varchar(30) UNIQUE,
   "TXT_primeiro_nome" varchar(30),
@@ -9,7 +9,7 @@ CREATE TABLE "Alunos" (
 );
 
 --Feito
-CREATE TABLE "Professores" (
+CREATE TABLE IF NOT EXISTS "Professores" (
   "ID_professor" SERIAL PRIMARY KEY,
   "ID_google" varchar(30) UNIQUE,
   "TXT_num_professor" varchar(9) UNIQUE,
@@ -19,7 +19,7 @@ CREATE TABLE "Professores" (
 );
 
 --Feito
-CREATE TABLE "Aventuras" (
+CREATE TABLE IF NOT EXISTS "Aventuras" (
   "ID_aventura" SERIAL PRIMARY KEY,
   "FK_professor" bigint,
   "ID_google" bigint UNIQUE,
@@ -32,7 +32,7 @@ CREATE TABLE "Aventuras" (
 );
 
 --Feito
-CREATE TABLE "Avatar" (
+CREATE TABLE IF NOT EXISTS "Avatar" (
   "ID_avatar" SERIAL PRIMARY KEY,
   "FK_aluno" bigint UNIQUE,
   "TXT_cor_rgb" varchar(11),
@@ -40,7 +40,7 @@ CREATE TABLE "Avatar" (
 );
 
 --Pendente planejamento
-CREATE TABLE "Itens" (
+CREATE TABLE IF NOT EXISTS "Itens" (
   "ID_item" SERIAL PRIMARY KEY,
   "TXT_name" varchar(50),
   "TXT_descricao" text,
@@ -49,7 +49,7 @@ CREATE TABLE "Itens" (
 );
 
 --Pendente planejamento (provavelmente não)
-CREATE TABLE "Conquistas" (
+CREATE TABLE IF NOT EXISTS "Conquistas" (
   "ID_conquista" SERIAL PRIMARY KEY,
   "TXT_nome" varchar(50),
   "TXT_descricao" text,
@@ -57,7 +57,7 @@ CREATE TABLE "Conquistas" (
 );
 
 --Pendente planejamento (provavelmente não)
-CREATE TABLE "Conquistas_Alunos" (
+CREATE TABLE IF NOT EXISTS "Conquistas_Alunos" (
   "ID_conquistaAluno" SERIAL PRIMARY KEY,
   "FK_conqusita" bigint,
   "FK_aluno" bigint,
@@ -66,7 +66,7 @@ CREATE TABLE "Conquistas_Alunos" (
 );
 
 --Pendente planejamento
-CREATE TABLE "Itens_Alunos_Desafios" (
+CREATE TABLE IF NOT EXISTS "Itens_Alunos_Desafios" (
   "ID_item_aluno_desafio" SERIAL PRIMARY KEY,
   "FK_item" bigint,
   "FK_aluno" bigint,
@@ -76,7 +76,7 @@ CREATE TABLE "Itens_Alunos_Desafios" (
 );
 
 -- Precisa terminar (PROCENTAGEM)
-CREATE TABLE "Alunos_Aventuras" (
+CREATE TABLE IF NOT EXISTS "Alunos_Aventuras" (
   "ID_aluno_aventura" SERIAL PRIMARY KEY,
   "FK_aluno" bigint,
   "FK_aventura" bigint,
@@ -85,7 +85,7 @@ CREATE TABLE "Alunos_Aventuras" (
 );
 
 --Feito
-CREATE TABLE "Missoes" (
+CREATE TABLE IF NOT EXISTS "Missoes" (
   "ID_missao" SERIAL PRIMARY KEY,
   "FK_aventura" bigint,
   "TXT_titulo" varchar(50),
@@ -95,7 +95,7 @@ CREATE TABLE "Missoes" (
 );
 
 -- Precisa fazer
-CREATE TABLE "Alunos_Missoes_Concluidas" (
+CREATE TABLE IF NOT EXISTS "Alunos_Missoes_Concluidas" (
   "ID_aluno_missao_concluida" SERIAL PRIMARY KEY,
   "FK_aluno" bigint,
   "FK_missao" bigint,
@@ -105,17 +105,17 @@ CREATE TABLE "Alunos_Missoes_Concluidas" (
 );
 
 --Feito
-CREATE TABLE "Grupos" (
+CREATE TABLE IF NOT EXISTS "Grupos" (
   "ID_grupo" SERIAL PRIMARY KEY,
   "FK_missao" bigint,
   "DT_criacao" timestamp
 );
 
 --Feito
-CREATE TABLE "Grupos_Alunos" ("FK_grupo" bigint, "FK_aluno" bigint);
+CREATE TABLE IF NOT EXISTS "Grupos_Alunos" ("FK_grupo" bigint, "FK_aluno" bigint);
 
 --Precisa Fazer
-CREATE TABLE "Desafios" (
+CREATE TABLE IF NOT EXISTS "Desafios" (
   "NR_indice" int,
   "ID_desafio" SERIAL PRIMARY KEY,
   "FK_missao" bigint,
@@ -125,7 +125,7 @@ CREATE TABLE "Desafios" (
 );
 
 --Precisa fazer
-CREATE TABLE "Opcoes" (
+CREATE TABLE IF NOT EXISTS "Opcoes" (
   "ID_opcao" SERIAL PRIMARY KEY,
   "TXT_descricao" text,
   "FL_opcao_certa" boolean,
@@ -133,7 +133,7 @@ CREATE TABLE "Opcoes" (
 );
 
 --Precisa fazer
-CREATE TABLE "Conteudos" (
+CREATE TABLE IF NOT EXISTS "Conteudos" (
   "ID_conteudo" SERIAL PRIMARY KEY,
   "FK_desafio" bigint,
   "TXT_path_arquivo" text,
@@ -142,7 +142,7 @@ CREATE TABLE "Conteudos" (
 );
 
 --Precisa fazer 
-CREATE TABLE "Respostas" (
+CREATE TABLE IF NOT EXISTS "Respostas" (
   "ID_resposta" SERIAL PRIMARY KEY,
   "FK_grupo" bigint,
   "FK_aluno" bigint,
@@ -153,27 +153,29 @@ CREATE TABLE "Respostas" (
 );
 
 --Feito
-CREATE TABLE "Medalhas" (
+CREATE TABLE IF NOT EXISTS "Medalhas" (
   "ID_medalha" SERIAL PRIMARY KEY,
   "TXT_titulo" varchar(50),
   "NR_minimo" float UNIQUE
 );
 
 --Pendente planejamento (provavelmente não)
-CREATE TABLE "Comentarios" (
+CREATE TABLE IF NOT EXISTS "Comentarios" (
   "ID_comentario" SERIAL PRIMARY KEY,
   "FK_aluno" bigint,
   "FK_professor" bigint,
   "FK_aventura" bigint,
-  "TXT_comentario" text,
-  "DT_criacao" timestamp,
   "FK_referencia" bigint,
   "FL_editado" boolean,
+  "FL_deletado" boolean,
+  "TXT_comentario" text,
   "DT_editado" timestamp,
+  "DT_criacao" timestamp,
+  "DT_deletado" timestamp
 );
 
 --Feito
-CREATE TABLE "Login" (
+CREATE TABLE IF NOT EXISTS "Login" (
   "ID_login" SERIAL PRIMARY KEY,
   "FK_aluno" bigint,
   "FK_professor" bigint,
@@ -181,7 +183,7 @@ CREATE TABLE "Login" (
 );
 
 --Precisa fazer 
-CREATE TABLE "Administrador" (
+CREATE TABLE IF NOT EXISTS "Administrador" (
   "ID_Administrador" SERIAL PRIMARY KEY,
   "TXT_USER" bigint,
   "TXT_HASH_PASSWORD" bigint,
