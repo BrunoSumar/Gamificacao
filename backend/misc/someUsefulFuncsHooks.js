@@ -3,7 +3,6 @@ const LoginRegisterDAO = require("../DAO/LoginRegisterDAO");
 
 const onRequest = {
   somente_professor: (req, res, done) => {
-    console.log(req.auth);
     if (
       user_type_code["Professor"] !== req.auth.type &&
       user_type_code["Admin"] !== req.auth.type
@@ -51,7 +50,6 @@ const onSend = {
       try {
         await loginDAO.insere(JSON.parse(payload).token);
       } catch (error) {
-        console.log(error);
         payload = null;
         reply.statusCode = 500;
       }
