@@ -160,8 +160,9 @@ class DesafioDAO {
     } finally {
       await connection.release();
     }
-
   }
+
 }
+
 
 module.exports = DesafioDAO;
