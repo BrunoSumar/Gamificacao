@@ -73,7 +73,7 @@ const POST = {
     },
 };
 
-const UPDATE = {
+const PUT = {
     params: {
         type: "object",
         properties: {

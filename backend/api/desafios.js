@@ -1,5 +1,5 @@
 const { onRequest } = require("../misc/someUsefulFuncsHooks");
-const desafioDAO = require("../DAO/GruposDAO");
+const desafioDAO = require("../DAO/DesafioDAO");
 const { GET, GET_ID, POST, PUT } = require("../schemas/desafios");
 
 async function routes(fastify) {
@@ -9,7 +9,7 @@ async function routes(fastify) {
 
   fastify.get("/", { schema: GET }, async (req, res) => {
     try {
-      const DAO = new desafiosDAO(pg);
+      const DAO = new desafioDAO(pg);
       return await DAO.read(req.params.id_aventura, req.params.id_missao, {
         ID_professor: req.auth.ID_professor,
         ID_aluno: req.auth.ID_aluno,
@@ -23,11 +23,11 @@ async function routes(fastify) {
 
   fastify.get("/:id_desafio", { schema: GET_ID }, async (req, res) => {
     try {
-      const DAO = new desafiosDAO(pg);
+      const DAO = new desafioDAO(pg);
       return await DAO.read(req.params.id_aventura, req.params.id_missao, {
         ID_professor: req.auth.ID_professor,
         ID_aluno: req.auth.ID_aluno,
-        ID_desafio: id_desafio,
+        ID_desafio: req.params.id_desafio,
       });
     } catch (error) {
       console.error(error);
@@ -44,7 +44,7 @@ async function routesProfessores(fastify) {
 
   fastify.post("/", { schema: POST }, async (req, res) => {
     try {
-      const DAO = new desafiosDAO(pg);
+      const DAO = new desafioDAO(pg);
       return await DAO.create(
         req.params.id_aventura,
         req.params.id_missao,
@@ -60,11 +60,10 @@ async function routesProfessores(fastify) {
 
   fastify.put("/", { schema: PUT }, async (req, res) => {
     try {
-      const DAO = new desafiosDAO(pg);
+      const DAO = new desafioDAO(pg);
       return await DAO.update(
         req.params.id_aventura,
         req.params.id_missao,
-        req.params.id_desafio,
         req.auth.ID_professor,
         req.body,
       );
