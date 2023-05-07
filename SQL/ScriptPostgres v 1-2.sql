@@ -160,7 +160,7 @@ CREATE TABLE IF NOT EXISTS "Medalhas" (
   "NR_minimo" float UNIQUE
 );
 
---Pendente planejamento (provavelmente não)
+--Feito
 CREATE TABLE IF NOT EXISTS "Comentarios" (
   "ID_comentario" SERIAL PRIMARY KEY,
   "FK_aluno" bigint,

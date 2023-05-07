@@ -11,9 +11,9 @@ class DesafioDAO {
     this._db = db;
   }
 
-  async create(payload, id_missao, id_aventura, id_professor) {
+  async create(id_aventura, id_missao, id_professor, payload) {
     const currentDate = new Date();
-    
+
     if (!(await isAventura(this._db, id_aventura)))
       throw "Essa não é uma aventura valida";
 
@@ -36,6 +36,7 @@ class DesafioDAO {
     });
 
     let connection = {};
+
     try {
       connection = await this._db.connect();
 
@@ -46,9 +47,12 @@ class DesafioDAO {
       });
 
       await connection.query("COMMIT");
+
+      const finalQuery = `SELECT * FROM "Desafios" WHERE FK_missao = ${id_missao}`;
+      const { rows } = await connection.query(finalQuery);
       return {
-        Message: "Grupo Criado",
-        row: grupos[0],
+        Message: "Desafio(s) Criado(s)",
+        rows,
       };
     } catch (error) {
       console.error(error);
@@ -59,13 +63,11 @@ class DesafioDAO {
     }
   }
 
-  async read(id_missao) {
+  async read(id_aventura, id_missao, ) {
 
   }
 
-  async delete(id_desafio) {
-
-  }
+  async delete(id_desafio) {}
 }
 
 module.exports = DesafioDAO;
