@@ -17,7 +17,6 @@ async function routes(fastify) {
     } catch (error) {
       console.error(error);
       res.code(500);
-      console.log(error);
       return { message: "Falha ao buscar grupos", error };
     }
   });
