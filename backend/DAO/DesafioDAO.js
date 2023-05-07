@@ -63,8 +63,72 @@ class DesafioDAO {
     }
   }
 
-  async read(id_aventura, id_missao, ) {
+  async read(id_aventura, id_missao, { ID_aluno = null, ID_professor = null }) {
+    if (!ID_aluno && !ID_professor)
+      throw "é necessario fornecer um ID de usuario";
 
+    if (ID_aluno && ID_professor)
+      throw "é necessario fornecer apenas um unico id de usuario";
+
+    if (!(await isAventura(this._db, id_aventura)))
+      throw "Essa não é uma aventura valida";
+
+    if (!(await isMissaoAventura(this._db, id_missao, id_aventura)))
+      throw "Essa missão não faz parte dessa aventura";
+
+    if (ID_professor)
+      if (!(await isProfessorAventura(this._db, ID_professor, id_aventura)))
+        throw "Esse usuario não é professor dessa aventura";
+
+    if (ID_aluno)
+      if (!(await isAlunoAventura(this._db, ID_aluno, id_aventura)))
+        throw "Esse usuario não é aluno dessa aventura";
+
+    const query = `SELECT * FROM "Desafios" WHERE FK_missao = ${id_missao}`;
+    const { rows } = this._db.query(query);
+  }
+
+  async read(
+    id_aventura,
+    id_missao,
+    { ID_aluno = null, ID_professor = null, ID_desafio = null }
+  ) {
+    if (!ID_aluno && !ID_professor)
+      throw "é necessario fornecer um ID de usuario";
+
+    if (ID_aluno && ID_professor)
+      throw "é necessario fornecer apenas um unico id de usuario";
+
+    if (!(await isAventura(this._db, id_aventura)))
+      throw "Essa não é uma aventura valida";
+
+    if (!(await isMissaoAventura(this._db, id_missao, id_aventura)))
+      throw "Essa missão não faz parte dessa aventura";
+
+    if (ID_professor)
+      if (!(await isProfessorAventura(this._db, ID_professor, id_aventura)))
+        throw "Esse usuario não é professor dessa aventura";
+
+    if (ID_aluno)
+      if (!(await isAlunoAventura(this._db, ID_aluno, id_aventura)))
+        throw "Esse usuario não é aluno dessa aventura";
+    let query = "";
+
+    if (ID_desafio) {
+      query = `SELECT * FROM "Desafios" WHERE FK_missao = ${id_missao}`;
+    } else {
+      query = `SELECT * FROM "Desafios" WHERE ID_desafio = ${ID_desafio}`;
+    }
+    try {
+      const { rows } = this._db.query(query);
+      return {
+        message: "Desafio(s) recuperado(s) com sucesso",
+        rows,
+      };
+    } catch (error) {
+      console.log(error);
+      throw "Não foi possivel regatar missoes";
+    }
   }
 
   async delete(id_desafio) {}
