@@ -14,11 +14,11 @@ class AventuraDAO {
 
     const colunas = Object.keys( aventura ).map( chave => `"${ chave.trim() }"` );
     const values = Object.values(aventura);
-    const values_query = `(${ values.map( (_, i) => `$${ i+1 }` ) })`;
+    const values_query = values.map( (_, i) => `$${ i+1 }` );
 
     const text =  `
         INSERT INTO "Aventuras" ( ${ colunas } )
-        VALUES ${ values_query }
+        VALUES (${ values_query })
         ON CONFLICT ("ID_google") DO NOTHING
         RETURNING "ID_aventura"
     `;

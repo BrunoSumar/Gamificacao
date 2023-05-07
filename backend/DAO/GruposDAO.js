@@ -41,7 +41,8 @@ class GruposDAO {
         RETURNING "ID_grupo"
       `;
       const { rows: grupos } = await connection.query(query_create);
-      if (grupos.length < 1) throw "Erro ao inserir grupo no banco";
+      if (grupos.length < 1)
+        throw "Erro ao inserir grupo no banco";
 
       const query_insert = `
         INSERT INTO "Grupos_Alunos" ("FK_grupo","FK_aluno")

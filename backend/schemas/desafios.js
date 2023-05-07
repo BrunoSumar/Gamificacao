@@ -111,7 +111,17 @@ const UPDATE = {
                 },
             },
             additionalProperties: false,
-            required: ["ID_desafio"],
+            if: {
+                properties: {
+                    ID_desafio: { const: null }
+                },
+            },
+            then: {
+                required: ["NR_indice","TXT_titulo", "TXT_descricao"],
+            },
+            else: {
+                required: ["ID_desafio"],
+            },
         },
     },
 };
