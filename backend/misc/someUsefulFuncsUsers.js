@@ -9,10 +9,10 @@ const user_type_code_reverse = Object.fromEntries( Object.entries( user_type_cod
 async function tryToRegisterOrGetUser(userType, googleData, DAO) {
 
   try {
-    let user = await DAO.busca(googleData.ID_google);
+    let user = await DAO.readIdGoogle(googleData.ID_google);
 
     if (!user) {
-      user = await DAO.insere(googleData);
+      user = await DAO.create(googleData);
     }
     console.log(user);
     user.row.type = user_type_code[userType] || null;

@@ -15,6 +15,7 @@ async function verify(token) {
     //     msg: 'Você deve usar uma conta "id.uff.br" para continuar ',
     //   };
     // }
+    console.log(payload);
     return { dados: payload, err: false, msg: "Usuario autenticado" };
   } catch (error) {
     throw error;

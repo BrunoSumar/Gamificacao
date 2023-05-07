@@ -81,9 +81,11 @@ function buildUserPayload(userType, googleData) {
   if (userType == "Aluno") {
     return {
       ID_google: `${googleData.id}`,
-      first_name: `${googleData.given_name}`,
-      last_name: `${googleData.family_name}`,
-      coins: 0,
+      TXT_primeiro_nome: `${googleData.given_name}`,
+      TXT_ultimo_nome: `${googleData.family_name}`,
+      TXT_email: `${googleData.email}`,
+      FL_deletado: false,
+      NR_moedas: 0,
     };
   }
   if (userType == "Professor") {
@@ -91,6 +93,8 @@ function buildUserPayload(userType, googleData) {
       ID_google: `${googleData.id}`,
       TXT_primeiro_nome: `${googleData.given_name}`,
       TXT_ultimo_nome: `${googleData.family_name}`,
+      TXT_email: `${googleData.email}`,
+      FL_deletado: false,
       FL_validado: false,
     };
   }
