@@ -116,12 +116,13 @@ CREATE TABLE IF NOT EXISTS "Grupos_Alunos" ("FK_grupo" bigint, "FK_aluno" bigint
 
 --Precisa Fazer
 CREATE TABLE IF NOT EXISTS "Desafios" (
-  "NR_indice" int,
   "ID_desafio" SERIAL PRIMARY KEY,
   "FK_missao" bigint,
   "TXT_titulo" varchar(50),
   "TXT_descricao" text,
   "FL_grande_desafio" boolean
+  "NR_indice" int,
+  "DT_desafio" timestamp
 );
 
 --Precisa fazer
