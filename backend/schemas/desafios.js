@@ -130,5 +130,5 @@ module.exports = {
     GET,
     GET_ID,
     POST,
-    UPDATE,
+    PUT,
 };

@@ -6,7 +6,6 @@ async function hasDesafios( db, id_missao ){
 
 function hasUniqueIndices( desafios ){
     const indices = desafios.map( d => d.NR_indice );
-    console.log( indices )
     return !indices.some((el,i) => indices.indexOf(el) !== i);
 };
 

@@ -1,4 +1,5 @@
 const { hasDesafios, hasUniqueIndices } = require("../misc/someUsefulFuncsDesafio");
+const { queryInsert, queryValues } = require("../misc/someUsefulFuncsQuery");
 const { isAventura } = require("../misc/someUsefulFuncsAventura");
 const {
   isAlunoAventura,
@@ -12,7 +13,6 @@ class DesafioDAO {
   }
 
   async create(id_aventura, id_missao, id_professor, payload) {
-    const currentDate = new Date();
 
     if (!(await isAventura(this._db, id_aventura)))
       throw "Essa não é uma aventura valida";
@@ -29,42 +29,31 @@ class DesafioDAO {
     if (!(await hasUniqueIndices(payload)))
       throw "Os indices dos desafios devem ser únicos";
 
-    const arrayQueries = payload.map((desafio) => {
-      const keys = Object.keys(desafio);
-      const values = Object.values(desafio);
-      return {
-        text: `INSERT INTO "Desafios" ("FK_missao","DT_desafio", ${keys.map(
-          (value) => `"${value}"`
-        )})
-        VALUES ($1,$2,${keys.map((_, index) => `$${index + 3}`)})`,
-        values: [id_missao, currentDate.toISOString(), ...values],
-      };
-    });
+    const current_date = new Date().toISOString();
 
-    let connection = {};
+    const desafios = payload.map( desafio => ({
+      DT_desafio: current_date,
+      FK_missao: id_missao,
+      ...desafio
+    }));
+
+    const text = `
+      INSERT INTO "Desafios"
+      ${ queryInsert( desafios ) }
+      RETURNING *
+    `;
+    const values = queryValues( desafios );
+
     try {
-      connection = await this._db.connect();
+      const { rows } = await this._db.query({ text, values });
 
-      await connection.query("BEGIN");
-
-      arrayQueries.forEach(async (element) => {
-        await connection.query(element);
-      });
-
-      await connection.query("COMMIT");
-
-      const finalQuery = `SELECT * FROM "Desafios" WHERE "FK_missao" = ${id_missao} ORDER BY "NR_indice"`;
-      const { rows } = await connection.query(finalQuery);
       return {
         Message: "Desafio(s) Criado(s)",
         rows,
       };
     } catch (error) {
       console.error(error);
-      await connection.query("ROLLBACK");
       throw error;
-    } finally {
-      await connection.release();
     }
   }
 
@@ -91,17 +80,17 @@ class DesafioDAO {
     if ( ID_aluno && !(await isAlunoAventura(this._db, ID_aluno, id_aventura)))
       throw "Esse usuario não é aluno dessa aventura";
 
-    if (!(await hasUniqueIndices(payload)))
-      throw "Os indices dos desafios devem ser únicos";
-
     const query = `
-      SELECT * FROM "Desafios"
+      SELECT "Desafios".* ${ ID_desafio ? ', jsonb_agg("Opcoes".*) AS opcoes' : '' }
+      FROM "Desafios" ${ ID_desafio ? 'LEFT JOIN "Opcoes" ON ("ID_desafio" = "FK_desafio")' : '' }
       WHERE ${ ID_desafio ? '"ID_desafio"' : '"FK_missao"' } = ${ ID_desafio || id_missao }
+      ${ ID_desafio ? 'GROUP BY "ID_desafio"' : '' }
       ORDER BY "NR_indice"
     `;
 
     try {
       const { rows } = await this._db.query(query);
+
       return {
         message: "Desafio(s) recuperado(s) com sucesso",
         rows,
@@ -119,26 +108,28 @@ class DesafioDAO {
     if (!(await isProfessorAventura(this._db, id_professor, id_aventura)))
       throw "Professor não pertence a aventura";
 
+    if (!(await hasUniqueIndices(desafios)))
+      throw "Os indices dos desafios devem ser únicos";
+
+    const [ novos_desafios, antigos_desafios ] = desafios.reduce( (acc,cur) => {
+      acc[ cur.ID_desafio ? 1 : 0 ].push(cur);
+      return acc;
+    }, [[],[]] );
+
     let connection = {};
     try {
       connection = await this._db.connect();
 
       await connection.query("BEGIN");
 
-      const [ novos_desafios, antigos_desafios ] = desafios.reduce( (acc,cur) => {
-        acc[ cur.ID_desafio ? 1 : 0 ].push(cur);
-        return acc;
-      }, [[],[]] );
-
-      const remove_text = `
+      const text = `
         DELETE FROM "Desafios"
         WHERE "FK_missao" = $1
         RETURNING *
       `;
-      const remove_values = [ id_missao ];
       const { rows: desafios_banco } = await connection.query({
-        text: remove_text,
-        values: remove_values,
+        values: [ id_missao ],
+        text,
       });
 
       if( antigos_desafios.length > 0 ){
@@ -146,56 +137,31 @@ class DesafioDAO {
         desafios_banco.forEach( d => desafios_banco_map.set( d.ID_desafio, d ) );
         const desafios_update = antigos_desafios.map( d => ({...desafios_banco_map.get( d.ID_desafio ), ...d}) );
 
-        let _i = 1;
-        const update_values = desafios_update
-              .map( desafio => Object.values(desafio) )
-              .reduce( (acc,cur) => acc.concat(cur) );
-        const update_colunas = Object
-              .keys( desafios_update[0] )
-              .map( chave => `"${ chave.trim() }"` );
-        const update_values_query = desafios_update
-              .map( _ => update_colunas.map( _ => `$${_i++}` ) )
-              .map( val => `(${ val })` );
-        const update_text = `
-          INSERT INTO "Desafios" (${ update_colunas })
-          VALUES ${ update_values_query }
-          RETURNING *
+        const text = `
+          INSERT INTO "Desafios"
+          ${ queryInsert( desafios_update ) }
         `;
-        const { rows } = await connection.query({
-          text: update_text,
-          values: update_values,
+        await connection.query({
+          values: queryValues( desafios_update ),
+          text,
         });
       }
 
       if( novos_desafios.length > 0 ){
         const current_date = new Date().toISOString();
-        const desafios_create = novos_desafios.map( d => ({
+        const desafios_create = novos_desafios.map( desafio => ({
           FK_missao: id_missao,
-          NR_indice: d.NR_indice,
-          TXT_titulo: d.TXT_titulo,
-          TXT_descricao: d.TXT_descricao,
-          FL_grande_desafio: d.FL_grande_desafio,
           DT_desafio: current_date,
+          ...desafio,
         }));
 
-        let _i = 1;
-        const create_values = desafios_create
-              .map( desafio => Object.values(desafio) )
-              .reduce( (acc,cur) => acc.concat( cur ) );
-        const create_colunas = Object
-              .keys( desafios_create[0] )
-              .map( chave => `"${ chave.trim() }"` );
-        const create_values_query = desafios_create
-              .map( _ => create_colunas.map( _ => `$${_i++}` ) )
-              .map( val => `(${ val })` );
-        const create_text = `
-          INSERT INTO "Desafios" (${ create_colunas })
-          VALUES ${ create_values_query }
-          RETURNING *
+        const text = `
+          INSERT INTO "Desafios"
+          ${ queryInsert( desafios_create ) }
         `;
-        const { rows } = await connection.query({
-          text: create_text,
-          values: create_values,
+        await connection.query({
+          values: queryValues( desafios_create ),
+          text,
         });
       }
 
