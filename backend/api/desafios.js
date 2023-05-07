@@ -1,6 +1,6 @@
 const { onRequest } = require("../misc/someUsefulFuncsHooks");
 const desafioDAO = require("../DAO/GruposDAO");
-const { GET, GET, POST, POST_PARTICIPAR, DELETE } = require("../schemas/desafios");
+const { GET, GET_ID, POST, PUT } = require("../schemas/desafios");
 
 async function routes(fastify) {
   const pg = fastify.pg;
@@ -58,7 +58,7 @@ async function routesProfessores(fastify) {
     }
   });
 
-  fastify.put("/", { schema: UPDATE }, async (req, res) => {
+  fastify.put("/", { schema: PUT }, async (req, res) => {
     try {
       const DAO = new desafiosDAO(pg);
       return await DAO.update(
