@@ -24,12 +24,15 @@ module.exports = async function routes(fastify) {
         alunoDao
       );
       user.user.id_token = id_token;
+
       await perfilDao.create({
         FK_aluno: user.user.ID_aluno,
         TXT_cor_rgb: "0, 0, 255",
         TP_avatar: 1,
       });
+
       perfil = await perfilDao.read(user.user.ID_aluno);
+
       resp = {
         Avatar: perfil.row.TP_avatar,
         Cor_RGB: perfil.row.TXT_cor_rgb,
