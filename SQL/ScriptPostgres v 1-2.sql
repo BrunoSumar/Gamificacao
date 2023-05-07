@@ -126,8 +126,10 @@ CREATE TABLE IF NOT EXISTS "Desafios" (
   "FK_missao" bigint,
   "TXT_titulo" varchar(50),
   "TXT_descricao" text,
-  "FL_grande_desafio" boolean "NR_indice" int,
-  "DT_desafio" timestamp
+  "FL_grande_desafio" boolean, 
+  "NR_indice" int,
+  "
+  " timestamp
 );
 
 --Precisa fazer
@@ -192,7 +194,7 @@ CREATE TABLE IF NOT EXISTS "Login" (
 CREATE TABLE IF NOT EXISTS "Administrador" (
   "ID_Administrador" SERIAL PRIMARY KEY,
   "TXT_USER" bigint,
-  "TXT_HASH_PASSWORD" bigint,
+  "TXT_HASH_PASSWORD" bigint
 );
 
 ALTER TABLE
