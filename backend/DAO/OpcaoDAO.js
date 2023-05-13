@@ -1,4 +1,4 @@
-const { hasOpcoes, hasUniqueAnwser, isDesafioMissao } = require("../misc/someUsefulFuncsDesafio");
+const { hasOpcoes, hasUniqueAnwser, isDesafioMissao, isGrandeDesafio } = require("../misc/someUsefulFuncsDesafio");
 const { queryInsert, queryValues } = require("../misc/someUsefulFuncsQuery");
 const { isAventura } = require("../misc/someUsefulFuncsAventura");
 const {
@@ -22,6 +22,9 @@ class opcaoDAO {
 
     if (!(await isProfessorAventura(this._db, id_professor, id_aventura)))
       throw "Esse usuario não é professor dessa aventura";
+
+    if ( await isGrandeDesafio(this._db, id_desafio) )
+      throw "Esse desafio não suporta opções";
 
     if ( await hasOpcoes(this._db, id_desafio) )
       throw "Esse desafio já tem opções cadastradas";
@@ -100,6 +103,9 @@ class opcaoDAO {
 
     if (!(await isProfessorAventura(this._db, id_professor, id_aventura)))
       throw "Professor não pertence a aventura";
+
+    if ( await isGrandeDesafio(this._db, id_desafio) )
+      throw "Esse desafio não suporta opções";
 
     if ( !opcoes || opcoes.length < 1 )
       throw "Opções inválidas";

@@ -30,10 +30,21 @@ async function isDesafioMissao(db, id_desafio, id_missao) {
   return !!rows.length;
 };
 
+async function isGrandeDesafio( db, id_desafio ){
+  const query = `
+    SELECT 1 FROM "Desafios"
+    WHERE "ID_desafio" = ${id_desafio}
+    AND "FL_grande_desafio" = TRUE
+  `;
+  const { rows } = await db.query(query);
+  return !!rows.length;
+};
+
 module.exports = {
   hasDesafios,
   hasOpcoes,
   hasUniqueIndices,
   hasUniqueAnwser,
   isDesafioMissao,
+  isGrandeDesafio,
 };
