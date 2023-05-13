@@ -1,3 +1,4 @@
+const { queryInsert, queryValues } = require("../misc/someUsefulFuncsQuery");
 const {
   isAlunoAventura,
   isProfessorAventura,
@@ -14,11 +15,11 @@ class AventuraDAO {
 
     const colunas = Object.keys( aventura ).map( chave => `"${ chave.trim() }"` );
     const values = Object.values(aventura);
-    const values_query = `(${ values.map( (_, i) => `$${ i+1 }` ) })`;
+    const values_query = values.map( (_, i) => `$${ i+1 }` );
 
     const text =  `
         INSERT INTO "Aventuras" ( ${ colunas } )
-        VALUES ${ values_query }
+        VALUES (${ values_query })
         ON CONFLICT ("ID_google") DO NOTHING
         RETURNING "ID_aventura"
     `;
@@ -38,32 +39,21 @@ class AventuraDAO {
   }
 
   async createFromClassroom( aventuras ) {
-    aventuras = [].concat( aventuras );
-    if( !aventuras || aventuras.length < 1 )
-      return null;
+    if( !aventuras )
+      throw 'aventura inválida';
 
-    const values = aventuras
-          .map( aventura => Object.values(aventura) )
-          .reduce( (acc, aventura) => acc.concat( aventura ) );
-
-    let _i = 1;
-    const colunas = Object
-          .keys( aventuras[0] )
-          .map( chave => `"${ chave.trim() }"` );
-    const valores_query = aventuras
-          .map( _ => colunas.map( _ => `$${_i++}` ) )
-          .map( val => `(${ val })` );
+    const values = queryValues( aventuras );
     const text =  `
-      INSERT INTO "Aventuras" ( ${ colunas } )
-      VALUES ${ valores_query }
+      INSERT INTO "Aventuras"
+      ${ queryInsert( aventuras ) }
       ON CONFLICT ("ID_google") DO NOTHING
       RETURNING "ID_aventura", "ID_google"
     `;
 
     try{
-      const { rows: aventuras } = await this._db.query({ text, values });
+      const { rows } = await this._db.query({ text, values });
 
-      return aventuras;
+      return rows;
     }
     catch( err ){
       console.error( err );
@@ -111,7 +101,7 @@ class AventuraDAO {
       `);
 
       if( aventuras.length < 1 )
-        return null;
+        return [];
 
       if( id_aluno ){
         const aluno_aventuras = aventuras
@@ -119,8 +109,10 @@ class AventuraDAO {
               .join(',');
 
         const { rows } = await connection.query( `
-          INSERT INTO "Alunos_Aventuras" ( "FK_aluno", "FK_aventura", "NR_porcentagem_conclusao" )
-          VALUES ${ aluno_aventuras } RETURNING *
+          INSERT INTO "Alunos_Aventuras"
+          ( "FK_aluno", "FK_aventura", "NR_porcentagem_conclusao" )
+          VALUES ${ aluno_aventuras }
+          RETURNING *
         `);
       }
 

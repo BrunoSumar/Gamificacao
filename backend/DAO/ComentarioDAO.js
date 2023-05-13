@@ -25,12 +25,10 @@ class ComentarioDAO {
       const values = Object.values(payload);
       const query = {
         text: `
-                    INSERT INTO "Comentarios" ("FK_aventura","FK_aluno","DT_criacao",${keys.map(
-                      (value) => `"${value}"`
-                    )})
-                    VALUES ($1,$2,$3,${keys.map((_, index) => `$${index + 4}`)})
-                    RETURNING *
-                `,
+          INSERT INTO "Comentarios" ("FK_aventura","FK_aluno","DT_criacao",${ keys.map( value => `"${value}"` ) })
+          VALUES ($1,$2,$3,${keys.map((_, index) => `$${index + 4}`)})
+          RETURNING *
+        `,
         values: [id_aventura, ID_aluno, currentDate.toISOString(), ...values],
       };
       try {

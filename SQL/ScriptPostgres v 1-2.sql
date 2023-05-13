@@ -2,20 +2,26 @@
 CREATE TABLE IF NOT EXISTS "Alunos" (
   "ID_aluno" SERIAL PRIMARY KEY,
   "ID_google" varchar(30) UNIQUE,
-  "TXT_primeiro_nome" varchar(30),
-  "TXT_ultimo_nome" varchar(30),
-  "TXT_num_matricula" varchar(9) UNIQUE,
-  "NR_moedas" int default 0
+  "TXT_primeiro_nome" varchar(100),
+  "TXT_ultimo_nome" varchar(100),
+  "TXT_num_matricula" varchar(15) UNIQUE,
+  "TXT_email" varchar(100) UNIQUE,
+  "NR_moedas" int default 0,
+  "FL_deletado" boolean,
+  "DT_deletado" timestamp
 );
 
 --Feito
 CREATE TABLE IF NOT EXISTS "Professores" (
   "ID_professor" SERIAL PRIMARY KEY,
   "ID_google" varchar(30) UNIQUE,
-  "TXT_num_professor" varchar(9) UNIQUE,
-  "TXT_primeiro_nome" varchar(20),
-  "TXT_ultimo_nome" varchar(20),
-  "FL_validado" boolean
+  "TXT_num_professor" varchar(15) UNIQUE,
+  "TXT_primeiro_nome" varchar(100),
+  "TXT_ultimo_nome" varchar(100),
+  "TXT_email" varchar(100) UNIQUE,
+  "FL_validado" boolean,
+  "FL_deletado" boolean,
+  "DT_deletado" timestamp
 );
 
 --Feito
@@ -116,12 +122,14 @@ CREATE TABLE IF NOT EXISTS "Grupos_Alunos" ("FK_grupo" bigint, "FK_aluno" bigint
 
 --Precisa Fazer
 CREATE TABLE IF NOT EXISTS "Desafios" (
-  "NR_indice" int,
   "ID_desafio" SERIAL PRIMARY KEY,
   "FK_missao" bigint,
   "TXT_titulo" varchar(50),
   "TXT_descricao" text,
-  "FL_grande_desafio" boolean
+  "FL_grande_desafio" boolean, 
+  "NR_indice" int,
+  "
+  " timestamp
 );
 
 --Precisa fazer
@@ -159,7 +167,7 @@ CREATE TABLE IF NOT EXISTS "Medalhas" (
   "NR_minimo" float UNIQUE
 );
 
---Pendente planejamento (provavelmente não)
+--Feito
 CREATE TABLE IF NOT EXISTS "Comentarios" (
   "ID_comentario" SERIAL PRIMARY KEY,
   "FK_aluno" bigint,
@@ -186,7 +194,7 @@ CREATE TABLE IF NOT EXISTS "Login" (
 CREATE TABLE IF NOT EXISTS "Administrador" (
   "ID_Administrador" SERIAL PRIMARY KEY,
   "TXT_USER" bigint,
-  "TXT_HASH_PASSWORD" bigint,
+  "TXT_HASH_PASSWORD" bigint
 );
 
 ALTER TABLE
