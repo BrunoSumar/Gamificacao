@@ -51,7 +51,7 @@ async function routesProfessores(fastify) {
 
     fastify.put("/", { schema: PUT }, async (req, res) => {
         try {
-            const DAO = new desafioDAO(pg);
+            const DAO = new opcaoDAO(pg);
             return await DAO.update(
                 req.params.id_aventura,
                 req.params.id_missao,
