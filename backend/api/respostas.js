@@ -49,14 +49,17 @@ async function routesAlunos(fastify) {
     try {
       const data = await req.file();
 
-      const DAO = new respostaDAO(pg);
-      return await DAO.createConteudo(
-        req.params.id_aventura,
-        req.params.id_missao,
-        req.params.id_desafio,
-        req.auth.ID_aluno,
-        data.file,
-      );
+      console.log( data )
+      return null;
+
+      // const DAO = new respostaDAO(pg);
+      // return await DAO.createConteudo(
+      //   req.params.id_aventura,
+      //   req.params.id_missao,
+      //   req.params.id_desafio,
+      //   req.auth.ID_aluno,
+      //   data.file,
+      // );
     } catch (error) {
       console.error(error);
       res.code(500);
