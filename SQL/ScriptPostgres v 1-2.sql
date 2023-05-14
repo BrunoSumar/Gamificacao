@@ -128,8 +128,8 @@ CREATE TABLE IF NOT EXISTS "Desafios" (
   "TXT_descricao" text,
   "FL_grande_desafio" boolean, 
   "NR_indice" int,
-  "
-  " timestamp
+  "DT_desafio" timestamp,
+  "FK_conteudo" bigint
 );
 
 --Precisa fazer
@@ -143,9 +143,7 @@ CREATE TABLE IF NOT EXISTS "Opcoes" (
 --Precisa fazer
 CREATE TABLE IF NOT EXISTS "Conteudos" (
   "ID_conteudo" SERIAL PRIMARY KEY,
-  "FK_desafio" bigint,
   "TXT_path_arquivo" text,
-  "TXT_video" text,
   "DT_inclusao" timestamp
 );
 
@@ -156,7 +154,7 @@ CREATE TABLE IF NOT EXISTS "Respostas" (
   "FK_aluno" bigint,
   "FK_desafio" bigint,
   "FK_opcao" bigint,
-  "TXT_path_arquivo" text,
+  "FK_conteudo" bigint,
   "DT_resposta" timestamp
 );
 
@@ -248,14 +246,19 @@ ADD
   FOREIGN KEY ("FK_opcao") REFERENCES "Opcoes" ("ID_opcao");
 
 ALTER TABLE
+  "Respostas"
+ADD
+  FOREIGN KEY ("FK_conteudo") REFERENCES "Conteudos" ("ID_conteudo");
+
+ALTER TABLE
   "Desafios"
 ADD
   FOREIGN KEY ("FK_missao") REFERENCES "Missoes" ("ID_missao");
 
 ALTER TABLE
-  "Conteudos"
+  "Desafios"
 ADD
-  FOREIGN KEY ("FK_desafio") REFERENCES "Desafios" ("ID_desafio");
+  FOREIGN KEY ("FK_conteudo") REFERENCES "Conteudos" ("ID_conteudo");
 
 ALTER TABLE
   "Opcoes"
