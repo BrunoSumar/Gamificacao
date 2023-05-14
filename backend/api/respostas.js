@@ -45,6 +45,25 @@ async function routesAlunos(fastify) {
     }
   });
 
+  fastify.post("/arquivo", /* { schema: POST }, */ async (req, res) => {
+    try {
+      const data = await req.file();
+
+      const DAO = new respostaDAO(pg);
+      return await DAO.createConteudo(
+        req.params.id_aventura,
+        req.params.id_missao,
+        req.params.id_desafio,
+        req.auth.ID_aluno,
+        data.file,
+      );
+    } catch (error) {
+      console.error(error);
+      res.code(500);
+      return { message: "Não foi possivel responder desafio", error };
+    }
+  });
+
   fastify.patch("/", { schema: PATCH }, async (req, res) => {
     try {
       const DAO = new respostaDAO(pg);

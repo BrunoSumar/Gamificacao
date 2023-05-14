@@ -63,6 +63,49 @@ class DesafioDAO {
     }
   }
 
+  async updateConteudo(id_aventura, id_missao, id_desafio, id_aluno, conteudo, { id_grupo = null }) {
+    if (!(await isAventura(this._db, id_aventura)))
+      throw "Essa não é uma aventura valida";
+
+    if (!(await isMissaoAventura(this._db, id_missao, id_aventura)))
+      throw "Essa missão não faz parte dessa aventura";
+
+    if (!(await isAlunoAventura(this._db, id_aluno, id_aventura)))
+      throw "Aluno não pertence à aventura";
+
+    if (!(await isMissaoAtiva(this._db, id_missao)))
+      throw "prazo limite para entrega excedido";
+
+    if (!(await isGrandeDesafio(this._db, id_desafio)))
+      throw "Desafio não aceita esse tipo de resposta";
+
+    resposta = {
+      FK_aluno: id_aluno,
+      FK_desafio: id_desafio,
+      DT_resposta: new Date().toISOString(),
+      ...resposta,
+    };
+
+    const text = `
+      INSERT INTO "Respostas"
+      ${ queryInsert( resposta ) }
+      RETURNING *
+    `;
+    const values = queryValues( resposta );
+
+    try {
+      const { rows } = await this._db.query({ text, values });
+
+      return {
+        Message: "Desafio respondido",
+        rows,
+      };
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
   async read(
     id_aventura,
     id_missao,
