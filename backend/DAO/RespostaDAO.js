@@ -8,6 +8,8 @@ const {
   isProfessorAventura,
 } = require("../misc/someUsefulFuncsMissao");
 
+const fs = require('fs');
+
 class DesafioDAO {
   constructor(db) {
     this._db = db;
@@ -79,26 +81,28 @@ class DesafioDAO {
     if (!(await isGrandeDesafio(this._db, id_desafio)))
       throw "Desafio não aceita esse tipo de resposta";
 
-    resposta = {
-      FK_aluno: id_aluno,
-      FK_desafio: id_desafio,
-      DT_resposta: new Date().toISOString(),
-      ...resposta,
-    };
+    const path_conteudo = `./conteudos/test-${Math.random()}-`;
+    // resposta = {
+    //   FK_aluno: id_aluno,
+    //   FK_desafio: id_desafio,
+    //   DT_resposta: new Date().toISOString(),
+    //   ...resposta,
+    // };
 
-    const text = `
-      INSERT INTO "Respostas"
-      ${ queryInsert( resposta ) }
-      RETURNING *
-    `;
-    const values = queryValues( resposta );
+    // const text = `
+    //   INSERT INTO "Respostas"
+    //   ${ queryInsert( resposta ) }
+    //   RETURNING *
+    // `;
+    // const values = queryValues( resposta );
 
     try {
-      const { rows } = await this._db.query({ text, values });
+      // const { rows } = await this._db.query({ text, values });
+      //
 
       return {
         Message: "Desafio respondido",
-        rows,
+        // rows,
       };
     } catch (error) {
       console.error(error);

@@ -94,9 +94,31 @@ const DELETE = {
     },
 };
 
+const PUT = {
+    consumes: ['multipart/form-data'],
+    body: {
+        type: "object",
+        properties: {
+            id_grupo: {
+                type: "object",
+                properties: {
+                    value: {
+                        type: "string",
+                        pattern: "^\\d+$",
+                    },
+                },
+            },
+            conteudo: {},
+        },
+        additionalProperties: false,
+        required: ["conteudo"],
+    },
+};
+
 module.exports = {
     GET,
     POST,
     PATCH,
     DELETE,
+    PUT,
 };

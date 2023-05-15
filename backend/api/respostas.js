@@ -1,6 +1,6 @@
 const respostaDAO = require("../DAO/RespostaDAO");
 const { onRequest } = require("../misc/someUsefulFuncsHooks");
-const { GET, POST, PATCH, DELETE } = require("../schemas/respostas");
+const { GET, POST, PATCH, DELETE, PUT } = require("../schemas/respostas");
 
 async function routes(fastify) {
   const pg = fastify.pg;
@@ -45,21 +45,23 @@ async function routesAlunos(fastify) {
     }
   });
 
-  fastify.post("/arquivo", /* { schema: POST }, */ async (req, res) => {
+  fastify.put("/arquivo", { schema: PUT }, async (req, res) => {
     try {
-      const data = await req.file();
+      if( !req.isMultipart() )
+        throw 'Nenhum arquivo fornecido';
 
-      console.log( data )
-      return null;
+      if( !req.body.conteudo )
+        throw 'Conteúdo inválido';
 
-      // const DAO = new respostaDAO(pg);
-      // return await DAO.createConteudo(
-      //   req.params.id_aventura,
-      //   req.params.id_missao,
-      //   req.params.id_desafio,
-      //   req.auth.ID_aluno,
-      //   data.file,
-      // );
+      const DAO = new respostaDAO(pg);
+      return await DAO.updateConteudo(
+        req.params.id_aventura,
+        req.params.id_missao,
+        req.params.id_desafio,
+        req.auth.ID_aluno,
+        req.body.conteudo,
+        { id_grupo: +req.body.id_grupo.value }
+      );
     } catch (error) {
       console.error(error);
       res.code(500);

@@ -41,6 +41,13 @@ fastify.register(require("@fastify/jwt"), {
   secret: config.SECRET,
 });
 
+
+// Requições Multipart
+fastify.register(require("@fastify/multipart"), {
+  attachFieldsToBody: true,
+  fileSize: 3 * 1024 * 1024, //Carga útil maximá de 3MB
+});
+
 // OAuth2
 // fastify.decorate("oauth", require("./OAuth"));
 
