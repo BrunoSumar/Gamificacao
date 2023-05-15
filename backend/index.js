@@ -6,7 +6,7 @@ const fastify = require("fastify")();
 const config = require("./config");
 
 //CORS
-fastify.register(require("fastify-cors"), {
+fastify.register(require("@fastify/cors"), {
   origin: (origin, cb) => {
     //   cb(null, true);
     const hostname = origin && new URL(origin).hostname;
@@ -37,18 +37,18 @@ fastify.register(async (fastify) => {
 });
 
 // Token JWT
-fastify.register(require("fastify-jwt"), {
+fastify.register(require("@fastify/jwt"), {
   secret: config.SECRET,
 });
 
 // OAuth2
-fastify.decorate("oauth", require("./OAuth"));
+// fastify.decorate("oauth", require("./OAuth"));
 
 // Rotas da aplicação
 fastify.register(require("./api/api"), { prefix: "api" });
 
 // Iniciando servidor
-fastify.listen(config.PORT, (err) => {
+fastify.listen({ port: config.PORT }, (err) => {
   if (err) {
     console.error(err);
     process.exit(1);
