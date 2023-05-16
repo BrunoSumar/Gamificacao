@@ -6,9 +6,9 @@ const {
 const FactoryFileManager = require("../misc/someUsefulFuncsConteudo");
 
 class ConteudoDAO {
-  constructor(db, type, file) {
+  constructor(db, type, opts) {
     this._db = db;
-    this._file_manager = FactoryFileManager.createFileManager( type, file );
+    this._file_manager = FactoryFileManager.createFileManager( type, opts );
   }
 
   async create() {
@@ -19,7 +19,7 @@ class ConteudoDAO {
       VALUES ($1, $2)
       RETURNING *
     `;
-    const values = [ this._path, current_date ];
+    const values = [ this._file_manager._path, current_date ];
 
     const { rows } = await this._db.query({ text, values });
     if( rows.length < 1 )
@@ -30,7 +30,8 @@ class ConteudoDAO {
     return rows[0];
   }
 
-  async read(id_aventura, { id_aluno = null, id_professor = null }) {
+  async read() {
+    return this._file_manager.buscar();
   }
 
   async update(payload, id_aventura, id_professor, id_missao) {
@@ -40,8 +41,15 @@ class ConteudoDAO {
     this._file_manager.deletar();
   }
 
-  async delete(id_missao, id_professor, id_aventura) {
+  async delete() {
+    const text =  `
+      DELETE FROM "Conteudos"
+      WHERE "TXT_path_arquivo" = $1
+    `;
+    const values = [ this._file_manager._path ]
+    const { rows } = await this._db.query({ text, values });
 
+    this._file_manager.deletar();
   }
 }
 

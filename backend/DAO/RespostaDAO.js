@@ -98,7 +98,7 @@ class RespostaDAO {
       throw 'Aluno não pertence a um grupo';
 
     if ( id_grupo && !(await isAlunoGrupo(this._db, id_aluno, id_grupo)))
-      throw "Aluno pertence ao grupo";
+      throw "Aluno não pertence ao grupo";
 
     let connection = {};
     let DAO = {};
@@ -107,10 +107,25 @@ class RespostaDAO {
 
       await connection.query("BEGIN");
 
-      DAO = new conteudoDAO( connection, 'fs', conteudo );
-      const { ID_conteudo } = await DAO.create();
+      const { rows: respostas_banco } = await connection.query( `
+        DELETE FROM "Respostas"
+        WHERE "FK_desafio" = ${ id_desafio }
+        AND "FK_aluno" = ${ id_aluno }
+        RETURNING *
+      `);
+      const antiga_resposta = respostas_banco[0] || null;
+
+      if( antiga_resposta?.FK_conteudo ){
+        const { rows: conteudos } = await connection.query(`
+          SELECT * FROM "Conteudos" WHERE "ID_conteudo" = ${ antiga_resposta?.FK_conteudo }
+        `);
+        await new conteudoDAO( connection, 'fs', { path: conteudos[0].TXT_path_arquivo } ).delete();
+      }
+
+      const { ID_conteudo } = await new conteudoDAO( connection, 'fs', { file: conteudo } ).create();
 
       const resposta = {
+        ...antiga_resposta,
         FK_aluno: id_aluno,
         FK_desafio: id_desafio,
         DT_resposta: new Date().toISOString(),
@@ -129,7 +144,7 @@ class RespostaDAO {
       await connection.query("COMMIT");
 
       return {
-        Message: "Desafio respondido",
+        Message: antiga_resposta ? "Resposta atualizada" : "Desafio respondido",
         rows,
       };
     } catch (error) {

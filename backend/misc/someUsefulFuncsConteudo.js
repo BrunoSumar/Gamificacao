@@ -7,30 +7,36 @@ class FileManager{
   };
 
   salvar(){};
+  buscar(){};
   deletar(){};
 };
 
 class FileSystem extends FileManager{
-  constructor( file ) {
+  constructor({ file = null, path = null }) {
     super(file);
-    this._path = `./conteudos/${ uuidv4() }-${ file.filename }`;
+    this._path = path || `./conteudos/${ uuidv4() }-${ file?.filename }`;
   }
 
   async salvar(){
-    fs.writeFileSync( this._path, await this._file.toBuffer() );
+    this._file && fs.writeFileSync( this._path, await this._file.toBuffer() );
   }
+
+  buscar(){
+    fs.readFileSync( this._path );
+  };
 
   deletar(){
     fs.unlinkSync( this._path );
   }
 
+
 };
 
 class FactoryFileManager{
-  static createFileManager( type, file ){
+  static createFileManager( type, opts ){
     switch( type ){
       case 'fs':
-        return new FileSystem( file );
+        return new FileSystem( opts );
       default:
         'Tipo não suportado';
     }
