@@ -8,9 +8,9 @@ const {
   isProfessorAventura,
 } = require("../misc/someUsefulFuncsMissao");
 
-const fs = require('fs');
+const conteudoDAO = require('./ConteudoDAO');
 
-class DesafioDAO {
+class RespostaDAO {
   constructor(db) {
     this._db = db;
   }
@@ -81,33 +81,49 @@ class DesafioDAO {
     if (!(await isGrandeDesafio(this._db, id_desafio)))
       throw "Desafio não aceita esse tipo de resposta";
 
-    const path_conteudo = `./conteudos/test-${Math.random()}-`;
-    // resposta = {
-    //   FK_aluno: id_aluno,
-    //   FK_desafio: id_desafio,
-    //   DT_resposta: new Date().toISOString(),
-    //   ...resposta,
-    // };
+    const path_conteudo = `./conteudos/test-${Math.random()}-${ conteudo.filename }`;
+    const buffer_conteudo = await conteudo.toBuffer();
 
-    // const text = `
-    //   INSERT INTO "Respostas"
-    //   ${ queryInsert( resposta ) }
-    //   RETURNING *
-    // `;
-    // const values = queryValues( resposta );
-
+    let connection = {};
     try {
-      // const { rows } = await this._db.query({ text, values });
-      //
+      connection = await this._db.connect();
+
+      await connection.query("BEGIN");
+
+      const DAO = new conteudoDAO( connection );
+      const { ID_conteudo } = await DAO.create( path_conteudo, buffer_conteudo );
+
+      const resposta = {
+        FK_aluno: id_aluno,
+        FK_desafio: id_desafio,
+        DT_resposta: new Date().toISOString(),
+        FK_conteudo: ID_conteudo,
+      };
+      console.log( resposta )
+
+      const text = `
+        INSERT INTO "Respostas"
+        ${ queryInsert( resposta ) }
+        RETURNING *
+      `;
+      const values = queryValues( resposta );
+      const { rows } = await connection.query({ text, values });
+
+      await connection.query("COMMIT");
 
       return {
         Message: "Desafio respondido",
-        // rows,
+        rows,
       };
     } catch (error) {
       console.error(error);
+      await connection.query("ROLLBACK");
       throw error;
+    } finally {
+      await connection.release();
     }
+
+
   }
 
   async read(
@@ -220,4 +236,4 @@ class DesafioDAO {
   }
 };
 
-module.exports = DesafioDAO;
+module.exports = RespostaDAO;

@@ -46,7 +46,6 @@ class opcaoDAO {
       RETURNING *
     `;
     const values = queryValues( opcoes );
-    console.log( opcoes, text, values )
 
     try {
       const { rows } = await this._db.query({ text, values });

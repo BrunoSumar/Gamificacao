@@ -99,6 +99,7 @@ const PUT = {
     body: {
         type: "object",
         properties: {
+            conteudo: {},
             id_grupo: {
                 type: "object",
                 properties: {
@@ -108,7 +109,6 @@ const PUT = {
                     },
                 },
             },
-            conteudo: {},
         },
         additionalProperties: false,
         required: ["conteudo"],

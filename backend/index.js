@@ -45,7 +45,11 @@ fastify.register(require("@fastify/jwt"), {
 // Requições Multipart
 fastify.register(require("@fastify/multipart"), {
   attachFieldsToBody: true,
-  fileSize: 3 * 1024 * 1024, //Carga útil maximá de 3MB
+  limits: {
+    fieldNameSize: 256,
+    headerPairs: 256,
+    fileSize: 3 * 1024 * 1024, //Carga útil maximá de 3MB
+  }
 });
 
 // Rotas da aplicação

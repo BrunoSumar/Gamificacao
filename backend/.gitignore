@@ -1,4 +1,4 @@
 node_modules/
-conteudos/
+conteudos/*
 .env
 .env.development
