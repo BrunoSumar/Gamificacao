@@ -3,6 +3,13 @@ const { queryInsert, queryValues } = require("../misc/someUsefulFuncsQuery");
 const { isAventura } = require("../misc/someUsefulFuncsAventura");
 const { isOpcaoDesafio, isMissaoAtiva, hasResposta } = require("../misc/someUsefulFuncsResposta");
 const {
+  hasGrupo,
+  isDeletaGrupo,
+  isMissaoEmGrupo,
+  isGrupo,
+  isAlunoGrupo,
+} = require("../misc/someUsefulFuncsGrupos");
+const {
   isAlunoAventura,
   isMissaoAventura,
   isProfessorAventura,
@@ -81,25 +88,35 @@ class RespostaDAO {
     if (!(await isGrandeDesafio(this._db, id_desafio)))
       throw "Desafio não aceita esse tipo de resposta";
 
-    const path_conteudo = `./conteudos/test-${Math.random()}-${ conteudo.filename }`;
-    const buffer_conteudo = await conteudo.toBuffer();
+    if ( id_grupo && !(await isMissaoEmGrupo(this._db, id_missao)))
+      throw "Missão não permite grupos";
+
+    if ( id_grupo && !(await isGrupo(this._db, id_grupo)))
+      throw "Grupo não existe";
+
+    if( id_grupo && !(await hasGrupo(this._db, id_missao, id_aluno)) )
+      throw 'Aluno não pertence a um grupo';
+
+    if ( id_grupo && !(await isAlunoGrupo(this._db, id_aluno, id_grupo)))
+      throw "Aluno pertence ao grupo";
 
     let connection = {};
+    let DAO = {};
     try {
       connection = await this._db.connect();
 
       await connection.query("BEGIN");
 
-      const DAO = new conteudoDAO( connection );
-      const { ID_conteudo } = await DAO.create( path_conteudo, buffer_conteudo );
+      DAO = new conteudoDAO( connection, 'fs', conteudo );
+      const { ID_conteudo } = await DAO.create();
 
       const resposta = {
         FK_aluno: id_aluno,
         FK_desafio: id_desafio,
         DT_resposta: new Date().toISOString(),
         FK_conteudo: ID_conteudo,
+        FK_grupo: id_grupo,
       };
-      console.log( resposta )
 
       const text = `
         INSERT INTO "Respostas"
@@ -118,12 +135,11 @@ class RespostaDAO {
     } catch (error) {
       console.error(error);
       await connection.query("ROLLBACK");
+      DAO.deleteFile();
       throw error;
     } finally {
       await connection.release();
     }
-
-
   }
 
   async read(

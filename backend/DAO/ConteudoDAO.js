@@ -3,16 +3,15 @@ const {
   isAlunoAventura,
 } = require("../misc/someUsefulFuncsMissao");
 
-const fs = require('fs');
+const FactoryFileManager = require("../misc/someUsefulFuncsConteudo");
 
 class ConteudoDAO {
-  constructor(db) {
+  constructor(db, type, file) {
     this._db = db;
+    this._file_manager = FactoryFileManager.createFileManager( type, file );
   }
 
-  //Somente professor
-  async create(path, conteudo) {
-    console.log( conteudo )
+  async create() {
     const current_date = new Date().toISOString();
     const text = `
       INSERT INTO "Conteudos"
@@ -20,31 +19,29 @@ class ConteudoDAO {
       VALUES ($1, $2)
       RETURNING *
     `;
-    const values = [ path, current_date ];
+    const values = [ this._path, current_date ];
 
     const { rows } = await this._db.query({ text, values });
     if( rows.length < 1 )
       throw 'Falha ao registrar conteúdo no banco';
 
-    fs.writeFileSync( path, conteudo );
-    // const writeStream = fs.createWriteStream( path );
+    await this._file_manager.salvar();
 
-    // await conteudo.pipe(writeStream);
-    // await writeStream;
-
-    console.log( rows )
     return rows[0];
   }
 
   async read(id_aventura, { id_aluno = null, id_professor = null }) {
   }
 
-  //somente professor
   async update(payload, id_aventura, id_professor, id_missao) {
   }
 
-  //somente professor
+  async deleteFile() {
+    this._file_manager.deletar();
+  }
+
   async delete(id_missao, id_professor, id_aventura) {
+
   }
 }
 

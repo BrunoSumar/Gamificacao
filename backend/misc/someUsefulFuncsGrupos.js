@@ -31,9 +31,20 @@ async function isGrupo(db, id_grupo) {
   return !!rows.length;
 };
 
+async function isAlunoGrupo( db, id_aluno, id_grupo  ){
+  const query = `
+    SELECT 1
+    FROM "Grupos_Alunos"
+    WHERE "FK_grupo" = ${id_grupo} AND "FK_aluno" = ${id_aluno}
+  `;
+  const { rows } = await db.query(query);
+  return !!rows.length;
+};
+
 module.exports = {
   isMissaoEmGrupo,
   hasGrupo,
   isDeletaGrupo,
-  isGrupo
+  isGrupo,
+  isAlunoGrupo,
 };
