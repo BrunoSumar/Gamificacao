@@ -48,9 +48,6 @@ fastify.register(require("@fastify/multipart"), {
   fileSize: 3 * 1024 * 1024, //Carga útil maximá de 3MB
 });
 
-// OAuth2
-// fastify.decorate("oauth", require("./OAuth"));
-
 // Rotas da aplicação
 fastify.register(require("./api/api"), { prefix: "api" });
 
