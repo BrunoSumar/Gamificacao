@@ -9,7 +9,7 @@ class ProfessorDAO {
     const query = {
       text: `
         INSERT INTO "Professores" (${keys.map((item) => `"${item}"`)})
-        VALUES (${keys.map((_,index) => `$${index+1}`)})
+        VALUES (${keys.map((_, index) => `$${index + 1}`)})
         RETURNING *
     `,
       values,
@@ -43,7 +43,7 @@ class ProfessorDAO {
 
       return {
         msg: "Professor encontrado",
-        row: rows[0],
+        rows: rows[0],
         err: false,
       };
     } catch (error) {
@@ -61,7 +61,7 @@ class ProfessorDAO {
 
       return {
         msg: "Professor encontrado",
-        row: rows[0],
+        rows: rows[0],
         err: false,
       };
     } catch (error) {
@@ -69,7 +69,7 @@ class ProfessorDAO {
     }
   }
 
-  async readById(ID_professor) {
+  async read(ID_professor) {
     try {
       const query = {
         text: `SELECT "TXT_primeiro_nome", "TXT_ultimo_nome","TXT_num_professor" from "Professores"`,
@@ -78,8 +78,8 @@ class ProfessorDAO {
       let { rows } = await this._db.query(query);
 
       return {
-        msg: "Professor encontrado",
-        row: rows[0],
+        msg: "Professores encontrados",
+        rows,
         err: false,
       };
     } catch (error) {
@@ -100,11 +100,48 @@ class ProfessorDAO {
       let { rows } = await this._db.query(query);
       return {
         msg: "Professor Atualizado",
-        row: rows[0],
+        rows: rows[0],
         err: false,
       };
     } catch (error) {
       throw error;
+    }
+  }
+
+  async delete(ID_professor) {
+    const currentDate = new Date();
+    const query = {
+      text: `UPDATE "Alunos" SET 
+      "ID_google" = $1
+      "TXT_num_professor" = $2
+      "TXT_primeiro_nome" = $3
+      "TXT_ultimo_nome" = $4
+      "TXT_email" = $5
+      "FL_validado" = $6
+      "FL_deletado" = $7
+      "DT_deletado" = $8
+      WHERE "ID_professor" = $9`,
+      values: [
+        null,
+        "Usuario deletado",
+        "Usuario deletado",
+        "Usuario deletado",
+        "Usuario deletado",
+        null,
+        true,
+        currentDate.toISOString(),
+        ID_professor,
+      ],
+    };
+    try {
+      const { rows } = await this._db.query(query);
+      return {
+        message: "Usuario deletado com sucesso",
+        rows,
+      };
+    } catch (error) {
+      console.log(error);
+      throw "Não foi possivel deletar o aluno";
     }
   }
 }

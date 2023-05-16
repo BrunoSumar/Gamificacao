@@ -5,7 +5,8 @@ const {
 
 async function privateRoutes(fastify) {
   fastify.register(require("../auth"));
-
+  fastify.register(require("../alunos"), { prefix: "alunos" });
+  fastify.register(require("../professores"), { prefix: "professores" });
   fastify.register(require("./aventuras"), { prefix: "aventuras" });
   fastify.register(require("./missao"), { prefix: "aventuras/:id_aventura/missoes" });
   fastify.register(require("./comentarios"), { prefix: "aventuras/:id_aventura/comentarios" });

@@ -1,53 +1,51 @@
-const AlunoDAO = require("../DAO/AlunoDAO");
-const { DELETE, GET, GET_ID, PATCH } = require("../schemas/alunos");
+const ProfessorDAO = require("../DAO/ProfessorDAO");
+const { DELETE, GET, GET_ID, PATCH } = require("../schemas/professores");
 async function routes(fastify) {
   fastify.get("/", { schema: GET }, async (req, reply) => {
     try {
-      const alunoDAO = new AlunoDAO(fastify.pg);
-      resp = await alunoDAO.read();
+      const professorDAO = new ProfessorDAO(fastify.pg);
+      resp = await professorDAO.read();
       reply.code(200);
       return { rows: resp.rows, msg: resp.msg };
     } catch (error) {
       reply.code(500);
+      return error;
     }
   });
 
   fastify.get("/:id", { schema: GET_ID }, async (req, reply) => {
     try {
-      const alunoDAO = new AlunoDAO(fastify.pg);
-      resp = await alunoDAO.readByID(req.params.id);
+      const professorDAO = new ProfessorDAO(fastify.pg);
+      resp = await professorDAO.readByID(req.params.id);
       reply.code(200);
       return { rows: resp.rows, msg: resp.msg };
     } catch (error) {
       reply.code(500);
+      return error;
     }
   });
 
   fastify.patch("/", { schema: PATCH }, async (req, reply) => {
     try {
-      const alunoDAO = new AlunoDAO(fastify.pg);
-      resp = await alunoDAO.update(req.body, req.auth.ID_aluno);
+      const professorDAO = new ProfessorDAO(fastify.pg);
+      resp = await professorDAO.update(req.body, req.auth.ID_professor);
       reply.code(200);
       return { rows: resp.rows, msg: resp.msg };
     } catch (error) {
       reply.code(500);
-      return {
-        error,
-      };
+      return error;
     }
   });
 
   fastify.delete("/", { schema: DELETE }, async (req, reply) => {
     try {
-      const alunoDAO = new AlunoDAO(fastify.pg);
-      resp = await alunoDAO.delete(req.auth.ID_aluno);
+      const professorDAO = new ProfessorDAO(fastify.pg);
+      resp = await professorDAO.delete(req.auth.ID_professor);
       reply.code(200);
       return { rows: resp.rows, msg: resp.msg };
     } catch (error) {
       reply.code(500);
-      return {
-        error,
-      };
+      return error;
     }
   });
 }
