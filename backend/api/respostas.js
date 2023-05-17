@@ -98,7 +98,7 @@ async function routesAlunos(fastify) {
     } catch (error) {
       console.error(error);
       res.code(500);
-      return { message: "Não foi possivel responder desafio", error };
+      return { message: "Não foi possivel remover resposta", error };
     }
   });
 };
