@@ -17,7 +17,7 @@ async function routes(fastify) {
     } catch (error) {
       console.error(error);
       res.code(500);
-      return { message: "Falha ao buscar reposta", error };
+      return { message: "Falha ao buscar resposta", error };
     }
   });
 

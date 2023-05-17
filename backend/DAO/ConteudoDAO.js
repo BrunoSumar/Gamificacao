@@ -1,9 +1,4 @@
-const {
-  isProfessorAventura,
-  isAlunoAventura,
-} = require("../misc/someUsefulFuncsMissao");
-
-const FactoryFileManager = require("../misc/someUsefulFuncsConteudo");
+const { FactoryFileManager } = require("../misc/someUsefulFuncsConteudo");
 
 class ConteudoDAO {
   constructor(db, type, opts) {

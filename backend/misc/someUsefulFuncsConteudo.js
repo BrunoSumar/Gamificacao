@@ -22,7 +22,7 @@ class FileSystem extends FileManager{
   }
 
   buscar(){
-    fs.readFileSync( this._path );
+    return fs.readFileSync( this._path );
   };
 
   deletar(){
