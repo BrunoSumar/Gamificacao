@@ -1,8 +1,11 @@
-const { FactoryFileManager } = require("../misc/someUsefulFuncsConteudo");
+const { FactoryFileManager, hasAccessConteudoAluno } = require("../misc/someUsefulFuncsConteudo");
 
 class ConteudoDAO {
-  constructor(db, type, opts) {
+  constructor(db, type, opts={}) {
     this._db = db;
+    if( opts.id_conteudo ){
+      // buscar path no banco
+    }
     this._file_manager = FactoryFileManager.createFileManager( type, opts );
   }
 
@@ -26,10 +29,9 @@ class ConteudoDAO {
   }
 
   async read() {
-    return this._file_manager.buscar();
-  }
-
-  async update(payload, id_aventura, id_professor, id_missao) {
+    if( hasAccessConteudoAluno() )
+      return null;
+    // return this._file_manager.buscar();
   }
 
   async deleteFile() {
