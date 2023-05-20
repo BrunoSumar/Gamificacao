@@ -66,8 +66,8 @@ class AventuraDAO {
       return null;
 
     const text =  `
-      INSERT INTO "Alunos_Aventuras" ( "FK_aluno", "FK_aventura", "NR_porcentagem_conclusao" )
-      SELECT "ID_aluno", ${ id_aventura }, 0 FROM "Alunos"
+      INSERT INTO "Alunos_Aventuras" ( "FK_aluno", "FK_aventura")
+      SELECT "ID_aluno", ${ id_aventura }  FROM "Alunos"
       WHERE "ID_google" IN (${ alunos.map(a => `'${a}'`) })
     `;
 
@@ -105,12 +105,12 @@ class AventuraDAO {
 
       if( id_aluno ){
         const aluno_aventuras = aventuras
-              .map( aventura => `(${ id_aluno }, ${ aventura.ID_aventura }, 0)` )
+              .map( aventura => `(${ id_aluno }, ${ aventura.ID_aventura })` )
               .join(',');
 
         const { rows } = await connection.query( `
           INSERT INTO "Alunos_Aventuras"
-          ( "FK_aluno", "FK_aventura", "NR_porcentagem_conclusao" )
+          ( "FK_aluno", "FK_aventura" )
           VALUES ${ aluno_aventuras }
           RETURNING *
         `);
@@ -171,8 +171,8 @@ class AventuraDAO {
 
     const values = [ id_aventura, id_aluno ];
     const text =  `
-      INSERT INTO "Alunos_Aventuras" ( "FK_aventura", "FK_aluno", "NR_porcentagem_conclusao" )
-      VALUES ( $1, $2, 0 )
+      INSERT INTO "Alunos_Aventuras" ( "FK_aventura", "FK_aluno" )
+      VALUES ( $1, $2 )
       RETURNING *
     `;
 
