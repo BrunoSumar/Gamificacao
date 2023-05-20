@@ -5,8 +5,8 @@ const {
 
 async function privateRoutes(fastify) {
   fastify.register(require("../auth"));
-  fastify.register(require("../alunos"), { prefix: "alunos" });
-  fastify.register(require("../professores"), { prefix: "professores" });
+  fastify.register(require("./alunos"), { prefix: "alunos" });
+  fastify.register(require("./professores"), { prefix: "professores" });
   fastify.register(require("./aventuras"), { prefix: "aventuras" });
   fastify.register(require("./missao"), { prefix: "aventuras/:id_aventura/missoes" });
   fastify.register(require("./comentarios"), { prefix: "aventuras/:id_aventura/comentarios" });
@@ -15,6 +15,7 @@ async function privateRoutes(fastify) {
   fastify.register(require("./opcoes"), { prefix: "aventuras/:id_aventura/missoes/:id_missao/desafios/:id_desafio/opcoes" });
   fastify.register(require("./respostas"), { prefix: "aventuras/:id_aventura/missoes/:id_missao/desafios/:id_desafio/respostas" });
   fastify.register(require("./perfil"), { prefix: "perfil" });
+  fastify.register(require("./administrador"), { prefix: "administrador" });
   fastify.register(routesMedalhas, { prefix: "medalhas" });
   fastify.register(routesMedalhasADMIN, { prefix: "admin/medalhas" });
 
@@ -24,6 +25,5 @@ async function privateRoutes(fastify) {
 
 module.exports = async function routes(fastify) {
   fastify.register(require("./login"), { prefix: "login" });
-
   fastify.register(privateRoutes);
 };

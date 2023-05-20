@@ -1,7 +1,8 @@
 const AlunoDAO = require("../DAO/AlunoDAO");
 const ProfessorDAO = require("../DAO/ProfessorDAO");
 const PerfilDAO = require("../DAO/PerfilDAO");
-const { post: SchemaLoginPost } = require("../schemas/login");
+const AdministradorDAO = require("../DAO/AdministradorDAO");
+const { post: SchemaLoginPost, SchemaLoginAdministrador } = require("../schemas/login");
 const {
   verify: verifyAccessTokenGoogle,
 } = require("../misc/someUsefulFuncsGoogleAuth");
@@ -71,6 +72,30 @@ module.exports = async function routes(fastify) {
           msg: "Não Foi possivel criar ou logar nesse usuario, tente novamente em alguns segundos",
         };
       }
+    }
+  );
+
+  fastify.post(
+    "/administrador",
+    { schema: SchemaLoginAdministrador },
+    async (req, reply) => {
+
+      try {
+        const administradorDAO = new AdministradorDAO(fastify.pg);
+        const resp = await administradorDAO.readByPassword(req.body);
+        const token = fastify.jwt.sign(resp.admin);
+        reply.code(200);
+        return {
+          token,
+          message: resp.Message,
+        };
+      } catch (error) {
+        reply.code(401);
+        return {
+          message: error,
+        };
+      }
+
     }
   );
 

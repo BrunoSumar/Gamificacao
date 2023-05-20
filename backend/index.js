@@ -4,7 +4,7 @@ require("dotenv").config({
 const path = require("path");
 const fastify = require("fastify")();
 const config = require("./config");
-
+const bcrypt = require("bcryptjs");
 //CORS
 fastify.register(require("@fastify/cors"), {
   origin: (origin, cb) => {

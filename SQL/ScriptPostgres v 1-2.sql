@@ -191,8 +191,8 @@ CREATE TABLE IF NOT EXISTS "Login" (
 --Precisa fazer 
 CREATE TABLE IF NOT EXISTS "Administrador" (
   "ID_Administrador" SERIAL PRIMARY KEY,
-  "TXT_USER" bigint,
-  "TXT_HASH_PASSWORD" bigint
+  "TXT_USER" text UNIQUE,
+  "TXT_HASH_PASSWORD" text
 );
 
 ALTER TABLE

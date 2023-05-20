@@ -1,17 +1,4 @@
-const post = {
-  body: {
-    type: "object",
-    properties: {
-      accessToken: {
-        type: "string",
-      },
-    },
-    additionalProperties: false,
-    required: ["accessToken"],
-  },
-};
-
-const SchemaLoginAdministrador = {
+const POST = {
   body: {
     type: "object",
     properties: {
@@ -23,11 +10,24 @@ const SchemaLoginAdministrador = {
       },
     },
     additionalProperties: false,
-    required: ["user", "password"],
+    required: ["password", "user"],
+  },
+};
+
+const PATCH = {
+  body: {
+    type: "object",
+    properties: {
+      password: {
+        type: "string",
+      },
+    },
+    additionalProperties: false,
+    required: ["password"],
   },
 };
 
 module.exports = {
-  post,
-  SchemaLoginAdministrador,
+  POST,
+  PATCH,
 };
