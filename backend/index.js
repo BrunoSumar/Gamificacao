@@ -61,5 +61,6 @@ fastify.listen({ port: config.PORT }, (err) => {
     console.error(err);
     process.exit(1);
   }
+  console.log(bcrypt.hashSync('admin'))
   console.log(`Listening at ${config.PORT}`);
 });

@@ -27,6 +27,7 @@ module.exports = async function routes(fastify) {
         buildUserPayload("Aluno", userGoogleData.dados),
         alunoDao
       );
+      console.log(user)
       user.user.id_token = id_token;
 
       await perfilDao.create({
