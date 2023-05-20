@@ -76,8 +76,8 @@ module.exports = async function routes(fastify) {
       } catch (error) {
         reply.code(401);
         return {
+          msg: "Não Foi possivel criar ou logar nesse usuário, tente novamente em alguns segundos",
           err: error,
-          msg: "Não Foi possivel criar ou logar nesse usuario, tente novamente em alguns segundos",
         };
       }
     }
