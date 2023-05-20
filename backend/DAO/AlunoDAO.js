@@ -19,7 +19,7 @@ class AlunoDAO {
       let { rows } = await this._db.query(query);
       return {
         msg: "Aluno inserido no banco",
-        row: rows[0],
+        rows: rows[0],
         err: false,
       };
     } catch (e) {
@@ -33,8 +33,9 @@ class AlunoDAO {
         text: `SELECT * from "Alunos" where "ID_google" = $1`,
         values: [googleId],
       };
-      let { rows } = await this._db.query(query);
 
+      let { rows } = await this._db.query(query);
+      if (!rows || rows.length < 1) return null;
       return {
         msg: "Aluno encontrado",
         rows: rows[0],
@@ -54,7 +55,7 @@ class AlunoDAO {
       let { rows } = await this._db.query(query);
       return {
         msg: "Aluno encontrado",
-        rows: rows[0],
+        rows,
         err: false,
       };
     } catch (error) {
