@@ -14,6 +14,15 @@ const POST = {
   },
 };
 
+const POST_VALIDA = {
+  body: {
+    type: "object",
+    properties: {},
+    additionalProperties: false,
+    required: [],
+  },
+};
+
 const PATCH = {
   body: {
     type: "object",
@@ -30,4 +39,5 @@ const PATCH = {
 module.exports = {
   POST,
   PATCH,
+  POST_VALIDA
 };

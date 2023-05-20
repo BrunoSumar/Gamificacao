@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS "Avatar" (
   "TP_avatar" int
 );
 
---Pendente planejamento
+--Não feito
 CREATE TABLE IF NOT EXISTS "Itens" (
   "ID_item" SERIAL PRIMARY KEY,
   "TXT_name" varchar(50),
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS "Itens" (
   "DT_criacao" timestamp
 );
 
---Pendente planejamento (provavelmente não)
+--Não feito
 CREATE TABLE IF NOT EXISTS "Conquistas" (
   "ID_conquista" SERIAL PRIMARY KEY,
   "TXT_nome" varchar(50),
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS "Conquistas" (
   "DT_criacao" timestamp
 );
 
---Pendente planejamento (provavelmente não)
+--Não feito
 CREATE TABLE IF NOT EXISTS "Conquistas_Alunos" (
   "ID_conquistaAluno" SERIAL PRIMARY KEY,
   "FK_conqusita" bigint,
@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS "Conquistas_Alunos" (
   "TXT_info" text
 );
 
---Pendente planejamento
+--Não feito
 CREATE TABLE IF NOT EXISTS "Itens_Alunos_Desafios" (
   "ID_item_aluno_desafio" SERIAL PRIMARY KEY,
   "FK_item" bigint,
@@ -81,12 +81,11 @@ CREATE TABLE IF NOT EXISTS "Itens_Alunos_Desafios" (
   "DT_uso" timestamp
 );
 
--- Precisa terminar (PROCENTAGEM)
+-- Feito
 CREATE TABLE IF NOT EXISTS "Alunos_Aventuras" (
   "ID_aluno_aventura" SERIAL PRIMARY KEY,
   "FK_aluno" bigint,
   "FK_aventura" bigint,
-  "NR_porcentagem_conclusao" float,
   UNIQUE ("ID_aluno_aventura", "FK_aluno")
 );
 
@@ -100,14 +99,13 @@ CREATE TABLE IF NOT EXISTS "Missoes" (
   "DT_entrega_maxima" timestamp
 );
 
--- Precisa fazer
+-- Feito
 CREATE TABLE IF NOT EXISTS "Alunos_Missoes_Concluidas" (
   "ID_aluno_missao_concluida" SERIAL PRIMARY KEY,
   "FK_aluno" bigint,
   "FK_missao" bigint,
   "FK_grupo" bigint,
-  "DT_concluido" timestamp,
-  "NR_porcentagem_conclusao" float
+  "DT_concluido" timestamp
 );
 
 --Feito
@@ -120,19 +118,20 @@ CREATE TABLE IF NOT EXISTS "Grupos" (
 --Feito
 CREATE TABLE IF NOT EXISTS "Grupos_Alunos" ("FK_grupo" bigint, "FK_aluno" bigint);
 
---Precisa Fazer
+--Feito
 CREATE TABLE IF NOT EXISTS "Desafios" (
   "ID_desafio" SERIAL PRIMARY KEY,
   "FK_missao" bigint,
   "TXT_titulo" varchar(50),
   "TXT_descricao" text,
-  "FL_grande_desafio" boolean, 
+  "FL_grande_desafio" boolean,
+  "NR_nota_grande_desafio" float, 
   "NR_indice" int,
   "DT_desafio" timestamp,
   "FK_conteudo" bigint
 );
 
---Precisa fazer
+--Feito
 CREATE TABLE IF NOT EXISTS "Opcoes" (
   "ID_opcao" SERIAL PRIMARY KEY,
   "TXT_descricao" text,
@@ -140,14 +139,14 @@ CREATE TABLE IF NOT EXISTS "Opcoes" (
   "FK_desafio" bigint
 );
 
---Precisa fazer
+-- feito
 CREATE TABLE IF NOT EXISTS "Conteudos" (
   "ID_conteudo" SERIAL PRIMARY KEY,
   "TXT_path_arquivo" text,
   "DT_inclusao" timestamp
 );
 
---Precisa fazer 
+--FEITO
 CREATE TABLE IF NOT EXISTS "Respostas" (
   "ID_resposta" SERIAL PRIMARY KEY,
   "FK_grupo" bigint,
@@ -165,7 +164,7 @@ CREATE TABLE IF NOT EXISTS "Medalhas" (
   "NR_minimo" float UNIQUE
 );
 
---Feito
+--Feito 
 CREATE TABLE IF NOT EXISTS "Comentarios" (
   "ID_comentario" SERIAL PRIMARY KEY,
   "FK_aluno" bigint,
@@ -188,7 +187,7 @@ CREATE TABLE IF NOT EXISTS "Login" (
   "DT_criacao" timestamp
 );
 
---Precisa fazer 
+--Feito 
 CREATE TABLE IF NOT EXISTS "Administrador" (
   "ID_Administrador" SERIAL PRIMARY KEY,
   "TXT_USER" text UNIQUE,

@@ -2,7 +2,10 @@ const AlunoDAO = require("../DAO/AlunoDAO");
 const ProfessorDAO = require("../DAO/ProfessorDAO");
 const PerfilDAO = require("../DAO/PerfilDAO");
 const AdministradorDAO = require("../DAO/AdministradorDAO");
-const { post: SchemaLoginPost, SchemaLoginAdministrador } = require("../schemas/login");
+const {
+  post: SchemaLoginPost,
+  SchemaLoginAdministrador,
+} = require("../schemas/login");
 const {
   verify: verifyAccessTokenGoogle,
 } = require("../misc/someUsefulFuncsGoogleAuth");
@@ -62,9 +65,13 @@ module.exports = async function routes(fastify) {
           buildUserPayload("Professor", userGoogleData.dados),
           professorDAO
         );
-        user.user.id_token = id_token;
-        const token = fastify.jwt.sign(user.user);
-        return { token };
+        if (user.user.FL_validado == true) {
+          user.user.id_token = id_token;
+          const token = fastify.jwt.sign(user.user);
+          return { token };
+        } else {
+          return "O usuario precisa ser validado";
+        }
       } catch (error) {
         reply.code(401);
         return {
@@ -79,7 +86,6 @@ module.exports = async function routes(fastify) {
     "/administrador",
     { schema: SchemaLoginAdministrador },
     async (req, reply) => {
-
       try {
         const administradorDAO = new AdministradorDAO(fastify.pg);
         const resp = await administradorDAO.readByPassword(req.body);
@@ -95,7 +101,6 @@ module.exports = async function routes(fastify) {
           message: error,
         };
       }
-
     }
   );
 

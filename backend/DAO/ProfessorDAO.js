@@ -1,3 +1,4 @@
+const { isProfessor } = require("../misc/someUsefulFuncsProfessor");
 class ProfessorDAO {
   constructor(db) {
     this._db = db;
@@ -88,6 +89,9 @@ class ProfessorDAO {
   }
 
   async update(payload, ID_professor) {
+    if (!isProfessor(this._db, ID_professor)) {
+      throw "Esse id não é de um professor valido";
+    }
     try {
       const values = Object.values(payload);
       const keys = Object.keys(payload);
