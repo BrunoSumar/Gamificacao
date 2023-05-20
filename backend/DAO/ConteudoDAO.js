@@ -29,7 +29,7 @@ class ConteudoDAO {
       VALUES ($1, $2)
       RETURNING *
     `;
-    const values = [ this._opts._path, current_date ];
+    const values = [ this._file_manager._path, current_date ];
 
     const { rows } = await this._db.query({ text, values });
     if( rows.length < 1 )
@@ -64,7 +64,7 @@ class ConteudoDAO {
       DELETE FROM "Conteudos"
       WHERE "TXT_path_arquivo" = $1
     `;
-    const values = [ this._opts._path ]
+    const values = [ this._file_manager._path ]
     const { rows } = await this._db.query({ text, values });
 
     this._file_manager.deletar();

@@ -60,9 +60,8 @@ fastify.register(require("./api/api"), { prefix: "api" });
 require('fs').mkdirSync('./conteudos', { recursive: true });
 
 // Rotina de limpeza de conteúdos
-// const cron = require('node-cron');
-// cron.schedule('0 0 * * 0', require('./clean')(pg);
-require('./clean')(pg)()
+const cron = require('node-cron');
+cron.schedule('0 0 * * 0', require('./clean')(pg));
 
 // Iniciando servidor
 fastify.listen({ port: config.PORT }, (err) => {
@@ -70,6 +69,6 @@ fastify.listen({ port: config.PORT }, (err) => {
     console.error(err);
     process.exit(1);
   }
-  console.log(bcrypt.hashSync('admin'))
+  // console.log(bcrypt.hashSync('admin'))
   console.log(`Listening at ${config.PORT}`);
 });
