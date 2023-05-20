@@ -50,11 +50,10 @@ module.exports = async function routes(fastify) {
           { FL_validado: true },
           req.params.id
         );
-        const token = fastify.jwt.sign(resp.admin);
         res.code(200);
         return {
-          token,
-          message: resp.message,
+          message: resp.msg,
+          row: resp.rows
         };
       } catch (error) {
         res.code(400);
