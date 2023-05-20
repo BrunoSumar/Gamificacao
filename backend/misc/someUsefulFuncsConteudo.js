@@ -19,7 +19,7 @@ class FileSystem extends FileManager{
 
   async salvar(){
     this._file && fs.writeFileSync( this._path, await this._file.toBuffer() );
-  }
+  };
 
   buscar(){
     return fs.readFileSync( this._path );
@@ -27,7 +27,7 @@ class FileSystem extends FileManager{
 
   deletar(){
     fs.unlinkSync( this._path );
-  }
+  };
 
 
 };
@@ -38,54 +38,62 @@ class FactoryFileManager{
       case 'fs':
         return new FileSystem( opts );
       default:
-        'Tipo não suportado';
+        throw 'Tipo não suportado';
     }
   }
 
 };
 
-async function hasAccessConteudoAluno( db, id_conteudo, id_aluno ){
+async function hasAccessConteudoAluno( db, id_aluno, id_conteudo ){
   const text = `
     WITH grupos_aluno AS (
       SELECT "FK_grupo" FROM "Grupos_Alunos"
-      WHERE "FK_aluno" = ${ id_aluno }
+      WHERE "FK_aluno" = $1
     ),
     respostas_aluno AS (
       SELECT "FK_conteudo", "ID_resposta" FROM "Respostas"
       WHERE "FK_conteudo" IS NOT NULL
       AND (
-        "FK_aluno" = ${ id_aluno } OR "FK_grupo" IN ( SELECT "FK_grupo" FROM grupos_aluno )
+        "FK_aluno" = $1 OR "FK_grupo" IN ( SELECT "FK_grupo" FROM grupos_aluno )
       )
     ),
     desafios_aluno AS (
       SELECT "FK_conteudo", "ID_desafio" FROM "Desafios" d
       JOIN "Missoes" m ON ("FK_missao" = "ID_missao")
       JOIN "Alunos_Aventuras" aa ON (m."FK_aventura" = aa."FK_aventura")
-      WHERE r."FK_aluno" = ${ id_aluno }
+      WHERE aa."FK_aluno" = $1
       AND "FK_conteudo" IS NOT NULL
     )
     SELECT 1 FROM "Conteudos"
-    LEFT JOIN respostas_aluno ra ON ( ra."FK_conteudo" = "ID_Conteudo" )
-    LEFT JOIN desafios_aluno da ON ( da."FK_conteudo" = "ID_Conteudo" )
-    WHERE ( "ID_reposta" IS NOT NULL OR "ID_desafio" IS NOT NULL )
-    AND "ID_conteudo" = ${ id_conteudo  }
+    LEFT JOIN respostas_aluno ra ON ( ra."FK_conteudo" = "ID_conteudo" )
+    LEFT JOIN desafios_aluno da ON ( da."FK_conteudo" = "ID_conteudo" )
+    WHERE ( "ID_resposta" IS NOT NULL OR "ID_desafio" IS NOT NULL )
+    AND "ID_conteudo" = $2
   `;
-  console.log( text )
-  const values = [ id_grupo ];
+  const values = [ id_aluno, id_conteudo ];
   let { rows } = await db.query({ text, values });
   return !!rows.length;
 };
 
 async function hasAccessConteudoProfessor( id_conteudo, id_professor ){
   const text = `
+    WITH desafios_professor AS (
+      SELECT "FK_conteudo", "ID_desafio" FROM "Desafios"
+      JOIN "Missoes" ON ( "FK_missao" = "ID_missao" )
+      JOIN "Aventura" ON ( "FK_aventura" = "ID_aventura" )
+      WHERE "FK_professor" = $1
+    ),
+    respostas_professor AS (
+      SELECT r."FK_conteudo", "ID_Respostas" FROM "Respostas" r
+      JOIN desafios_professor dp ON ( "FK_desafios" = "ID_desafio" )
+    )
     SELECT 1 FROM "Conteudos"
-    LEFT JOIN "Respostas" ON (
-"Respostas.FK_conteudo" = "ID_Conteudo"
-"")
-    LEFT JOIN "Missoes" ON ( "Missoes.FK_conteudo" = "ID_Conteudo" )
-    WHERE ( "ID_missao" IS NOT NULL OR "ID_resposta" IS NOT NULL )
+    LEFT JOIN respostas_professor rp ON ( rp."FK_conteudo" = "ID_conteudo" )
+    LEFT JOIN desafios_professor dp ON ( dp."FK_conteudo" = "ID_conteudo" )
+    WHERE ( "ID_resposta" IS NOT NULL OR "ID_desafio" IS NOT NULL )
+    AND "ID_conteudo" = $2
   `;
-  const values = [ id_grupo ];
+  const values = [ id_professor, id_conteudo ];
   let { rows } = await db.query({ text, values });
   return !!rows.length;
 };
@@ -93,4 +101,5 @@ async function hasAccessConteudoProfessor( id_conteudo, id_professor ){
 module.exports = {
   FactoryFileManager,
   hasAccessConteudoAluno,
+  hasAccessConteudoProfessor,
 };
