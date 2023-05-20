@@ -1,6 +1,6 @@
 const post = {
   body: {
-    type: "object",
+    type: "string",
     properties: {
       accessToken: {
         type: "string",

@@ -65,7 +65,7 @@ module.exports = async function routes(fastify) {
           buildUserPayload("Professor", userGoogleData.dados),
           professorDAO
         );
-        if (user.user.FL_validado == true) {
+        if (user.user.FL_validado) {
           user.user.id_token = id_token;
           const token = fastify.jwt.sign(user.user);
           return { token };

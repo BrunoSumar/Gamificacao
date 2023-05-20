@@ -14,16 +14,15 @@ async function tryToRegisterOrGetUser(userType, googleData, DAO) {
     if (!user) {
       user = await DAO.create(googleData);
     }
-    console.log(user);
-    user.row.type = user_type_code[userType] || null;
+    user.rows.type = user_type_code[userType] || null;
 
-    if (!user?.row.type) {
+    if ( user?.rows.type == null ) {
       throw error;
     }
 
     return {
       err: false,
-      user: user.row,
+      user: user.rows,
     };
   } catch (error) {
     throw error;
