@@ -317,19 +317,46 @@ class RespostaDAO {
   async verifica_resposta(lista_desafio, id_missao, id_aventura) {
     let lista_error = {
       missaoAventura: [],
-      alunoAventura: [],
-      hasResposta: [],
     };
-    lista_desafios.foreach(async (desafios) => {
-      if (!(await isMissaoAventura(this._db, id_missao, id_aventura)))
-        throw "Missao não pertence a aventura";
 
-      if (!(await isAlunoAventura(this._db, id_aluno, id_aventura)))
-        throw "Aluno não pertence à aventura";
+    if (await isMissaoAtiva(this._db, id_missao))
+      throw "prazo limite para entrega ainda não terminou";
 
+    if (!(await isMissaoAventura(this._db, id_missao, id_aventura)))
+      throw "Missao não pertence a aventura";
+
+    if (!(await isAlunoAventura(this._db, id_aluno, id_aventura)))
+      throw "Aluno não pertence à aventura";
+
+    lista_desafio.foreach(async (desafios_id) => {
       if (!(await hasResposta(this._db, id_desafio, id_aluno)))
-        throw "Desafio ainda não foi respondido";
+        lista_error.missaoAventura.push(
+          `O desafio ${desafios_id} não possui resposta`
+        );
     });
+
+    for (const property in lista_error) {
+      if (lista_error[property].length > 0);
+      throw lista_error;
+    }
+
+    const query = {
+      text: `SELECT "Respostas"."FK_desafio", "Respostas"."FK_opcao" as "respota_enviada", "Opcoes"."ID_opcao" as "respota_correta", "Respostas"."NR_nota_grande_desafio" as "nota_grande_desafio" FROM "Respostas"
+      LEFT JOIN "Opcoes"
+      ON "Respostas"."FK_desafio" = "Opcoes"."FK_desafio"
+      WHERE "Respostas"."FK_desafio" IN (${lista_desafio.map(_,(index) => `$${index + 1}`)}) and ("Opcoes"."FL_opcao_certa" = true or "Opcoes"."FL_opcao_certa" is null)`,
+      values: lista_desafio,
+    };
+    try {
+      const { rows } = this._db.query(query);
+      return {
+        message: "Desafios Corrigidos",
+        rows,
+      };
+    } catch (error) {
+      console.log(error)
+      throw "Não foi possivel corrigir os desafios"
+    }
   }
 }
 
