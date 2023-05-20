@@ -31,6 +31,7 @@
     "google-auth-library": "^7.12.0",
     "googleapis": "^95.0.0",
     "jwt-decode": "^3.1.2",
+    "node-cron": "^3.0.2",
     "node-fetch": "^2.6.7",
     "pg": "^8.7.3"
   },

@@ -21,7 +21,8 @@ fastify.register(require("@fastify/cors"), {
 });
 
 // Conexão com o banco
-fastify.decorate("pg", require("./banco"));
+const pg = require("./banco");
+fastify.decorate("pg", pg);
 
 fastify.register(async (fastify) => {
   fastify.pg.on("error", (err) => {
@@ -57,6 +58,11 @@ fastify.register(require("./api/api"), { prefix: "api" });
 
 // Pasta de conteúdos
 require('fs').mkdirSync('./conteudos', { recursive: true });
+
+// Rotina de limpeza de conteúdos
+// const cron = require('node-cron');
+// cron.schedule('0 0 * * 0', require('./clean')(pg);
+require('./clean')(pg)()
 
 // Iniciando servidor
 fastify.listen({ port: config.PORT }, (err) => {
