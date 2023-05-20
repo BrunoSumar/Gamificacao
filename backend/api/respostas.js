@@ -60,7 +60,7 @@ async function routesAlunos(fastify) {
         req.params.id_desafio,
         req.auth.ID_aluno,
         req.body.conteudo,
-        { id_grupo: +req.body.id_grupo.value }
+        { id_grupo: +req.body.id_grupo?.value }
       );
     } catch (error) {
       console.error(error);
