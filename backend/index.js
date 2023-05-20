@@ -55,6 +55,9 @@ fastify.register(require("@fastify/multipart"), {
 // Rotas da aplicação
 fastify.register(require("./api/api"), { prefix: "api" });
 
+// Pasta de conteúdos
+require('fs').mkdirSync('./conteudos', { recursive: true });
+
 // Iniciando servidor
 fastify.listen({ port: config.PORT }, (err) => {
   if (err) {
