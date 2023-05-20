@@ -70,7 +70,7 @@ module.exports = async function routes(fastify) {
           const token = fastify.jwt.sign(user.user);
           return { token };
         } else {
-          return "O usuario precisa ser validado";
+          throw "O usuario precisa ser validado";
         }
       } catch (error) {
         reply.code(401);
