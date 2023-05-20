@@ -37,7 +37,7 @@ class AlunoDAO {
 
       return {
         msg: "Aluno encontrado",
-        row: rows[0],
+        rows: rows[0],
         err: false,
       };
     } catch (error) {
@@ -54,7 +54,7 @@ class AlunoDAO {
       let { rows } = await this._db.query(query);
       return {
         msg: "Aluno encontrado",
-        row: rows[0],
+        rows: rows[0],
         err: false,
       };
     } catch (error) {
@@ -68,7 +68,7 @@ class AlunoDAO {
       let { rows } = await this._db.query(query);
       return {
         msg: "Aluno encontrado",
-        row: rows[0],
+        rows: rows[0],
         err: false,
       };
     } catch (error) {
@@ -89,7 +89,7 @@ class AlunoDAO {
       let { rows } = await this._db.query(query);
       return {
         msg: "Aluno Atualizado",
-        row: rows[0],
+        rows: rows[0],
         err: false,
       };
     } catch (error) {
