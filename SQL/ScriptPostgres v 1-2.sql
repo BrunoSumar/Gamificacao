@@ -218,7 +218,7 @@ ADD
 ALTER TABLE
   "Comentarios"
 ADD
-  FOREIGN KEY ("FK_aventura") REFERENCES "Aventuras" ("ID_aventura");
+  FOREIGN KEY ("FK_aventura") REFERENCES "Aventuras" ("ID_aventura") ON DELETE CASCADE;
 
 ALTER TABLE
   "Comentarios"
@@ -238,7 +238,7 @@ ADD
 ALTER TABLE
   "Respostas"
 ADD
-  FOREIGN KEY ("FK_desafio") REFERENCES "Desafios" ("ID_desafio");
+  FOREIGN KEY ("FK_desafio") REFERENCES "Desafios" ("ID_desafio") ON DELETE CASCADE;
 
 ALTER TABLE
   "Respostas"
@@ -248,32 +248,32 @@ ADD
 ALTER TABLE
   "Respostas"
 ADD
-  FOREIGN KEY ("FK_conteudo") REFERENCES "Conteudos" ("ID_conteudo");
+  FOREIGN KEY ("FK_conteudo") REFERENCES "Conteudos" ("ID_conteudo") ON DELETE CASCADE;
 
 ALTER TABLE
   "Desafios"
 ADD
-  FOREIGN KEY ("FK_missao") REFERENCES "Missoes" ("ID_missao");
+  FOREIGN KEY ("FK_missao") REFERENCES "Missoes" ("ID_missao") ON DELETE CASCADE;
 
 ALTER TABLE
   "Desafios"
 ADD
-  FOREIGN KEY ("FK_conteudo") REFERENCES "Conteudos" ("ID_conteudo");
+  FOREIGN KEY ("FK_conteudo") REFERENCES "Conteudos" ("ID_conteudo") ;
 
 ALTER TABLE
   "Opcoes"
 ADD
-  FOREIGN KEY ("FK_desafio") REFERENCES "Desafios" ("ID_desafio");
+  FOREIGN KEY ("FK_desafio") REFERENCES "Desafios" ("ID_desafio") ON DELETE CASCADE;
 
 ALTER TABLE
   "Grupos"
 ADD
-  FOREIGN KEY ("FK_missao") REFERENCES "Missoes" ("ID_missao");
+  FOREIGN KEY ("FK_missao") REFERENCES "Missoes" ("ID_missao") ON DELETE CASCADE;
 
 ALTER TABLE
   "Alunos_Missoes_Concluidas"
 ADD
-  FOREIGN KEY ("FK_missao") REFERENCES "Missoes" ("ID_missao");
+  FOREIGN KEY ("FK_missao") REFERENCES "Missoes" ("ID_missao") ON DELETE CASCADE;
 
 ALTER TABLE
   "Alunos_Missoes_Concluidas"
@@ -318,9 +318,9 @@ ADD
 ALTER TABLE
   "Alunos_Aventuras"
 ADD
-  FOREIGN KEY ("FK_aventura") REFERENCES "Aventuras" ("ID_aventura");
+  FOREIGN KEY ("FK_aventura") REFERENCES "Aventuras" ("ID_aventura") ON DELETE CASCADE;
 
 ALTER TABLE
   "Missoes"
 ADD
-  FOREIGN KEY ("FK_aventura") REFERENCES "Aventuras" ("ID_aventura");
+  FOREIGN KEY ("FK_aventura") REFERENCES "Aventuras" ("ID_aventura") ON DELETE CASCADE;
