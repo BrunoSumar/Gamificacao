@@ -4,7 +4,7 @@ const config = require("./config");
 async function verify(req, reply) {
   try {
 
-    auth = await req.jwtVerify();
+    req.auth = await req.jwtVerify();
 
     const data_expiracao = +req.auth.exp * 1000;
     const data_atual = Date.now();
