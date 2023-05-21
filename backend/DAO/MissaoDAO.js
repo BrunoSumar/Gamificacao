@@ -15,24 +15,23 @@ class MissaoDAO {
     if ( !(await isProfessorAventura(this._db, id_professor, id_aventura)) )
       throw "Esse professor não é mestre dessa aventura";
 
-    if ( !(await isAntesTerminoAventura(this._db, id_aventura, payload.DT_entrega_maxima) )
-         throw "Esse professor não é mestre dessa aventura";
+    if ( !(await isAntesTerminoAventura(this._db, id_aventura, payload.DT_entrega_maxima)) )
+      throw "Esse professor não é mestre dessa aventura";
 
-         const values = Object.values(payload);
-         const keys = Object.keys(payload);
-         const query = {
-           text: `
+    const values = Object.values(payload);
+    const keys = Object.keys(payload);
+    const query = {
+      text: `
           INSERT INTO "Missoes" ("FK_aventura",${keys.map((value) => `"${value}"`)})
           VALUES ($1, $2, $3, $4, $5)
       `,
-           values: [id_aventura, ...values],
-         };
-         let { rows } = await this._db.query(query);
-         return {
-           message: "A Missão foi criada no banco",
-           rows,
-         };
-       }
+      values: [id_aventura, ...values],
+    };
+    let { rows } = await this._db.query(query);
+    return {
+      message: "A Missão foi criada no banco",
+      rows,
+    };
   }
 
   async read(id_aventura, { id_aluno = null, id_professor = null }) {
@@ -64,8 +63,7 @@ class MissaoDAO {
         WHERE "ID_missao" = $${values.length + 1}
         RETURNING *
       `;
-    const values = [...values, id_missao];
-    let { rows } = await this._db.query({ text, values });
+    let { rows } = await this._db.query({ text, values: [...values, id_missao] });
     return {
       message: "A Missão foi alterada no banco",
       rows,

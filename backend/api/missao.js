@@ -59,7 +59,7 @@ async function routesProfessor(fastify) {
     }
   });
 
-  fastify.put("/:id_missao/conteudo", { schema: PUT }, async (req, res) => {
+  fastify.put("/:id_missao/conteudo", { schema: PUT_CONTEUDO }, async (req, res) => {
     try {
       if( !req.isMultipart() )
         throw 'Nenhum arquivo fornecido';
