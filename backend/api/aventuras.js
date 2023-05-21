@@ -48,7 +48,6 @@ module.exports = async function routes(fastify) {
       }
     }
   );
-}
 
   fastify.get("/:id_aventura", { schema: schemas.GET_ID }, async (req, reply) => {
     try {
