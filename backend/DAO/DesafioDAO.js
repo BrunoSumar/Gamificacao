@@ -1,6 +1,7 @@
 const { hasDesafios, hasUniqueIndices } = require("../misc/someUsefulFuncsDesafio");
 const { queryInsert, queryValues } = require("../misc/someUsefulFuncsQuery");
 const { isAventura } = require("../misc/someUsefulFuncsAventura");
+const { isMissaoEmGrupo } = require("../misc/someUsefulFuncsGrupos");
 const {
   isAlunoAventura,
   isMissaoAventura,
@@ -28,6 +29,9 @@ class DesafioDAO {
 
     if (!(await hasUniqueIndices(payload)))
       throw "Os indices dos desafios devem ser únicos";
+
+    if( payload.some( x => !x.FL_grande_desafio ) && (await isMissaoEmGrupo( this._db, id_missao )) )
+      throw "Missões em grupo aceitam apenas pequenos desafios";
 
     const current_date = new Date().toISOString();
 
