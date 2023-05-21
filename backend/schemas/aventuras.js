@@ -40,11 +40,12 @@ const POST = {
             },
         },
         additionalProperties: false,
-        required: [ 'TXT_nome', 'TXT_descricao' ],
+        required: [ 'TXT_nome', 'TXT_descricao', 'DT_inicio', 'DT_termino' ],
     },
 };
 
-const PATCH = { ...POST, required: [] };
+const PATCH = POST;
+PATCH.body.required = [] ;
 
 const PATCH_ALUNO = {
     params: {

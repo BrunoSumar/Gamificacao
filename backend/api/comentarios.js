@@ -5,7 +5,9 @@ const {
   patch,
   post,
 } = require("../schemas/comentarios");
+
 module.exports = async function routes(fastify) {
+
   fastify.get("/", { schema: get }, async (req, reply) => {
     try {
       const comentarioDAO = new ComentarioDAO(fastify.pg);

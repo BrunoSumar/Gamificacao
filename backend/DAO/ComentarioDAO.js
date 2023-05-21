@@ -55,9 +55,7 @@ class ComentarioDAO {
         values: [
           id_aventura,
           ID_professor,
-          false,
           currentDate.toISOString(),
-          null,
           ...values,
         ],
       };
