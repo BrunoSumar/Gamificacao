@@ -1,10 +1,14 @@
 const { isGrandeDesafio } = require("../misc/someUsefulFuncsDesafio");
 const { queryInsert, queryValues } = require("../misc/someUsefulFuncsQuery");
-const { isAventura } = require("../misc/someUsefulFuncsAventura");
+const {
+  isAventura,
+  isAventuraAtiva,
+} = require("../misc/someUsefulFuncsAventura");
 const {
   isOpcaoDesafio,
   isMissaoAtiva,
   hasResposta,
+  criaGrupoRespostas
 } = require("../misc/someUsefulFuncsResposta");
 const {
   hasGrupo,
@@ -150,7 +154,6 @@ class RespostaDAO {
         ${queryInsert(resposta)}
         RETURNING *
       `;
-      console.log(text)
       const values = queryValues(resposta);
       const { rows } = await connection.query({ text, values });
       
@@ -314,6 +317,182 @@ class RespostaDAO {
       throw error;
     }
   }
+
+  async verifica_resposta_aluno(
+    id_aventura,
+    id_missao = null,
+    lista_desafio = [],
+    ID_aluno = null
+  ) {
+
+    if (await isMissaoAtiva(this._db, id_missao))
+      throw "prazo limite para entrega ainda não terminou";
+
+    if (!(await isMissaoAventura(this._db, id_missao, id_aventura)))
+      throw "Missao não pertence a aventura";
+
+    if (!(await isAlunoAventura(this._db, id_aluno, id_aventura)))
+      throw "Aluno não pertence à aventura";
+
+    const query = {
+      text: `SELECT "Desafios"."FK_missao" as "ID_missao", "Respostas"."FK_desafio" as "ID_desafio", "Respostas"."FK_opcao" as "resposta_enviada", "Opcoes"."ID_opcao" as "resposta_correta", "Respostas"."NR_nota_grande_desafio" as "nota_grande_desafio" FROM "Respostas"
+      LEFT JOIN "Opcoes"
+      ON "Respostas"."FK_desafio" = "Opcoes"."FK_desafio"
+      LEFT JOIN "Grupos"
+      ON "Respostas"."FK_GRUPO" = "Grupos"."ID_grupo"
+      LEFT JOIN "Grupos_Alunos"
+      ON "Grupos_Alunos"."FK_grupo" = "Grupos"."ID_grupo"
+      LEFT JOIN "Desafios"
+      ON "Respostas"."FK_desafio" =  "Desafios".""ID_desafio""
+      WHERE 
+      ("Opcoes"."FL_opcao_certa" = true or "Opcoes"."FL_opcao_certa" is null) 
+      AND "resposta_enviada" IS NOT NULL
+      ${id_missao ? `AND "Desafios"."FK_missao" =${id_missao} `:''}
+      ${lista_desafio.length ? ` AND "Respostas"."FK_desafio" IN (${lista_desafio})`: '' }
+      ${ID_aluno? ` AND ("Respostas"."FK_aluno" = ${ID_aluno} or "Grupos_Alunos"."FK_aluno" = ${ID_aluno} )` : ''}
+      `,
+    };
+    try {
+      let { rows } = this._db.query(query);
+      return {
+        message: "Desafios Corrigidos",
+        rows:criaGrupoRespostas(rows)  ,
+      };
+    } catch (error) {
+      console.log(error);
+      throw "Não foi possivel corrigir os desafios";
+    }
+  }
+
+  // async verifica_resposta_aventura_aluno(id_aventura, id_aluno) {
+  //   if (await isAventuraAtiva(this._db, id_aventura))
+  //     throw "prazo limite para entrega ainda não terminou";
+
+  //   if (!(await isAlunoAventura(this._db, id_aluno, id_aventura)))
+  //     throw "Aluno não pertence à aventura";
+
+  //   let query = {
+  //     text: `SELECT "Missoes"."ID_missao", array_agg("Desafios"."ID_desafio") as lista_desafios,
+  //      FROM "Missoes" 
+  //      LEFT JOIN "Desafios" 
+  //      ON "Desafios"."FK_missao" = "Missoes"."ID_missao"
+  //      WHERE "Missoes"."FK_aventura = $1
+  //      GROUP BY "Missoes"."ID_missao"
+  //      `,
+  //     values: [id_aventura],
+  //   };
+
+  //   try {
+  //     let { rows } = this._db.query(query);
+  //     let rows_final = rows.map(async (element) => {
+  //       rows_final.push({
+  //         id_missao: element.ID_missao,
+  //         respostas: await this.verifica_resposta(
+  //           element.lista_desafios,
+  //           id_aluno,
+  //           element.ID_missao,
+  //           id_aventura
+  //         ),
+  //       });
+  //     });
+
+  //     let notaFinalAventura =
+  //       rows_final.reduce((acc, resposta) => {
+  //         return acc + resposta.notafinal;
+  //       }) / rows_final.length;
+
+  //     let resposta_final = {
+  //       notaFinalAventura,
+  //       rows_final,
+  //     };
+
+  //     return {
+  //       message: "Nota da aventura calculada com sucesso!",
+  //       resposta_final,
+  //     };
+  //   } catch (error) {
+  //     console.log(error);
+  //     throw "Não foi possivel corrigir os desafios";
+  //   }
+  // }
+
+  // async verifica_resposta_todos_alunos_missao(
+  //   id_missao,
+  //   ID_professor,
+  //   id_aventura
+  // ) {
+  //   if (!(await isProfessorAventura(this._db, ID_professor, id_aventura)))
+  //     throw "Esse professor não faz mestra essa aventura";
+  //   if (!(await isMissaoAventura(this._db, id_missao, id_aventura)))
+  //     throw "Essa missão não faz parte da aventura";
+
+  //   let query = {
+  //     text: `
+  //       SELECT "Aventuras"."ID_aventura", "Alunos_Aventuras"."FK_aluno", "Missoes"."ID_missao", array_agg("Desafios"."ID_desafio") as lista_desafio 
+  //       FROM "Aventuras"
+  //       LEFT JOIN "Alunos_Aventuras"
+  //       ON "Aventuras"."ID_aventura" = "Alunos_Aventuras"."FK_aventura"
+  //       LEFT JOIN "Missoes"
+  //       ON "Aventuras"."ID_aventura" = "Missoes"."FK_aventura"
+  //       LEFT JOIN "Desafios"
+  //       ON "Desafios"."FK_missao" = "Missoes"."ID_missao"
+  //       WHERE "Missoes"."ID_missao" = $1 and "Aventuras"."ID_aventura" = $2
+  //       GROUP BY "Aventuras"."ID_aventura", "Alunos_Aventuras"."FK_aluno", "Missoes"."ID_missao"
+  //       `,
+  //     values: [id_missao, id_aventura],
+  //   };
+
+  //   try {
+  //     let { rows } = this._db.query(query);
+  //     let rows_final = rows.map(async (element) => {
+  //       return {
+  //         id_aluno: element.FK_aluno,
+  //         respostas: await this.verifica_resposta_aluno(
+  //           element.lista_desafio,
+  //           element.FK_aluno,
+  //           id_missao,
+  //           id_aventura
+  //         ),
+  //       };
+  //     });
+  //     return {
+  //       message: "Respostas de todos os alunos nessa missão",
+  //       rows: rows_final,
+  //     };
+  //   } catch (error) {
+  //     console.log(error)
+  //     throw 'Não foi possivel obter as informações'
+  //   }
+  // }
+
+  // async verifica_resposta_todos_alunos_aventura(id_aventura, ID_professor) {
+  //   if (!(await isProfessorAventura(this._db, ID_professor, id_aventura)))
+  //     throw "Esse professor não faz mestra essa aventura";
+  //   let query = {
+  //     text: 'Select * from "Alunos_Aventuras" WHERE FK_aventura = $1',
+  //     values: [id_aventura],
+  //   };
+  //   try {
+  //     let { rows } = this._db.query(query);
+  //     let rows_final = rows.map(async (element) => {
+  //       return {
+  //         id_aluno: element.FK_aluno,
+  //         respostas: await this.verifica_resposta_aventura_aluno(
+  //           id_aventura,
+  //           element.FK_aluno
+  //         ),
+  //       };
+  //     });
+
+  //     return {
+  //       message: "nota de todos os alunos na aventura",
+  //       rows: rows_final,
+  //     };
+  //   } catch (error) {
+  //     console.log(error)
+  //     throw 'Não foi possivel obter as informações'
+  //   }
+  // }
 }
 
 module.exports = RespostaDAO;

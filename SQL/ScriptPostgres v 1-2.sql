@@ -124,8 +124,7 @@ CREATE TABLE IF NOT EXISTS "Desafios" (
   "FK_missao" bigint,
   "TXT_titulo" varchar(50),
   "TXT_descricao" text,
-  "FL_grande_desafio" boolean,
-  "NR_nota_grande_desafio" float, 
+  "FL_grande_desafio" boolean, 
   "NR_indice" int,
   "DT_desafio" timestamp,
   "FK_conteudo" bigint
@@ -154,6 +153,7 @@ CREATE TABLE IF NOT EXISTS "Respostas" (
   "FK_desafio" bigint,
   "FK_opcao" bigint,
   "FK_conteudo" bigint,
+  "NR_nota_grande_desafio" float,
   "DT_resposta" timestamp
 );
 
