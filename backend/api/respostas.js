@@ -103,4 +103,30 @@ async function routesAlunos(fastify) {
   });
 };
 
+async function routesAlunos(fastify) {
+  const pg = fastify.pg;
+
+  fastify.addHook("onRequest", onRequest.somente_professor);
+
+  fastify.patch("/id_resposta", { schema: POST }, async (req, res) => {
+    try {
+      const DAO = new respostaDAO(pg);
+      return await DAO.updateNota(
+        req.params.id_aventura,
+        req.params.id_missao,
+        req.params.id_desafio,
+        req.params.id_resposta,
+        req.auth.ID_professor,
+        req.body.NR_nota_grande_desafio,
+      );
+    } catch (error) {
+      console.error(error);
+      res.code(500);
+      return { message: "Não foi possivel responder desafio", error };
+    }
+  });
+
+}
+
+
 module.exports = routes;

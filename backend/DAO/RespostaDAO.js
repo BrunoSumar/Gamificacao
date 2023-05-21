@@ -1,6 +1,6 @@
 const { isGrandeDesafio } = require("../misc/someUsefulFuncsDesafio");
 const { queryInsert, queryValues } = require("../misc/someUsefulFuncsQuery");
-const { isAventura } = require("../misc/someUsefulFuncsAventura");
+const { isAventura, isAventuraAtiva } = require("../misc/someUsefulFuncsAventura");
 const {
   isOpcaoDesafio,
   isMissaoAtiva,
@@ -314,6 +314,39 @@ class RespostaDAO {
       throw error;
     }
   }
+
+  async updateNota(id_aventura, id_missao, id_desafio, id_resposta, id_professor, nota) {
+    if (!(await isProfessorAventura(this._db, id_professor, id_aventura)))
+      throw "Professor não pertence à aventura";
+
+    if (!(await isAventuraAtiva(this._db, id_aventura)))
+      throw "Aventura ja foi concluida";
+
+    if (!(await isMissaoAventura(this._db, id_missao, id_aventura)))
+      throw "Missao não pertence a aventura";
+
+    if (!(await isRespostaDesafio(this._db, id_resposta, id_desafio)))
+      throw "Resposta não pertence ao desafio";
+
+    if (!(await isGrandeDesafio(this._db, id_desafio)))
+      throw "Desafio não aceita esse tipo de avaliacao";
+
+    try {
+      const text = `
+        UPDATE "Respostas"
+        SET "NR_nota_grande_desafio" = $1
+        WHERE "ID_resposta" = $2
+        RETURNING *
+      `;
+      const values = [ nota, id_respota ];
+      const { rows } = await this._db.query({ text, values });
+      return rows;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
 }
 
 module.exports = RespostaDAO;

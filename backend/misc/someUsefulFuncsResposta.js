@@ -32,8 +32,21 @@ async function isMissaoAtiva(db, id_missao) {
   return !!rows.length;
 };
 
+async function isRespostaDesafio(db, id_resposta, id_desafio) {
+  const current_date = new Date().toISOString();
+  const text = `
+    SELECT 1 FROM "Respotas"
+    WHERE "ID_resposta" = $1
+    AND "FK_desafio" = $2
+  `;
+  const values = [ id_resposta, id_desafio ];
+  let { rows } = await db.query({ text, values });
+  return !!rows.length;
+};
+
 module.exports = {
   isOpcaoDesafio,
   hasResposta,
   isMissaoAtiva,
+  isRespostaDesafio,
 };
