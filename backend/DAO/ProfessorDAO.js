@@ -20,13 +20,13 @@ class ProfessorDAO {
       let { rows } = await this._db.query(query);
       return {
         msg: "Professor inserido no banco",
-        row: rows[0],
+        rows: rows[0],
         err: false,
       };
     } catch (e) {
       throw {
         msg: "Erro ao inserir professor no banco",
-        row: null,
+        rows: null,
         err: e,
       };
     }
