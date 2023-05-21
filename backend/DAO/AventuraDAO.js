@@ -240,16 +240,15 @@ class AventuraDAO {
     }
   }
 
-  async deleteAluno( id_aventura, id_aluno ) {
-    if( !id_aventura )
-      return null;
+  async deleteAluno( id_aventura, id_professor, id_aluno ) {
+    if (!(await isProfessorAventura(this._db, id_professor, id_aventura)))
+      throw "Esse usuario não é professor dessa aventura";
 
-    const values = [ id_aventura, id_professor, id_aluno ];
+    const values = [ id_aventura, id_aluno ];
     const text =  `
       DELETE FROM "Alunos_Aventuras"
       WHERE "FK_aventura" = $1
-      AND  "FK_professor" = $2
-      AND      "FK_aluno" = $3
+      AND      "FK_aluno" = $2
       RETURNING *
     `;
 
