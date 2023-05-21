@@ -45,7 +45,7 @@ async function routesAlunos(fastify) {
     }
   });
 
-  fastify.put("/arquivo", { schema: PUT }, async (req, res) => {
+  fastify.put("/conteudo", { schema: PUT }, async (req, res) => {
     try {
       if( !req.isMultipart() )
         throw 'Nenhum arquivo fornecido';
