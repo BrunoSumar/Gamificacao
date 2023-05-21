@@ -40,8 +40,10 @@ fastify.register(async (fastify) => {
 // Token JWT
 fastify.register(require("@fastify/jwt"), {
   secret: config.SECRET,
+  sign: {
+    expiresIn: '1d',
+  },
 });
-
 
 // Requições Multipart
 fastify.register(require("@fastify/multipart"), {

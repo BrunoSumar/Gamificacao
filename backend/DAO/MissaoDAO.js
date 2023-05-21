@@ -49,7 +49,6 @@ class MissaoDAO {
     };
   }
 
-  //somente professor
   async update(payload, id_aventura, id_professor, id_missao) {
     if (!(await isProfessorAventura(this._db, id_professor, id_aventura)) )
       throw "Professor não é mestre dessa aventura";
@@ -70,7 +69,6 @@ class MissaoDAO {
     };
   }
 
-  //somente professor
   async delete(id_missao, id_professor, id_aventura) {
     if (isProfessorAventura(this._db, id_professor, id_aventura)) {
       const query = {

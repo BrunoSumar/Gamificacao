@@ -4,8 +4,15 @@ const config = require("./config");
 async function verify(req, reply) {
   try {
 
-    req.auth = await req.jwtVerify();
+    auth = await req.jwtVerify();
+
+    const data_expiracao = +req.auth.exp * 1000;
+    const data_atual = Date.now();
+    if( data_expiracao < data_atual )
+      throw 'Token expirado';
+
     delete req.auth.iat;
+    delete req.auth.exp;
 
   } catch (error) {
 
