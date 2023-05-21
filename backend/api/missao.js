@@ -1,6 +1,6 @@
 const { onRequest } = require("../misc/someUsefulFuncsHooks");
 const MissaoDAO = require("../DAO/MissaoDAO");
-const { GET, POST, DELETE, PATCH } = require("../schemas/missoes");
+const { GET, POST, DELETE, PATCH, PUT_CONTEUDO, GET_NOTAS } = require("../schemas/missoes");
 async function routes(fastify) {
   const pg = fastify.pg;
   fastify.register(routesProfessor);
