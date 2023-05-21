@@ -1,5 +1,6 @@
 const { onRequest } = require("../misc/someUsefulFuncsHooks");
 const MissaoDAO = require("../DAO/MissaoDAO");
+const respostaDAO = require("../DAO/RespostaDAO");
 const { GET, POST, DELETE, PATCH } = require("../schemas/missoes");
 async function routes(fastify) {
   const pg = fastify.pg;
@@ -18,6 +19,29 @@ async function routes(fastify) {
     } catch (error) {
       res.code(500);
       return { message: "Não foi possivel buscar missão", error };
+    }
+  });
+
+  fastify.get("/:id_missao/notas", { schema: getRespostaAluno }, async (req, res) => {
+    const desafios = req.query.desafios;
+    const DAO = new respostaDAO(pg);
+    try {
+      if (desafios.length <= 0) {
+        throw "É necessario passar pelo menos um desafio para obter a correção";
+      }
+
+      let resp = await DAO.verifica_resposta_aluno(
+        desafios,
+        req.auth.ID_aluno,
+        req.params.id_missao,
+        req.params.id_aventura
+      );
+      res.code(200);
+      return resp;
+    } catch (error) {
+      res.code(500);
+      console.log(error);
+      return error;
     }
   });
 }
