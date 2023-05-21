@@ -74,6 +74,7 @@ class RespostaDAO {
       throw error;
     }
   }
+
   async updateConteudo(
     id_aventura,
     id_missao,
@@ -128,9 +129,10 @@ class RespostaDAO {
         const { rows: conteudos } = await connection.query(`
           SELECT * FROM "Conteudos" WHERE "ID_conteudo" = ${antiga_resposta?.FK_conteudo}
         `);
-        await new conteudoDAO(connection, "fs", {
+        DAO = new conteudoDAO(connection, "fs", {
           path: conteudos[0].TXT_path_arquivo,
-        }).delete();
+        });
+        await DAO.delete();
       }
       DAO = new conteudoDAO(connection, "fs", { file: conteudo });
       const { ID_conteudo } = await DAO.create();
@@ -161,7 +163,7 @@ class RespostaDAO {
     } catch (error) {
       console.error(error);
       await connection.query("ROLLBACK");
-      DAO.deleteFile();
+      DAO.deleteFile && DAO.deleteFile();
       throw error;
     } finally {
       await connection.release();
@@ -210,9 +212,10 @@ class RespostaDAO {
         const { rows: conteudos } = await connection.query(`
           SELECT * FROM "Conteudos" WHERE "ID_conteudo" = ${id_conteudo}
         `);
-        DAO = await new conteudoDAO(connection, "fs", {
+        DAO = new conteudoDAO(connection, "fs", {
           path: conteudos[0].TXT_path_arquivo,
-        }).delete();
+        });
+        await DAO.delete();
       }
 
       await connection.query("COMMIT");
@@ -224,7 +227,7 @@ class RespostaDAO {
     } catch (error) {
       console.error(error);
       await connection.query("ROLLBACK");
-      DAO.deleteFile();
+      DAO.deleteFile && DAO.deleteFile();
       throw error;
     } finally {
       await connection.release();
