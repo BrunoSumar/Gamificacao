@@ -66,6 +66,19 @@ const DELETE = GET_ID;
 
 const DELETE_ALUNO = PATCH_ALUNO;
 
+const GET_NOTAS = {
+    params: {
+      type: "object",
+      properties: {
+        id_aventura: {
+          type: "integer",
+        },
+      },
+      additionalProperties: false,
+      required: ["id_aventura"],
+    },
+  }
+
 module.exports = {
     GET,
     GET_ID,
@@ -74,4 +87,5 @@ module.exports = {
     PATCH_ALUNO,
     DELETE,
     DELETE_ALUNO,
+    GET_NOTAS
 };

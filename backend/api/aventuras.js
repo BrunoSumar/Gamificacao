@@ -1,4 +1,5 @@
 const { google } = require("googleapis");
+const respostaDAO = require("../DAO/RespostaDAO");
 const fetch = require('node-fetch');
 const schemas = require("../schemas/aventuras");
 const AventuraDAO = require("../DAO/AventuraDAO");
@@ -23,6 +24,31 @@ module.exports = async function routes(fastify) {
       throw err;
     }
   });
+
+  fastify.get(
+    "/:id_aventura/notas",
+    { schema: schemas.GET_NOTAS },
+    async (req, res) => {
+      const DAO = new respostaDAO(pg);
+      try {
+        let resposta = DAO.verifica_resposta_aluno(
+          req.params.id_aventura,
+          null,
+          null,
+          req.auth?.ID_aluno
+        );
+        return{
+          message: "Respostas encontradas!",
+          rows: resposta
+        }
+      } catch (error) {
+        res.code(500);
+        console.log(error);
+        return error;
+      }
+    }
+  );
+}
 
   fastify.get("/:id_aventura", { schema: schemas.GET_ID }, async (req, reply) => {
     try {

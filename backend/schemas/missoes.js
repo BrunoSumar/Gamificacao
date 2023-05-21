@@ -13,6 +13,35 @@ const GET = {
   },
 };
 
+const GET_NOTAS = {
+  params: {
+    type: "object",
+    properties: {
+      id_aventura: {
+        type: "integer",
+      },
+      id_missao: {
+        type: "integer",
+      },
+    },
+    additionalProperties: false,
+    required: ["id_aventura",'id_missao'],
+  },
+  query:{
+    type: 'object',
+    properties:{
+      desafios: {
+        type: ['array','null'],
+        items: {
+          type: 'integer',
+        }
+      }
+    },
+    additionalProperties: false,
+    required: ["id_aventura",'id_missao'],
+  }
+}
+
 const POST = {
   params: {
     type: "object",
@@ -109,4 +138,5 @@ module.exports = {
   POST,
   PATCH,
   DELETE,
+  GET_NOTAS
 };

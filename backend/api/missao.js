@@ -1,7 +1,7 @@
 const { onRequest } = require("../misc/someUsefulFuncsHooks");
 const MissaoDAO = require("../DAO/MissaoDAO");
 const respostaDAO = require("../DAO/RespostaDAO");
-const { GET, POST, DELETE, PATCH } = require("../schemas/missoes");
+const { GET, POST, DELETE, PATCH, GET_NOTAS } = require("../schemas/missoes");
 async function routes(fastify) {
   const pg = fastify.pg;
   fastify.register(routesProfessor);
@@ -22,28 +22,30 @@ async function routes(fastify) {
     }
   });
 
-  fastify.get("/:id_missao/notas", { schema: getRespostaAluno }, async (req, res) => {
-    const desafios = req.query.desafios;
-    const DAO = new respostaDAO(pg);
-    try {
-      if (desafios.length <= 0) {
-        throw "É necessario passar pelo menos um desafio para obter a correção";
+  fastify.get(
+    "/:id_missao/notas",
+    { schema: GET_NOTAS },
+    async (req, res) => {
+      const desafios = req.query.desafios;
+      const DAO = new respostaDAO(pg);
+      try {
+        let resposta = DAO.verifica_resposta_aluno(
+          req.params.id_aventura,
+          req.params.id_missao,
+          desafios,
+          req.auth?.ID_aluno
+        );
+        return{
+          message: "Respostas encontradas!",
+          rows: resposta
+        }
+      } catch (error) {
+        res.code(500);
+        console.log(error);
+        return error;
       }
-
-      let resp = await DAO.verifica_resposta_aluno(
-        desafios,
-        req.auth.ID_aluno,
-        req.params.id_missao,
-        req.params.id_aventura
-      );
-      res.code(200);
-      return resp;
-    } catch (error) {
-      res.code(500);
-      console.log(error);
-      return error;
     }
-  });
+  );
 }
 
 async function routesProfessor(fastify) {
