@@ -12,11 +12,12 @@ class MissaoDAO {
   }
 
   async create(payload, id_aventura, id_professor) {
+    console.log( payload, id_aventura, id_professor )
     if ( !(await isProfessorAventura(this._db, id_professor, id_aventura)) )
       throw "Esse professor não é mestre dessa aventura";
 
     if ( !(await isAntesTerminoAventura(this._db, id_aventura, payload.DT_entrega_maxima)) )
-      throw "Esse professor não é mestre dessa aventura";
+      throw "Data de entrega depois do termino da aventura";
 
     const values = Object.values(payload);
     const keys = Object.keys(payload);
@@ -24,6 +25,7 @@ class MissaoDAO {
       text: `
           INSERT INTO "Missoes" ("FK_aventura",${keys.map((value) => `"${value}"`)})
           VALUES ($1, $2, $3, $4, $5)
+          RETURNING *
       `,
       values: [id_aventura, ...values],
     };

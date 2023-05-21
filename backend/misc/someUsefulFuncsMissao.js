@@ -37,7 +37,7 @@ async function isMissaoAventura(db, id_missao, id_aventura) {
 async function isAntesTerminoAventura(db, id_aventura, data) {
   const text = `
     SELECT 1 FROM "Aventuras"
-    WHERE "DT_termino" > $1
+    WHERE ( "DT_termino" IS NULL OR "DT_termino" > $1 )
     AND "ID_aventura" = $2
   `;
   const values = [ data , id_aventura ];
