@@ -70,12 +70,16 @@ class ProfessorDAO {
     }
   }
 
-  async read(ID_professor) {
+  async read(ID_professor = null) {
     try {
       const query = {
-        text: `SELECT "TXT_primeiro_nome", "TXT_ultimo_nome","TXT_num_professor" from "Professores"`,
-        values: [ID_professor],
+        text: `SELECT * 
+        from "Professores" ${
+          ID_professor ? `WHERE "ID_professor" = ${ID_professor}` : ""
+        } `,
       };
+
+      console.log(query);
       let { rows } = await this._db.query(query);
 
       return {
