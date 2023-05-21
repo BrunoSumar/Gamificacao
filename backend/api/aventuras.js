@@ -5,6 +5,7 @@ const schemas = require("../schemas/aventuras");
 const AventuraDAO = require("../DAO/AventuraDAO");
 const { verify: VerifyToken } = require('../misc/someUsefulFuncsGoogleAuth')
 const { user_type_code } = require("../misc/someUsefulFuncsUsers");
+const { onRequest } = require("../misc/someUsefulFuncsHooks");
 
 module.exports = async function routes(fastify) {
   const pg = fastify.pg;
@@ -64,6 +65,13 @@ module.exports = async function routes(fastify) {
     }
   });
 
+};
+
+async function routesAlunos(fastify) {
+  const pg = fastify.pg;
+
+  fastify.addHook("onRequest", onRequest.somente_professor);
+
   fastify.patch("/import", async (req, reply) => {
     try {
       let courses = [];
@@ -88,7 +96,7 @@ module.exports = async function routes(fastify) {
           body.courses
             .filter( course => course.courseState === 'ACTIVE' )
             .filter( course => /^[A-z]{3}[0-9]{5}/.test( course.name ) )
-            .filter( course => /@id\.uff\.br$/.test( course.teacherGroupEmail ) )
+            // .filter( course => /@id\.uff\.br$/.test( course.teacherGroupEmail ) )
             .filter( course => creation_time > (now - new Date( course.creationTime )) )
             .map( course => ({
               TXT_nome: course.name.split('-')[1].trim(),
@@ -108,17 +116,11 @@ module.exports = async function routes(fastify) {
   });
 };
 
+
 async function routesProfessores(fastify) {
   const pg = fastify.pg;
 
-  fastify.addHook( "onRequest", async req => {
-    if ( user_type_code['Professor'] !== req.auth.type && user_type_code['Admin'] !== req.auth.type ){
-      throw {
-        status: 403,
-        message: "Operação restrita para professores",
-      };
-    }
-  });
+  fastify.addHook("onRequest", onRequest.somente_professor);
 
   fastify.post("/", { schema: schemas.POST }, async (req, reply) => {
     try {
@@ -155,7 +157,7 @@ async function routesProfessores(fastify) {
       const courses = body.courses
             .filter( course => course.courseState === 'ACTIVE' )
             .filter( course => /^[A-z]{3}[0-9]{5}/.test( course.name ) )
-            .filter( course => /@id\.uff\.br$/.test( course.teacherGroupEmail ) )
+            // .filter( course => /@id\.uff\.br$/.test( course.teacherGroupEmail ) )
             .filter( course => creation_time > (now - new Date( course.creationTime )) )
             .map( course => ({
               TXT_nome: course.name.split('-')[1].trim(),

@@ -1,5 +1,4 @@
 const ComentarioDAO = require("../DAO/ComentarioDAO");
-const { onRequest } = require("../misc/someUsefulFuncsHooks");
 const {
   deleteComentario,
   get,
