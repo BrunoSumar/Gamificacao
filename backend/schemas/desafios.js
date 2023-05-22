@@ -126,9 +126,23 @@ const PUT = {
     },
 };
 
+const PUT_CONTEUDO = {
+    consumes: ['multipart/form-data'],
+    body: {
+        type: "object",
+        properties: {
+            conteudo: {},
+        },
+        additionalProperties: false,
+        required: ["conteudo"],
+    },
+};
+
+
 module.exports = {
     GET,
     GET_ID,
     POST,
     PUT,
+    PUT_CONTEUDO,
 };

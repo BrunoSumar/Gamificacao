@@ -8,6 +8,8 @@ const {
   isProfessorAventura,
 } = require("../misc/someUsefulFuncsMissao");
 
+const conteudoDAO = require("./ConteudoDAO");
+
 class DesafioDAO {
   constructor(db) {
     this._db = db;
@@ -180,6 +182,48 @@ class DesafioDAO {
     } catch (error) {
       console.error(error);
       await connection.query("ROLLBACK");
+      throw error;
+    } finally {
+      await connection.release();
+    }
+  }
+
+  async updateConteudo( id_aventura, id_missao, id_desafio, id_professor, conteudo ) {
+    if (!(await isAventura(this._db, id_aventura)))
+      throw "Essa não é uma aventura valida";
+
+    if (!(await isMissaoAventura(this._db, id_missao, id_aventura)))
+      throw "Essa missão não faz parte dessa aventura";
+
+    if (!(await isProfessorAventura(this._db, id_professor, id_aventura)))
+      throw "Professor não pertence à aventura";
+
+    let connection = {};
+    let DAO = {};
+    try {
+      connection = await this._db.connect();
+
+      await connection.query("BEGIN");
+
+      DAO = new conteudoDAO(connection, "fs", { file: conteudo });
+      const { ID_conteudo } = await DAO.create();
+
+      const { rows } = await connection.query(`
+        UPDATE "Desafios" SET "FK_conteudo" = ${ ID_conteudo }
+        WHERE "ID_desafio" = ${ id_missao }
+        RETURNING *
+     `);
+
+      await connection.query("COMMIT");
+
+      return {
+        Message: "Conteúdo de desafio salvo",
+        rows,
+      };
+    } catch (error) {
+      console.error(error);
+      await connection.query("ROLLBACK");
+      DAO.deleteFile && DAO.deleteFile();
       throw error;
     } finally {
       await connection.release();

@@ -1,6 +1,8 @@
-const { onRequest } = require("../misc/someUsefulFuncsHooks");
 const MissaoDAO = require("../DAO/MissaoDAO");
-const { GET, POST, DELETE, PATCH, PUT_CONTEUDO, GET_NOTAS } = require("../schemas/missoes");
+const RespostasDAO = require("../DAO/MissaoDAO");
+const { onRequest } = require("../misc/someUsefulFuncsHooks");
+const { GET, POST, DELETE, PATCH, GET_NOTAS } = require("../schemas/missoes");
+
 async function routes(fastify) {
   const pg = fastify.pg;
   fastify.register(routesProfessor);
@@ -81,25 +83,6 @@ async function routesProfessor(fastify) {
     } catch (error) {
       res.code(500);
       return { message: "Não foi atualizar missão", error };
-    }
-  });
-
-  fastify.put("/:id_missao/conteudo", { schema: PUT_CONTEUDO }, async (req, res) => {
-    try {
-      if( !req.isMultipart() )
-        throw 'Nenhum arquivo fornecido';
-
-      const DAO = new respostaDAO(pg);
-      return await DAO.updateConteudo(
-        req.params.id_aventura,
-        req.params.id_missao,
-        req.auth.ID_professor,
-        req.body.conteudo,
-      );
-    } catch (error) {
-      console.error(error);
-      res.code(500);
-      return { message: "Não foi possivel salvar conteúdo", error };
     }
   });
 

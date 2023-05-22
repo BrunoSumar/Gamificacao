@@ -1,6 +1,6 @@
 const { onRequest } = require("../misc/someUsefulFuncsHooks");
 const desafioDAO = require("../DAO/DesafioDAO");
-const { GET, GET_ID, POST, PUT } = require("../schemas/desafios");
+const { GET, GET_ID, POST, PUT, PUT_CONTEUDO } = require("../schemas/desafios");
 
 async function routes(fastify) {
   const pg = fastify.pg;
@@ -71,6 +71,26 @@ async function routesProfessores(fastify) {
       console.error(error);
       res.code(500);
       return { message: "Não foi alterar o(s) desafio(s)", error };
+    }
+  });
+
+  fastify.put("/:id_desafio/conteudo", { schema: PUT_CONTEUDO }, async (req, res) => {
+    try {
+      if( !req.isMultipart() )
+        throw 'Nenhum arquivo fornecido';
+
+      const DAO = new desafioDAO(pg);
+      return await DAO.updateConteudo(
+        req.params.id_aventura,
+        req.params.id_missao,
+        req.params.id_desafio,
+        req.auth.ID_professor,
+        req.body.conteudo,
+      );
+    } catch (error) {
+      console.error(error);
+      res.code(500);
+      return { message: "Não foi possivel salvar conteúdo", error };
     }
   });
 };

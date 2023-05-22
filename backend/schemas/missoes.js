@@ -117,18 +117,6 @@ const PATCH = {
   },
 };
 
-const PUT_CONTEUDO = {
-    consumes: ['multipart/form-data'],
-    body: {
-        type: "object",
-        properties: {
-            conteudo: {},
-        },
-        additionalProperties: false,
-        required: ["conteudo"],
-    },
-};
-
 const DELETE = {
   params: {
     type: "object",
@@ -149,7 +137,6 @@ module.exports = {
   GET,
   POST,
   PATCH,
-  PUT_CONTEUDO,
   DELETE,
-  GET_NOTAS
+  GET_NOTAS,
 };
