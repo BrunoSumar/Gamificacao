@@ -1,6 +1,6 @@
 const fp = require("fastify-plugin");
 const config = require("./config");
-const { user_type_code } = require("../misc/someUsefulFuncsUsers");
+const { user_type_code } = require("./misc/someUsefulFuncsUsers");
 
 async function verify(req, reply) {
   try {
