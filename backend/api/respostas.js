@@ -6,6 +6,7 @@ async function routes(fastify) {
   const pg = fastify.pg;
 
   fastify.register(routesAlunos);
+  fastify.register(routesProfessor);
 
   fastify.get("/", { schema: GET }, async (req, res) => {
     try {
@@ -105,7 +106,7 @@ async function routesAlunos(fastify) {
   });
 }
 
-async function routesAlunos(fastify) {
+async function routesProfessor(fastify) {
   const pg = fastify.pg;
 
   fastify.addHook("onRequest", onRequest.somente_professor);
