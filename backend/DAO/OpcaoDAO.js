@@ -89,7 +89,7 @@ class opcaoDAO {
     try {
       const { rows } = await this._db.query(query);
       if( ID_aluno )
-        rows.forEach( r => delete rows.FL_opcao_certa );
+        rows.forEach( r => delete r.FL_opcao_certa );
       return rows;
     } catch (error) {
       console.error(error);
