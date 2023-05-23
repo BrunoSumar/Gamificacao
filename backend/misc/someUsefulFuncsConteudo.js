@@ -26,9 +26,15 @@ class FileSystem extends FileManager{
   };
 
   deletar(){
-    fs.unlinkSync( this._path );
+    try{
+      fs.accessSync( this._path, fs.constants.W_OK );
+      fs.unlinkSync( this._path );
+      return true;
+    }
+    catch(err){
+      return false;
+    }
   };
-
 
 };
 
@@ -75,19 +81,19 @@ async function hasAccessConteudoAluno( db, id_aluno, id_conteudo ){
   return !!rows.length;
 };
 
-async function hasAccessConteudoProfessor( id_conteudo, id_professor ){
+async function hasAccessConteudoProfessor( db, id_professor, id_conteudo ){
   const text = `
     WITH desafios_professor AS (
       SELECT "FK_conteudo", "ID_desafio" FROM "Desafios"
       JOIN "Missoes" ON ( "FK_missao" = "ID_missao" )
-      JOIN "Aventura" ON ( "FK_aventura" = "ID_aventura" )
+      JOIN "Aventuras" ON ( "FK_aventura" = "ID_aventura" )
       WHERE "FK_professor" = $1
     ),
     respostas_professor AS (
-      SELECT r."FK_conteudo", "ID_Respostas" FROM "Respostas" r
-      JOIN desafios_professor dp ON ( "FK_desafios" = "ID_desafio" )
+      SELECT r."FK_conteudo", "ID_resposta" FROM "Respostas" r
+      JOIN desafios_professor dp ON ( "FK_desafio" = "ID_desafio" )
     )
-    SELECT 1 FROM "Conteudos"
+    SELECT * FROM "Conteudos"
     LEFT JOIN respostas_professor rp ON ( rp."FK_conteudo" = "ID_conteudo" )
     LEFT JOIN desafios_professor dp ON ( dp."FK_conteudo" = "ID_conteudo" )
     WHERE ( "ID_resposta" IS NOT NULL OR "ID_desafio" IS NOT NULL )

@@ -93,6 +93,8 @@ async function routesProfessores(fastify) {
       return { message: "Não foi possivel salvar conteúdo", error };
     }
   });
+
+
 };
 
 module.exports = routes;

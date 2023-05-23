@@ -205,6 +205,25 @@ class DesafioDAO {
 
       await connection.query("BEGIN");
 
+      const { rows: desafios } =  await connection.query(`
+        SELECT * FROM "Desafios" WHERE "ID_desafio" = ${ id_desafio }
+      `);
+
+      if( desafios[0]?.FK_conteudo ){
+        await connection.query(`
+          UPDATE  "Desafios" SET "FK_conteudo" = NULL
+          WHERE "ID_desafio" = ${ id_desafio }
+        `);
+        const { rows: conteudos } = await connection.query(`
+          SELECT * FROM "Conteudos"
+          WHERE "ID_conteudo" = ${ desafios[0]?.FK_conteudo }
+        `);
+        DAO = new conteudoDAO(connection, "fs", {
+          path: conteudos[0].TXT_path_arquivo,
+        });
+        await DAO.delete();
+      }
+
       DAO = new conteudoDAO(connection, "fs", { file: conteudo });
       const { ID_conteudo } = await DAO.create();
 

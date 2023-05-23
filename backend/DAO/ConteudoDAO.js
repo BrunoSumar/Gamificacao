@@ -51,7 +51,7 @@ class ConteudoDAO {
     const file_manager = await this._file_manager;
     return {
       file_name: this._opts.path.match(/^\.\/conteudos\/.{36}-(.+)$/)[1],
-      data: file_manager.buscar(),
+      data: await file_manager.buscar(),
     };
   }
 
