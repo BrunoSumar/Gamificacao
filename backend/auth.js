@@ -1,5 +1,6 @@
 const fp = require("fastify-plugin");
 const config = require("./config");
+const { user_type_code } = require("./misc/someUsefulFuncsUsers");
 
 async function verify(req, reply) {
   try {
@@ -9,7 +10,13 @@ async function verify(req, reply) {
     delete req.auth.iat;
     delete req.auth.exp;
 
-  } catch (error) {
+    if (user_type_code["Admin"] !== req.auth.type)
+      return;
+
+    req.auth.ID_aluno = req.query.ID_aluno;
+    req.auth.ID_professor = req.query.ID_professor;
+  }
+  catch (error) {
 
     console.error( error );
     reply.statusCode = 401;
@@ -22,5 +29,5 @@ async function verify(req, reply) {
 };
 
 module.exports = fp(async function (fastify, opts) {
-    fastify.addHook("onRequest", verify);
+  fastify.addHook("onRequest", verify);
 });

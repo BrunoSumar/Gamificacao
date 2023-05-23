@@ -4,7 +4,6 @@ const fetch = require("node-fetch");
 const schemas = require("../schemas/aventuras");
 const AventuraDAO = require("../DAO/AventuraDAO");
 const { verify: VerifyToken } = require("../misc/someUsefulFuncsGoogleAuth");
-const { user_type_code } = require("../misc/someUsefulFuncsUsers");
 const { onRequest } = require("../misc/someUsefulFuncsHooks");
 
 module.exports = async function routes(fastify) {
