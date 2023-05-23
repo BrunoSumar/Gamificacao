@@ -329,29 +329,30 @@ class RespostaDAO {
     if (id_missao && !(await isMissaoAventura(this._db, id_missao, id_aventura)))
       throw "Missao não pertence a aventura";
 
-    if (id_aluno && !(await isAlunoAventura(this._db, id_aluno, id_aventura)))
+    if (ID_aluno && !(await isAlunoAventura(this._db, ID_aluno, id_aventura)))
       throw "Aluno não pertence à aventura";
 
     const query = {
-      text: `SELECT "Desafios"."FK_missao" as "ID_missao", "Respostas"."FK_desafio" as "ID_desafio", "Respostas"."FK_opcao" as "resposta_enviada", "Opcoes"."ID_opcao" as "resposta_correta", "Respostas"."NR_nota_grande_desafio" as "nota_grande_desafio" FROM "Respostas"
+      text: `SELECT coalesce("Respostas"."FK_aluno","Grupos_Alunos"."FK_aluno") as "ID_aluno", "Desafios"."FK_missao" as "ID_missao", "Respostas"."FK_desafio" as "ID_desafio", "Respostas"."FK_opcao" as "resposta_enviada", "Opcoes"."ID_opcao" as "resposta_correta", "Respostas"."NR_nota_grande_desafio" as "nota_grande_desafio" FROM "Respostas"
       LEFT JOIN "Opcoes"
       ON "Respostas"."FK_desafio" = "Opcoes"."FK_desafio"
       LEFT JOIN "Grupos"
-      ON "Respostas"."FK_GRUPO" = "Grupos"."ID_grupo"
+      ON "Respostas"."FK_grupo" = "Grupos"."ID_grupo"
       LEFT JOIN "Grupos_Alunos"
       ON "Grupos_Alunos"."FK_grupo" = "Grupos"."ID_grupo"
       LEFT JOIN "Desafios"
-      ON "Respostas"."FK_desafio" =  "Desafios".""ID_desafio""
+      ON "Respostas"."FK_desafio" =  "Desafios"."ID_desafio"
       WHERE
       ("Opcoes"."FL_opcao_certa" = true or "Opcoes"."FL_opcao_certa" is null)
-      AND "resposta_enviada" IS NOT NULL
+      AND ("Respostas"."FK_opcao" IS NOT NULL OR "Respostas"."FK_conteudo" IS NOT NULL)
       ${id_missao ? `AND "Desafios"."FK_missao" =${id_missao} `:''}
       ${lista_desafio.length ? ` AND "Respostas"."FK_desafio" IN (${lista_desafio})`: '' }
       ${ID_aluno? ` AND ("Respostas"."FK_aluno" = ${ID_aluno} or "Grupos_Alunos"."FK_aluno" = ${ID_aluno} )` : ''}
       `,
     };
     try {
-      let { rows } = this._db.query(query);
+      let { rows } = await this._db.query(query);
+      console.log(rows)
       return {
         message: "Desafios Corrigidos",
         rows:criaGrupoRespostas(rows)  ,
