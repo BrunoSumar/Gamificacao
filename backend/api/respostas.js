@@ -1,6 +1,6 @@
 const RespostaDAO = require("../DAO/RespostaDAO");
 const { onRequest } = require("../misc/someUsefulFuncsHooks");
-const { GET, POST, PATCH, DELETE, PUT } = require("../schemas/respostas");
+const { GET, POST, PATCH, DELETE, PUT, PATCH_NOTA } = require("../schemas/respostas");
 
 async function routes(fastify) {
   const pg = fastify.pg;
@@ -111,7 +111,7 @@ async function routesProfessor(fastify) {
 
   fastify.addHook("onRequest", onRequest.somente_professor);
 
-  fastify.patch("/id_resposta", { schema: POST }, async (req, res) => {
+  fastify.patch("/id_resposta", { schema: PATCH_NOTA }, async (req, res) => {
     try {
       const DAO = new respostaDAO(pg);
       return await DAO.updateNota(
@@ -128,7 +128,6 @@ async function routesProfessor(fastify) {
       return { message: "Não foi possivel responder desafio", error };
     }
   });
-
 }
 
 
