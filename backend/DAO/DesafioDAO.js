@@ -229,7 +229,7 @@ class DesafioDAO {
 
       const { rows } = await connection.query(`
         UPDATE "Desafios" SET "FK_conteudo" = ${ ID_conteudo }
-        WHERE "ID_desafio" = ${ id_missao }
+        WHERE "ID_desafio" = ${ id_desafio }
         RETURNING *
      `);
 
@@ -238,6 +238,59 @@ class DesafioDAO {
       return {
         Message: "Conteúdo de desafio salvo",
         rows,
+      };
+    } catch (error) {
+      console.error(error);
+      await connection.query("ROLLBACK");
+      DAO.deleteFile && DAO.deleteFile();
+      throw error;
+    } finally {
+      await connection.release();
+    }
+  }
+
+  async deleteConteudo( id_aventura, id_missao, id_desafio, id_professor ) {
+    if (!(await isAventura(this._db, id_aventura)))
+      throw "Essa não é uma aventura valida";
+
+    if (!(await isMissaoAventura(this._db, id_missao, id_aventura)))
+      throw "Essa missão não faz parte dessa aventura";
+
+    if (!(await isProfessorAventura(this._db, id_professor, id_aventura)))
+      throw "Professor não pertence à aventura";
+
+    let connection = {};
+    let DAO = {};
+    try {
+      connection = await this._db.connect();
+
+      await connection.query("BEGIN");
+
+      const { rows: conteudos } = await connection.query(`
+        SELECT * FROM "Conteudos"
+        WHERE "ID_conteudo" IN (
+          SELECT "FK_conteudo" FROM "Desafios"
+          WHERE "ID_desafio" = ${ id_desafio }
+        )
+      `);
+      if( conteudos.length < 1 )
+        throw "Conteúdo do desafio naõ encontrado";
+
+      await connection.query(`
+        UPDATE "Desafios" SET "FK_conteudo" = NULL
+        WHERE "ID_desafio" = ${ id_desafio }
+     `);
+
+      DAO = new conteudoDAO(connection, "fs", {
+        path: conteudos[0].TXT_path_arquivo,
+      });
+      await DAO.delete();
+
+      await connection.query("COMMIT");
+
+      return {
+        Message: "Conteúdo de desafio removido",
+        rows: conteudos[0],
       };
     } catch (error) {
       console.error(error);

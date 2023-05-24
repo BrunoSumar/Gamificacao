@@ -8,4 +8,5 @@ module.exports = new pg.Pool({
     password: config.DB_PASSWORD,
     port: '5432',
     max: 6,
+    timezone: 'America/Sao_Paulo',
 });

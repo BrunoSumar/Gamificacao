@@ -1,6 +1,6 @@
 const { onRequest } = require("../misc/someUsefulFuncsHooks");
 const desafioDAO = require("../DAO/DesafioDAO");
-const { GET, GET_ID, POST, PUT, PUT_CONTEUDO } = require("../schemas/desafios");
+const { GET, GET_ID, POST, PUT, PUT_CONTEUDO, DELETE_CONTEUDO } = require("../schemas/desafios");
 
 async function routes(fastify) {
   const pg = fastify.pg;
@@ -94,6 +94,24 @@ async function routesProfessores(fastify) {
     }
   });
 
+  fastify.delete("/:id_desafio/conteudo", { schema: DELETE_CONTEUDO }, async (req, res) => {
+    try {
+      if( !req.isMultipart() )
+        throw 'Nenhum arquivo fornecido';
+
+      const DAO = new desafioDAO(pg);
+      return await DAO.deleteConteudo(
+        req.params.id_aventura,
+        req.params.id_missao,
+        req.params.id_desafio,
+        req.auth.ID_professor,
+      );
+    } catch (error) {
+      console.error(error);
+      res.code(500);
+      return { message: "Não foi possivel remover conteúdo", error };
+    }
+  });
 
 };
 

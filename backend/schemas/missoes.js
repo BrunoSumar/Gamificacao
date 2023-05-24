@@ -109,7 +109,7 @@ const PATCH = {
       DT_entrega_maxima: {
         type: "string",
         maxLength: 50,
-        pattern: regex_data,
+        // pattern: regex_data,
       },
     },
     additionalProperties: false,

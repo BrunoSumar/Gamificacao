@@ -128,6 +128,22 @@ const PUT = {
 
 const PUT_CONTEUDO = {
     consumes: ['multipart/form-data'],
+    params: {
+        type: "object",
+        properties: {
+            id_aventura: {
+                type: "integer",
+            },
+            id_missao: {
+                type: "integer",
+            },
+            id_desafio: {
+                type: "integer",
+            },
+        },
+        additionalProperties: false,
+        required: ["id_aventura", "id_missao", "id_desafio"],
+    },
     body: {
         type: "object",
         properties: {
@@ -138,6 +154,24 @@ const PUT_CONTEUDO = {
     },
 };
 
+const DELETE_CONTEUDO = {
+    params: {
+        type: "object",
+        properties: {
+            id_aventura: {
+                type: "integer",
+            },
+            id_missao: {
+                type: "integer",
+            },
+            id_desafio: {
+                type: "integer",
+            },
+        },
+        additionalProperties: false,
+        required: ["id_aventura", "id_missao", "id_desafio"],
+    },
+};
 
 module.exports = {
     GET,
@@ -145,4 +179,5 @@ module.exports = {
     POST,
     PUT,
     PUT_CONTEUDO,
+    DELETE_CONTEUDO,
 };
