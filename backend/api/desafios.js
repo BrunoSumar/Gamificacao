@@ -96,9 +96,6 @@ async function routesProfessores(fastify) {
 
   fastify.delete("/:id_desafio/conteudo", { schema: DELETE_CONTEUDO }, async (req, res) => {
     try {
-      if( !req.isMultipart() )
-        throw 'Nenhum arquivo fornecido';
-
       const DAO = new desafioDAO(pg);
       return await DAO.deleteConteudo(
         req.params.id_aventura,

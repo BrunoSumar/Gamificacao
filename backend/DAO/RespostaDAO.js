@@ -369,22 +369,17 @@ class RespostaDAO {
     if (!(await isProfessorAventura(this._db, id_professor, id_aventura)))
       throw "Professor não pertence à aventura";
 
-      console.log( 1 )
     if (!(await isAventuraAtiva(this._db, id_aventura)))
       throw "Aventura ja foi concluida";
 
-      console.log( 1 )
     if (!(await isMissaoAventura(this._db, id_missao, id_aventura)))
       throw "Missao não pertence a aventura";
 
-      console.log( 1 )
     if (!(await isRespostaDesafio(this._db, id_resposta, id_desafio)))
       throw "Resposta não pertence ao desafio";
 
-      console.log( 1 )
     if (!(await isGrandeDesafio(this._db, id_desafio)))
       throw "Desafio não aceita esse tipo de avaliacao";
-      console.log( 1 )
 
     try {
       const text = `
