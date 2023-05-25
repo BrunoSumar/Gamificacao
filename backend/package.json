@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index",
     "dev": "set NODE_ENV=dev&& nodemon index",
+    "linuxDev": "export NODE_ENV=dev&& nodemon index",
     "newAdmin": "set NODE_ENV=dev&&export NODE_ENV=dev&&node newAdmin"
   },
   "repository": {
@@ -23,6 +24,8 @@
     "@fastify/cors": "^8.2.1",
     "@fastify/jwt": "^6.7.1",
     "@fastify/multipart": "^7.6.0",
+    "@fastify/swagger": "^8.5.1",
+    "@fastify/swagger-ui": "^1.8.1",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.0.0",
     "fastify": "^4.17.0",
