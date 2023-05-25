@@ -165,6 +165,11 @@ async function routesProfessores(fastify) {
           error: body.error,
         };
 
+      const hoje = new Date();
+      const DT_inicio = hoje.toISOString();
+      hoje.setMonth( hoje.getMonth() + 5 );
+      const DT_termino = hoje.toISOString();
+
       const courses = body.courses
         .filter((course) => course.courseState === "ACTIVE")
         .filter((course) => /^[A-z]{3}[0-9]{5}/.test(course.name))
@@ -176,6 +181,8 @@ async function routesProfessores(fastify) {
           ID_google: parseInt(course.id),
           FL_evento: false,
           FK_professor: req.auth.ID_professor,
+          DT_inicio,
+          DT_termino,
         }));
 
       if (courses.length < 1)

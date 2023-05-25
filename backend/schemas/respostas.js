@@ -140,6 +140,8 @@ const PATCH_NOTA = {
         properties: {
             NR_nota_grande_desafio: {
                 type: "integer",
+                minimum: 0,
+                maximum: 100,
             },
         },
         additionalProperties: false,

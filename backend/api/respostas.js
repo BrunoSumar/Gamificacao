@@ -111,8 +111,9 @@ async function routesProfessor(fastify) {
 
   fastify.addHook("onRequest", onRequest.somente_professor);
 
-  fastify.patch("/id_resposta", { schema: PATCH_NOTA }, async (req, res) => {
+  fastify.patch("/:id_resposta", { schema: PATCH_NOTA }, async (req, res) => {
     try {
+      console.log( req.body )
       const DAO = new RespostaDAO(pg);
       return await DAO.updateNota(
         req.params.id_aventura,
@@ -125,7 +126,7 @@ async function routesProfessor(fastify) {
     } catch (error) {
       console.error(error);
       res.code(500);
-      return { message: "Não foi possivel responder desafio", error };
+      return { message: "Não foi possivel corrigir resposta", error };
     }
   });
 }

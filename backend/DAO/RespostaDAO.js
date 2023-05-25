@@ -5,7 +5,8 @@ const {
   isOpcaoDesafio,
   isMissaoAtiva,
   hasResposta,
-  criaGrupoRespostas
+  criaGrupoRespostas,
+  isRespostaDesafio,
 } = require("../misc/someUsefulFuncsResposta");
 const {
   hasGrupo,
@@ -368,17 +369,22 @@ class RespostaDAO {
     if (!(await isProfessorAventura(this._db, id_professor, id_aventura)))
       throw "Professor não pertence à aventura";
 
+      console.log( 1 )
     if (!(await isAventuraAtiva(this._db, id_aventura)))
       throw "Aventura ja foi concluida";
 
+      console.log( 1 )
     if (!(await isMissaoAventura(this._db, id_missao, id_aventura)))
       throw "Missao não pertence a aventura";
 
+      console.log( 1 )
     if (!(await isRespostaDesafio(this._db, id_resposta, id_desafio)))
       throw "Resposta não pertence ao desafio";
 
+      console.log( 1 )
     if (!(await isGrandeDesafio(this._db, id_desafio)))
       throw "Desafio não aceita esse tipo de avaliacao";
+      console.log( 1 )
 
     try {
       const text = `
@@ -387,7 +393,7 @@ class RespostaDAO {
         WHERE "ID_resposta" = $2
         RETURNING *
       `;
-      const values = [ nota, id_respota ];
+      const values = [ nota, id_resposta ];
       const { rows } = await this._db.query({ text, values });
       return rows;
     } catch (error) {

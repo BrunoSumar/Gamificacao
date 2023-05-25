@@ -200,12 +200,11 @@ class AventuraDAO {
         AND  "FK_professor" = $2
         RETURNING "ID_aventura"
     `;
-
     try{
       const { rows: aventuras } = await this._db.query({ text, values });
 
       if( aventuras.length < 1 )
-        return null;
+        throw 'Aventura não encontrada';
 
       return aventuras[0].ID_aventura;
     }

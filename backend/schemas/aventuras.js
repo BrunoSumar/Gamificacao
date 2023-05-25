@@ -14,6 +14,16 @@ const GET_ID = {
 };
 
 const POST = {
+    params: {
+        type: 'object',
+        properties: {
+            id_aventura: {
+                type: 'integer',
+            },
+        },
+        additionalProperties: false,
+        required: [ 'id_aventura' ],
+    },
     body: {
         type: 'object',
         properties: {
@@ -44,8 +54,44 @@ const POST = {
     },
 };
 
-const PATCH = POST;
-PATCH.body.required = [] ;
+const PATCH = {
+    params: {
+        type: 'object',
+        properties: {
+            id_aventura: {
+                type: 'integer',
+            },
+        },
+        additionalProperties: false,
+        required: [ 'id_aventura' ],
+    },
+    body: {
+        type: 'object',
+        properties: {
+            TXT_nome: {
+                type: 'string',
+                maxLength: 50,
+            },
+            TXT_descricao: {
+                type: 'string',
+            },
+            FL_evento: {
+                type: 'boolean',
+            },
+            TXT_numero_classe: {
+                type: 'string',
+                maxLength: 10,
+            },
+            DT_inicio: {
+                type: 'string',
+            },
+            DT_termino: {
+                type: 'string',
+            },
+        },
+        additionalProperties: false,
+    },
+};
 
 const PATCH_ALUNO = {
     params: {
