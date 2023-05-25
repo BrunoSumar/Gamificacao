@@ -32,7 +32,7 @@ module.exports = async function routes(fastify) {
     async (req, res) => {
       const DAO = new respostaDAO(pg);
       try {
-        let resposta = DAO.verifica_resposta_aluno(
+        let resposta = await DAO.verifica_resposta_aluno(
           req.params.id_aventura,
           null,
           null,

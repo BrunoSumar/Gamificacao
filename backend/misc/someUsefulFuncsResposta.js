@@ -38,7 +38,6 @@ function _groupByAluno(array = []) {
     if (!obj_temp[element.ID_aluno]) obj_temp[element.ID_aluno] = [];
     obj_temp[element.ID_aluno].push(element);
   });
-  console.log(Object.values(obj_temp));
   return Object.values(obj_temp);
 }
 
@@ -65,15 +64,16 @@ function _groupByDesafio(array = []) {
 function _calculaNotasDesafio(array) {
   return array.reduce((acc, item) => {
     if (item.nota_grande_desafio) return acc + item.nota_grande_desafio;
-    if (item.resposta_enviada) return acc + (item.resposta_enviada == item.resposta_correta ? 100 : 0);
-    return acc + 0
-  },0);
+    if (item.resposta_enviada)
+      return acc + (item.resposta_enviada == item.resposta_correta ? 100 : 0);
+    return acc + 0;
+  }, 0);
 }
 
 function _calculaNotasAventura(array) {
   return array.reduce((acc, item) => {
     return acc + item.nota_missao;
-  },0);
+  }, 0);
 }
 
 function criaGrupoRespostas(array = []) {
@@ -84,16 +84,16 @@ function criaGrupoRespostas(array = []) {
       missoes: missoes.map((element) => _groupByDesafio(element)),
     }));
 
+    console.log(array_temp[0].missoes)
+
   return array_temp.map((aluno) => {
     let missao_array = aluno.missoes.map(({ id_missao, desafios }) => {
       return {
         id_missao,
         desafios,
-        nota_missao:
-          (_calculaNotasDesafio(desafios) / desafios.length),
+        nota_missao: _calculaNotasDesafio(desafios) / desafios.length,
       };
     });
-
     return {
       ...aluno,
       missoes: missao_array,
