@@ -1,5 +1,5 @@
 const MissaoDAO = require("../DAO/MissaoDAO");
-const RespostasDAO = require("../DAO/MissaoDAO");
+const RespostasDAO = require("../DAO/RespostaDAO");
 const { onRequest } = require("../misc/someUsefulFuncsHooks");
 const { GET, POST, DELETE, PATCH, GET_NOTAS } = require("../schemas/missoes");
 
@@ -28,9 +28,9 @@ async function routes(fastify) {
     { schema: GET_NOTAS },
     async (req, res) => {
       const desafios = req.query.desafios;
-      const DAO = new respostaDAO(pg);
+      const DAO = new RespostasDAO(pg);
       try {
-        let resposta = DAO.verifica_resposta_aluno(
+        let resposta = await DAO.verifica_resposta_aluno(
           req.params.id_aventura,
           req.params.id_missao,
           desafios,

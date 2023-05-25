@@ -35,7 +35,7 @@ async function routesAlunos(fastify) {
 
   fastify.post("/", { schema: POST }, async (req, res) => {
     try {
-      const DAO = new respostaDAO(pg);
+      const DAO = new RespostaDAO(pg);
       return await DAO.create(
         req.params.id_aventura,
         req.params.id_missao,
@@ -56,7 +56,7 @@ async function routesAlunos(fastify) {
 
       if (!req.body.conteudo) throw "Conteúdo inválido";
 
-      const DAO = new respostaDAO(pg);
+      const DAO = new RespostaDAO(pg);
       return await DAO.updateConteudo(
         req.params.id_aventura,
         req.params.id_missao,
@@ -74,7 +74,7 @@ async function routesAlunos(fastify) {
 
   fastify.patch("/", { schema: PATCH }, async (req, res) => {
     try {
-      const DAO = new respostaDAO(pg);
+      const DAO = new RespostaDAO(pg);
       return await DAO.update(
         req.params.id_aventura,
         req.params.id_missao,
@@ -91,7 +91,7 @@ async function routesAlunos(fastify) {
 
   fastify.delete("/", { schema: DELETE }, async (req, res) => {
     try {
-      const DAO = new respostaDAO(pg);
+      const DAO = new RespostaDAO(pg);
       return await DAO.delete(
         req.params.id_aventura,
         req.params.id_missao,
@@ -113,7 +113,7 @@ async function routesProfessor(fastify) {
 
   fastify.patch("/id_resposta", { schema: PATCH_NOTA }, async (req, res) => {
     try {
-      const DAO = new respostaDAO(pg);
+      const DAO = new RespostaDAO(pg);
       return await DAO.updateNota(
         req.params.id_aventura,
         req.params.id_missao,

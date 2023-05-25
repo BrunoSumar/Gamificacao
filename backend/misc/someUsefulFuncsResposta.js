@@ -38,7 +38,7 @@ function _groupByAluno(array = []) {
     if (!obj_temp[element.ID_aluno]) obj_temp[element.ID_aluno] = [];
     obj_temp[element.ID_aluno].push(element);
   });
-
+  console.log(Object.values(obj_temp));
   return Object.values(obj_temp);
 }
 
@@ -56,42 +56,41 @@ function _groupByMissao(array = []) {
 }
 
 function _groupByDesafio(array = []) {
-  let obj_temp = {};
-  array.forEach((element) => {
-    if (!obj_temp[element.ID_desafio]) obj_temp[element.ID_desafio] = [];
-    obj_temp[element.ID_desafio].push(element);
-  });
-
   return {
     id_missao: array[0]?.ID_missao || null,
-    desafio: Object.values(obj_temp),
+    desafios: array,
   };
 }
 
 function _calculaNotasDesafio(array) {
   return array.reduce((acc, item) => {
     if (item.nota_grande_desafio) return acc + item.nota_grande_desafio;
-    return acc + (item.resposta_enviada == item.resposta_correta ? 100 : 0);
-  });
+    if (item.resposta_enviada) return acc + (item.resposta_enviada == item.resposta_correta ? 100 : 0);
+    return acc + 0
+  },0);
 }
 
 function _calculaNotasAventura(array) {
   return array.reduce((acc, item) => {
     return acc + item.nota_missao;
-  });
+  },0);
 }
 
 function criaGrupoRespostas(array = []) {
-  const array_temp = _groupByAluno(array).map((element) =>
-    _groupByMissao(element).map((element) => _groupByDesafio(element))
-  );
+  const array_temp = _groupByAluno(array)
+    .map((element) => _groupByMissao(element))
+    .map(({ id_aluno, missoes }) => ({
+      id_aluno,
+      missoes: missoes.map((element) => _groupByDesafio(element)),
+    }));
 
   return array_temp.map((aluno) => {
-    let missao_array = aluno.missoes.map((desafio) => {
+    let missao_array = aluno.missoes.map(({ id_missao, desafios }) => {
       return {
-        ...desafio,
+        id_missao,
+        desafios,
         nota_missao:
-          _calculaNotasDesafio(desafio.desafio) / desafio.desafio.length,
+          (_calculaNotasDesafio(desafios) / desafios.length),
       };
     });
 
@@ -110,10 +109,10 @@ async function isRespostaDesafio(db, id_resposta, id_desafio) {
     WHERE "ID_resposta" = $1
     AND "FK_desafio" = $2
   `;
-  const values = [ id_resposta, id_desafio ];
+  const values = [id_resposta, id_desafio];
   let { rows } = await db.query({ text, values });
   return !!rows.length;
-};
+}
 
 module.exports = {
   isOpcaoDesafio,

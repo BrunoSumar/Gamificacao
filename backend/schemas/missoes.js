@@ -38,7 +38,7 @@ const GET_NOTAS = {
       }
     },
     additionalProperties: false,
-    required: ["id_aventura",'id_missao'],
+    required: [],
   }
 }
 
