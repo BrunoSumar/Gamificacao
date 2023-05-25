@@ -1,7 +1,9 @@
 const MedalhasDAO = require("../DAO/MedalhasDAO");
 const { deleteMedal, patch, post } = require("../schemas/medalhas");
 const { onRequest } = require("../misc/someUsefulFuncsHooks");
-async function routes(fastify) {
+
+module.exports = async function routes(fastify) {
+  fastify.register(routesADMIN);
   fastify.get("/", async (req, reply) => {
     try {
       const medalhasDAO = new MedalhasDAO(fastify.pg);
@@ -59,8 +61,3 @@ async function routesADMIN(fastify) {
 
   fastify.addHook("onRequest", onRequest.somente_administrador);
 }
-
-module.exports = {
-  routesADMIN,
-  routes,
-};

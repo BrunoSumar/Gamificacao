@@ -49,7 +49,7 @@ const patch = {
       },
     },
     additionalProperties: false,
-    required: ["TXT_titulo","NR_minimo"],
+    required: [],
   },
 };
 

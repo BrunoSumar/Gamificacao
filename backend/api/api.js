@@ -1,7 +1,3 @@
-const {
-  routes: routesMedalhas,
-  routesADMIN: routesMedalhasADMIN,
-} = require("./medalha");
 
 async function privateRoutes(fastify) {
   fastify.register(require("../auth"));
@@ -17,9 +13,7 @@ async function privateRoutes(fastify) {
   fastify.register(require("./perfil"), { prefix: "perfil" });
   fastify.register(require("./administrador"), { prefix: "administrador" });
   fastify.register(require("./conteudos"), { prefix: "conteudos" });
-  fastify.register(routesMedalhas, { prefix: "medalhas" });
-  fastify.register(routesMedalhasADMIN, { prefix: "admin/medalhas" });
-
+  fastify.register(require("./medalhas"), { prefix: "medalhas" });
   fastify.get("/ping", async () => ({ status: 200 }));
   fastify.get("/token", async (req) => req.auth);
 };

@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index",
-    "dev": "export NODE_ENV=dev&&set NODE_ENV=dev&& nodemon index",
+    "dev": "set NODE_ENV=dev&& nodemon index",
     "newAdmin": "set NODE_ENV=dev&&export NODE_ENV=dev&&node newAdmin"
   },
   "repository": {

@@ -12,6 +12,7 @@ const patch = {
       },
     },
     additionalProperties: false,
+    required:[]
   },
 };
 

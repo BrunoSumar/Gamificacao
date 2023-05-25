@@ -347,7 +347,7 @@ class RespostaDAO {
       ("Opcoes"."FL_opcao_certa" = true or "Opcoes"."FL_opcao_certa" is null)
       AND ("Respostas"."FK_opcao" IS NOT NULL OR "Respostas"."FK_conteudo" IS NOT NULL)
       ${id_missao ? `AND "Desafios"."FK_missao" =${id_missao} `:''}
-      ${lista_desafio.length ? ` AND "Respostas"."FK_desafio" IN (${lista_desafio})`: '' }
+      ${lista_desafio?.length ? ` AND "Respostas"."FK_desafio" IN (${lista_desafio})`: '' }
       ${ID_aluno? ` AND ("Respostas"."FK_aluno" = ${ID_aluno} or "Grupos_Alunos"."FK_aluno" = ${ID_aluno} )` : ''}
       `,
     };
@@ -356,7 +356,7 @@ class RespostaDAO {
       console.log(rows)
       return {
         message: "Desafios Corrigidos",
-        rows:criaGrupoRespostas(rows)  ,
+        rows: criaGrupoRespostas(rows)  ,
       };
     } catch (error) {
       console.log(error);
