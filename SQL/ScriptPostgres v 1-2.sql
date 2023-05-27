@@ -323,3 +323,14 @@ ALTER TABLE
   "Missoes"
 ADD
   FOREIGN KEY ("FK_aventura") REFERENCES "Aventuras" ("ID_aventura") ON DELETE CASCADE;
+
+ALTER TABLE
+  "Grupos_Alunos"
+ADD
+  FOREIGN KEY ("FK_grupo") REFERENCES "Grupos" ("ID_grupo") ON DELETE CASCADE;
+
+ALTER TABLE
+  "Grupos_Alunos"
+ADD
+  FOREIGN KEY ("FK_aluno") REFERENCES "Alunos" ("ID_aluno") ;
+
