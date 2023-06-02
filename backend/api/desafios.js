@@ -5,6 +5,9 @@ const { GET, GET_ID, POST, PUT, PUT_CONTEUDO, DELETE_CONTEUDO } = require("../sc
 async function routes(fastify) {
   const pg = fastify.pg;
 
+  fastify.register(require("./opcoes"), { prefix: ":id_desafio/opcoes" });
+  fastify.register(require("./respostas"), { prefix: ":id_desafio/respostas" });
+
   fastify.register(routesProfessores);
 
   fastify.get("/", { schema: GET }, async (req, res) => {

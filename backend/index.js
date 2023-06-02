@@ -1,10 +1,12 @@
 require("dotenv").config({
   path: process.env.NODE_ENV == "dev" ? ".env.development" : ".env",
 });
+
 const path = require("path");
 const fastify = require("fastify")();
 const config = require("./config");
 const bcrypt = require("bcryptjs");
+
 //CORS
 fastify.register(require("@fastify/cors"), {
   origin: (origin, cb) => {
@@ -51,7 +53,7 @@ fastify.register(require("@fastify/multipart"), {
   limits: {
     fieldNameSize: 256,
     headerPairs: 256,
-    fileSize: 3 * 1024 * 1024, //Carga útil maximá de 3MB
+    fileSize: 3 * 1024 * 1024, //Carga útil máxima de 3MB
   }
 });
 
@@ -143,6 +145,7 @@ fastify.listen({ port: config.PORT }, (err) => {
   console.log(`Listening at ${config.PORT}`);
 });
 
+// Gera/expõem rota documentação
 fastify.ready(err => {
   if (err) {
     console.error(err);

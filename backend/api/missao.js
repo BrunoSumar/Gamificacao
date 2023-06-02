@@ -5,6 +5,10 @@ const { GET, POST, DELETE, PATCH, GET_NOTAS } = require("../schemas/missoes");
 
 async function routes(fastify) {
   const pg = fastify.pg;
+
+  fastify.register(require("./grupos"), { prefix: ":id_missao/grupos" });
+  fastify.register(require("./desafios"), { prefix: ":id_missao/desafios" });
+
   fastify.register(routesProfessor);
 
   fastify.get("/", { schema: GET }, async (req, res) => {

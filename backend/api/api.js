@@ -4,12 +4,6 @@ async function privateRoutes(fastify) {
   fastify.register(require("./alunos"), { prefix: "alunos" });
   fastify.register(require("./professores"), { prefix: "professores" });
   fastify.register(require("./aventuras"), { prefix: "aventuras" });
-  fastify.register(require("./missao"), { prefix: "aventuras/:id_aventura/missoes" });
-  fastify.register(require("./comentarios"), { prefix: "aventuras/:id_aventura/comentarios" });
-  fastify.register(require("./grupos"), { prefix: "aventuras/:id_aventura/missoes/:id_missao/grupos" });
-  fastify.register(require("./desafios"), { prefix: "aventuras/:id_aventura/missoes/:id_missao/desafios" });
-  fastify.register(require("./opcoes"), { prefix: "aventuras/:id_aventura/missoes/:id_missao/desafios/:id_desafio/opcoes" });
-  fastify.register(require("./respostas"), { prefix: "aventuras/:id_aventura/missoes/:id_missao/desafios/:id_desafio/respostas" });
   fastify.register(require("./perfil"), { prefix: "perfil" });
   fastify.register(require("./administrador"), { prefix: "administrador" });
   fastify.register(require("./conteudos"), { prefix: "conteudos" });

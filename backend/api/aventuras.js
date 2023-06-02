@@ -9,6 +9,9 @@ const { onRequest } = require("../misc/someUsefulFuncsHooks");
 module.exports = async function routes(fastify) {
   const pg = fastify.pg;
 
+  fastify.register(require("./missao"), { prefix: ":id_aventura/missoes" });
+  fastify.register(require("./comentarios"), { prefix: ":id_aventura/comentarios" });
+
   fastify.register(routesProfessores);
   fastify.register(routesAlunos);
 
