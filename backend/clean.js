@@ -2,13 +2,13 @@ const fs = require('fs');
 
 function cleanRoutine( pg ){
   const query_delete = `
-      DELETE FROM "Conteudos"
-      WHERE "ID_conteudo" NOT IN (
-        SELECT "FK_conteudo" FROM "Desafios" WHERE "FK_conteudo" IS NOT NULL
-          UNION ALL
-        SELECT "FK_conteudo" FROM "Respostas" WHERE "FK_conteudo" IS NOT NULL
-      )
-    `;
+    DELETE FROM "Conteudos"
+    WHERE "ID_conteudo" NOT IN (
+      SELECT "FK_conteudo" FROM "Desafios" WHERE "FK_conteudo" IS NOT NULL
+        UNION ALL
+      SELECT "FK_conteudo" FROM "Respostas" WHERE "FK_conteudo" IS NOT NULL
+    )
+  `;
 
   const query_search = `
     SELECT "TXT_path_arquivo" FROM "Conteudos"

@@ -14,6 +14,7 @@ const GET_ID = {
 };
 
 const POST = {
+    description: 'Cria um aventura.',
     params: {
         type: 'object',
         properties: {
