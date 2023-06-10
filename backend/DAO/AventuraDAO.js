@@ -95,7 +95,7 @@ class AventuraDAO {
       await connection.query('BEGIN');
 
       const { rows: aventuras } = await connection.query( `
-        SELECT "ID_aventura"
+        SELECT "ID_aventura", "ID_google"
         FROM "Aventuras"
         WHERE "ID_google" IN (${ google_ids })
       `);
@@ -112,12 +112,11 @@ class AventuraDAO {
           INSERT INTO "Alunos_Aventuras"
           ( "FK_aluno", "FK_aventura" )
           VALUES ${ aluno_aventuras }
-          RETURNING *
         `);
       }
 
       await connection.query('COMMIT');
-      return aventuras.map( row => row.ID_aventura );
+      return aventuras;
     }
     catch( err ){
       console.error( err );
