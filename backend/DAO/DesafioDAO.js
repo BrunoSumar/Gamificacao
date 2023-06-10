@@ -97,6 +97,8 @@ class DesafioDAO {
 
     try {
       const { rows } = await this._db.query(query);
+      if( ID_aluno )
+        rows.forEach( r => r.opcoes?.forEach( o => delete o.FL_opcao_certa ) );
 
       return {
         message: "Desafio(s) recuperado(s) com sucesso",
