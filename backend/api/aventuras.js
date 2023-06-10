@@ -71,6 +71,27 @@ module.exports = async function routes(fastify) {
       }
     }
   );
+
+  fastify.get(
+    "/:id_aventura/alunos",
+    { schema: schemas.GET_ALUNO },
+    async (req, reply) => {
+      try {
+        const DAO = new AventuraDAO(pg);
+
+        return await DAO.readAlunos(
+          req.params.id_aventura,
+          {
+            id_professor: req.auth.ID_professor,
+            id_aluno: req.params.id_aluno,
+          },
+        );
+      } catch (err) {
+        console.error(err);
+        throw err;
+      }
+    }
+  );
 };
 
 async function routesAlunos(fastify) {

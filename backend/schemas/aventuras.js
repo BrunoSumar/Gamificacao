@@ -13,6 +13,8 @@ const GET_ID = {
     },
 };
 
+const GET_ALUNO = GET_ID;
+
 const POST = {
     description: 'Cria um aventura.',
     params: {
@@ -130,6 +132,7 @@ const GET_NOTAS = {
 module.exports = {
     GET,
     GET_ID,
+    GET_ALUNO,
     POST,
     PATCH,
     PATCH_ALUNO,

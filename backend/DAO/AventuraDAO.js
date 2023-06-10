@@ -158,6 +158,37 @@ class AventuraDAO {
     }
   }
 
+  async readAlunos( id_aventura, { id_aluno, id_professor } ){
+    if( id_aluno && id_professor )
+      throw { msg: 'Mais de um ID valido fornecido' };
+
+    if( id_professor && !(await isProfessorAventura(this._db, id_professor, id_aventura)) )
+      throw { status: 403, message: 'Professor não comanda a aventura' };
+
+    if( id_aluno && !(await isAlunoAventura(this._db, id_aluno, id_aventura)) )
+      throw { status: 403, message: 'Aluno não pertence a aventura' };
+
+    const text = `
+        SELECT "Alunos".*
+        FROM "Alunos"
+        JOIN "Alunos_Aventuras"
+        ON ("ID_aluno" = "FK_aluno")
+        WHERE "FK_aventura" = $1
+        ORDER BY "DT_inicio"
+    `;
+    const values = [ id_aventura ];
+
+    try{
+      const { rows } = await this._db.query( { text, values } );
+
+      return rows;
+    }
+    catch( err ){
+      console.error( err );
+      throw err;
+    }
+  }
+
   async insertAluno( id_aventura, id_professor, id_aluno ) {
     if( !id_aventura || !id_aluno )
       return null;
