@@ -1,3 +1,5 @@
+const corretTimezone = require('../misc/someUsefulFuncsHora')
+
 async function isOpcaoDesafio(db, id_opcao, id_desafio) {
   const text = `
     SELECT 1 FROM "Opcoes"
@@ -21,7 +23,7 @@ async function hasResposta(db, id_desafio, id_aluno) {
 }
 
 async function isMissaoAtiva(db, id_missao) {
-  const current_date = new Date().toISOString();
+  const current_date =  corretTimezone(new Date()).toISOString();
   const text = `
     SELECT 1 FROM "Missoes"
     WHERE "ID_missao" = $1

@@ -21,6 +21,8 @@ const {
   isProfessorAventura,
 } = require("../misc/someUsefulFuncsMissao");
 
+const corretTimezone = require('../misc/someUsefulFuncsHora')
+
 const conteudoDAO = require("./ConteudoDAO");
 
 class RespostaDAO {
@@ -53,7 +55,7 @@ class RespostaDAO {
     resposta = {
       FK_aluno: id_aluno,
       FK_desafio: id_desafio,
-      DT_resposta: new Date().toISOString(),
+      DT_resposta:  corretTimezone(new Date()).toISOString(),
       ...resposta,
     };
 
@@ -142,7 +144,7 @@ class RespostaDAO {
         ...antiga_resposta,
         FK_aluno: id_aluno,
         FK_desafio: id_desafio,
-        DT_resposta: new Date().toISOString(),
+        DT_resposta:  corretTimezone(new Date()).toISOString(),
         FK_conteudo: ID_conteudo,
         FK_grupo: id_grupo || null,
       };

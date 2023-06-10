@@ -1,5 +1,5 @@
 const { FactoryFileManager, hasAccessConteudoAluno, hasAccessConteudoProfessor } = require("../misc/someUsefulFuncsConteudo");
-
+const corretTimezone = require('../misc/someUsefulFuncsHora')
 class ConteudoDAO {
   constructor(db, type, opts={}) {
     this._db = db;
@@ -22,7 +22,7 @@ class ConteudoDAO {
   }
 
   async create() {
-    const current_date = new Date().toISOString();
+    const current_date =  corretTimezone(new Date()).toISOString();
     const text = `
       INSERT INTO "Conteudos"
       ( "TXT_path_arquivo", "DT_inclusao" )

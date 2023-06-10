@@ -2,6 +2,7 @@ const { hasDesafios, hasUniqueIndices } = require("../misc/someUsefulFuncsDesafi
 const { queryInsert, queryValues } = require("../misc/someUsefulFuncsQuery");
 const { isAventura } = require("../misc/someUsefulFuncsAventura");
 const { isMissaoEmGrupo } = require("../misc/someUsefulFuncsGrupos");
+const corretTimezone = require('../misc/someUsefulFuncsHora')
 const {
   isAlunoAventura,
   isMissaoAventura,
@@ -35,8 +36,8 @@ class DesafioDAO {
     if( payload.some( x => !x.FL_grande_desafio ) && (await isMissaoEmGrupo( this._db, id_missao )) )
       throw "Missões em grupo aceitam apenas pequenos desafios";
 
-    const current_date = new Date().toISOString();
-
+    const current_date =  corretTimezone(new Date()).toISOString();
+    console.log(current_date)
     const desafios = payload.map( desafio => ({
       DT_desafio: current_date,
       FK_missao: id_missao,
@@ -154,7 +155,7 @@ class DesafioDAO {
       }
 
       if( novos_desafios.length > 0 ){
-        const current_date = new Date().toISOString();
+        const current_date =  corretTimezone(new Date()).toISOString();
         const desafios_create = novos_desafios.map( desafio => ({
           FK_missao: id_missao,
           DT_desafio: current_date,
