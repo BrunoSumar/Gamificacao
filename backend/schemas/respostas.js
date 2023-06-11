@@ -40,6 +40,9 @@ const POST = {
             FK_opcao: {
                 type: "integer",
             },
+            FK_grupo: {
+                type: "integer",
+            },
         },
         additionalProperties: false,
         required: ["FK_opcao"],

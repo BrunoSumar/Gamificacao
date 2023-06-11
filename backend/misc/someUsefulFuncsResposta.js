@@ -1,4 +1,4 @@
-const corretTimezone = require('../misc/someUsefulFuncsHora')
+const corretTimezone = require("../misc/someUsefulFuncsHora");
 
 async function isOpcaoDesafio(db, id_opcao, id_desafio) {
   const text = `
@@ -23,7 +23,7 @@ async function hasResposta(db, id_desafio, id_aluno) {
 }
 
 async function isMissaoAtiva(db, id_missao) {
-  const current_date =  corretTimezone(new Date()).toISOString();
+  const current_date = corretTimezone(new Date()).toISOString();
   const text = `
     SELECT 1 FROM "Missoes"
     WHERE "ID_missao" = $1
@@ -78,7 +78,7 @@ function _calculaNotasAventura(array) {
   }, 0);
 }
 
-function criaGrupoRespostas(array = []) {
+function criaGrupoRespostas(array = [], fl_missao = false) {
   const array_temp = _groupByAluno(array)
     .map((element) => _groupByMissao(element))
     .map(({ id_aluno, missoes }) => ({
@@ -86,7 +86,7 @@ function criaGrupoRespostas(array = []) {
       missoes: missoes.map((element) => _groupByDesafio(element)),
     }));
 
-    console.log(array_temp[0].missoes)
+  console.log(array_temp[0].missoes);
 
   return array_temp.map((aluno) => {
     let missao_array = aluno.missoes.map(({ id_missao, desafios }) => {
@@ -99,7 +99,7 @@ function criaGrupoRespostas(array = []) {
     return {
       ...aluno,
       missoes: missao_array,
-      nota_aventura: _calculaNotasAventura(missao_array) / missao_array.length,
+      nota_aventura: fl_missao ? null : (_calculaNotasAventura(missao_array) / missao_array.length),
     };
   });
 }
@@ -115,10 +115,22 @@ async function isRespostaDesafio(db, id_resposta, id_desafio) {
   return !!rows.length;
 }
 
+async function hasRespostaGrupo(db, id_desafio, id_grupo) {
+  const text = `
+  SELECT 1 FROM "Respostas"
+  WHERE "FK_desafio" = $1
+  AND "FK_grupo" = $2
+`;
+  const values = [id_desafio, id_grupo];
+  let { rows } = await db.query({ text, values });
+  return !!rows.length;
+}
+
 module.exports = {
   isOpcaoDesafio,
   hasResposta,
   isMissaoAtiva,
   criaGrupoRespostas,
   isRespostaDesafio,
+  hasRespostaGrupo,
 };

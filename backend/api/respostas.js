@@ -40,8 +40,11 @@ async function routesAlunos(fastify) {
         req.params.id_aventura,
         req.params.id_missao,
         req.params.id_desafio,
-        req.auth.ID_aluno,
-        req.body
+        req.body,
+        {
+          id_aluno:req.auth.ID_aluno,
+          id_grupo:req.body?.FK_grupo,
+        }
       );
     } catch (error) {
       console.error(error);
@@ -55,15 +58,17 @@ async function routesAlunos(fastify) {
       if (!req.isMultipart()) throw "Nenhum arquivo fornecido";
 
       if (!req.body.conteudo) throw "Conteúdo inválido";
-
+      console.log(req.body?.id_grupo.value)
       const DAO = new RespostaDAO(pg);
       return await DAO.updateConteudo(
         req.params.id_aventura,
         req.params.id_missao,
         req.params.id_desafio,
-        req.auth.ID_aluno,
         req.body.conteudo,
-        { id_grupo: +req.body.id_grupo?.value }
+        {
+          id_aluno: req.auth.ID_aluno,
+          id_grupo: +req.body?.id_grupo?.value,
+        }
       );
     } catch (error) {
       console.error(error);
