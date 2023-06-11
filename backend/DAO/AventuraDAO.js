@@ -174,7 +174,6 @@ class AventuraDAO {
         JOIN "Alunos_Aventuras"
         ON ("ID_aluno" = "FK_aluno")
         WHERE "FK_aventura" = $1
-        ORDER BY "DT_inicio"
     `;
     const values = [ id_aventura ];
 
