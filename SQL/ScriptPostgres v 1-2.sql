@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS "Conquistas_Alunos" (
 );
 
 --Não feito
-CREATE TABLE IF NOT EXISTS "Itens_Alunos_Desafios" (
+CREATE TABLE IF NOT EXISTS "Itens_Alunos" (
   "ID_item_aluno_desafio" SERIAL PRIMARY KEY,
   "FK_item" bigint,
   "FK_aluno" bigint,
@@ -300,12 +300,12 @@ ADD
   FOREIGN KEY ("FK_aluno") REFERENCES "Alunos" ("ID_aluno");
 
 ALTER TABLE
-  "Itens_Alunos_Desafios"
+  "Itens_Alunos"
 ADD
   FOREIGN KEY ("FK_aluno") REFERENCES "Alunos" ("ID_aluno");
 
 ALTER TABLE
-  "Itens_Alunos_Desafios"
+  "Itens_Alunos"
 ADD
   FOREIGN KEY ("FK_item") REFERENCES "Itens" ("ID_item");
 
