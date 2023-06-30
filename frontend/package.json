@@ -2,7 +2,8 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://brunosumar.github.io/Gamificacao",
+  "homepage": ".",
+  "proxy": "http://localhost:3001",
   "dependencies": {
     "@react-oauth/google": "^0.6.1",
     "@testing-library/jest-dom": "^5.16.2",
@@ -28,7 +29,6 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "proxy": "http://localhost:3001",
   "eslintConfig": {
     "extends": [
       "react-app",
