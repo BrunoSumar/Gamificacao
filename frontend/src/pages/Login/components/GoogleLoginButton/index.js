@@ -1,20 +1,13 @@
 import { useGoogleLogin } from "@react-oauth/google";
-
 import React, { useEffect, useState } from "react";
 import { GoogleButtonCustom } from "./styles";
-const GoogleLoginButton = (props) => {
-  const [isLogged, setLogged] = useState(false);
 
-  useEffect(() => {
-    if (localStorage.getItem("app_jwt")) {
-      setLogged(true);
-    }
-  }, []);
+const GoogleLoginButton = ({ successPath, setLogged, setToken, setLoading }) => {
 
   const onSuccess = async (token) => {
     try {
       let response = await fetch(
-        `${process.env.REACT_APP_SERVER_URL}${props.successPath}`,
+        `${process.env.REACT_APP_SERVER_URL}${successPath}`,
         {
           method: "POST",
           body: JSON.stringify({
@@ -26,7 +19,9 @@ const GoogleLoginButton = (props) => {
       if (response.ok) {
         let jwt = await response.json();
         localStorage.setItem("app_jwt", jwt.token);
-        setLogged(true);
+        setToken(jwt.token);
+        setLogged(jwt.token);
+        setLoading(false);
       }
       else throw 'error'
     } catch (error) {
@@ -46,18 +41,12 @@ const GoogleLoginButton = (props) => {
   });
 
   return (
-    <>
-      {!isLogged ? (
-        <GoogleButtonCustom
-          style={{ border: "1px red" }}
-          onClick={() => login()}
-        >
-          Sign in with Google
-        </GoogleButtonCustom>
-      ) : (
-        <button onClick={_ => {localStorage.removeItem('app_jwt'); setLogged(false)}}> Logout </button>
-      )}
-    </>
+    <GoogleButtonCustom
+      style={{ border: "1px red" }}
+      onClick={() => { setLoading(true); login(); }}
+    >
+      Sign in with Google
+    </GoogleButtonCustom>
   );
 };
 
