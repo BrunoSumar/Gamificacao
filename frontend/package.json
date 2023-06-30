@@ -2,6 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://brunosumar.github.io/Gamificacao",
   "dependencies": {
     "@react-oauth/google": "^0.6.1",
     "@testing-library/jest-dom": "^5.16.2",
