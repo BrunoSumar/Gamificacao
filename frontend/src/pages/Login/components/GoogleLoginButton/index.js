@@ -15,21 +15,20 @@ const GoogleLoginButton = ({ successPath, setLogged, setToken, setLoading }) => 
           }),
         }
       );
+      setLoading(false);
+      if( !response.ok )
+        throw 'error';
 
-      if (response.ok) {
-        let jwt = await response.json();
-        localStorage.setItem("app_jwt", jwt.token);
-        setToken(jwt.token);
-        setLogged(jwt.token);
-        setLoading(false);
-      }
-      else throw 'error'
+      let jwt = await response.json();
+      localStorage.setItem("app_jwt", jwt.token);
+      setToken(jwt.token);
+      setLogged(jwt.token);
     } catch (error) {
-      alert("Error server response!!");
+      alert("Erro ao realizar login");
     }
   };
 
-  const onError = (error) => alert("Error OnError!!");
+  const onError = (error) => alert("Falha ao realizar login");
 
   // const scope = "profile email https://www.googleapis.com/auth/classroom.courses.readonly https://www.googleapis.com/auth/classroom.rosters.readonly https://www.googleapis.com/auth/classroom.profile.emails"; //TODO Avaliar colocar isso como env
   const scope = "profile email https://www.googleapis.com/auth/classroom.courses.readonly https://www.googleapis.com/auth/classroom.rosters.readonly"; //TODO Avaliar colocar isso como env

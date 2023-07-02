@@ -8,7 +8,8 @@
     "start": "node index",
     "dev": "set NODE_ENV=dev&& nodemon index",
     "linuxDev": "export NODE_ENV=dev&& nodemon index",
-    "newAdmin": "set NODE_ENV=dev&& node newAdmin"
+    "newAdmin":  "set NODE_ENV=dev&& node newAdmin",
+    "lNewAdmin": "export NODE_ENV=dev&& node newAdmin"
   },
   "repository": {
     "type": "git",

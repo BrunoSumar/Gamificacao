@@ -88,6 +88,7 @@ module.exports = async function routes(fastify) {
     { schema: SchemaLoginAdministrador },
     async (req, reply) => {
       try {
+        console.log( req.body )
         const administradorDAO = new AdministradorDAO(fastify.pg);
         const resp = await administradorDAO.readByPassword(req.body);
         const token = fastify.jwt.sign(resp.admin);
