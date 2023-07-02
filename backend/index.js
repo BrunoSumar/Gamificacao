@@ -6,21 +6,23 @@ const path = require("path");
 const fastify = require("fastify")();
 const config = require("./config");
 const bcrypt = require("bcryptjs");
+console.log(config)
 
 //CORS
-fastify.register(require("@fastify/cors"), {
-  origin: (origin, cb) => {
-    //   cb(null, true);
-    const hostname = origin && new URL(origin).hostname;
-    if (hostname === "localhost" || config.DEV_MODE) {
-      //  Request from localhost will pass
-      cb(null, true);
-      return;
-    }
-    // Generate an error on other origins, disabling access
-    cb(new Error("Not allowed"));
-  },
-});
+// fastify.register(require("@fastify/cors"), {
+//   origin: (origin, cb) => {
+//       cb(null, true);
+//     console.log( origin )
+//     const hostname = origin && new URL(origin).hostname;
+//     if (hostname === "localhost" || config.DEV_MODE) {
+//        // Request from localhost will pass
+//       cb(null, true);
+//       return;
+//     }
+//     // Generate an error on other origins, disabling access
+//     cb(new Error("Not allowed"));
+//   },
+// });
 
 // Conexão com o banco
 const pg = require("./banco");
