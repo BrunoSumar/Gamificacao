@@ -3,7 +3,7 @@ import GoogleProvider from "./components/GoogleProvider";
 import LogoutButton from "./components/LogoutButton";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { footerCustom } from "./styles";
+import { FooterCustom } from "./styles";
 
 const LoginOptions = ({ isLogged, setLogged, token, setToken, isLoading, setLoading }) => {
   const [ copySuccess, setCopySuccess ] = useState(false);
@@ -64,10 +64,10 @@ const LoginPage = () => {
         token={token} setToken={setToken}
       />
       <br/>
-      <footerCustom>
+      <FooterCustom>
         <Link to="admin">Entrar como administrador</Link> <br/>
         <a href="#">Veja o projeto no github</a>
-      </footerCustom>
+      </FooterCustom>
     </main>
   );
 };

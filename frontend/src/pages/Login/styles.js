@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const footerCustom = styled.footer`
+export const FooterCustom = styled.footer`
   footer {
     position: fixed;
     left: 0;
@@ -10,4 +10,4 @@ export const footerCustom = styled.footer`
     // background-color: #f5f5f5;
     background-color: red;
   }
-`
+`;
