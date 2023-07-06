@@ -60,11 +60,9 @@ fastify.register(require("@fastify/multipart"), {
 });
 
 // Servido frontend estaticamente
-// fastify.register(require('@fastify/static'), {
-//   root: path.join(__dirname, './build/'),
-//   // prefix: '/', // optional: default '/'
-//   // constraints: { host: 'example.com' } // optional: default {}
-// })
+fastify.register(require('@fastify/static'), {
+  root: path.join(__dirname, './build/'),
+})
 
 // Documentação da API
 fastify.register(require('@fastify/swagger'), {});
