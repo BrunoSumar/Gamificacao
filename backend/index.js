@@ -88,10 +88,10 @@ fastify.listen({ port: config.PORT }, (err) => {
 });
 
 // Gera/expõem rota documentação
-fastify.ready(err => {
-  if (err) {
-    console.error(err);
-    throw err;
-  }
-  fastify.swagger()
-})
+// fastify.ready(err => {
+//   if (err) {
+//     console.error(err);
+//     throw err;
+//   }
+//   fastify.swagger()
+// })
