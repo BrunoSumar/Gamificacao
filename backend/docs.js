@@ -5,11 +5,7 @@ module.exports = [
     swagger: {
       info: {
         title: 'Documentação rota API',
-        description: '',
-      },
-      externalDocs: {
-        url: 'https://www.johndoe.com/api/',
-        description: 'Find more info here'
+        description: 'Descrição das rotas',
       },
       host: '0.0.0.0:80',
       basePath: '/api',
