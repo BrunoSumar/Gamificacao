@@ -79,7 +79,7 @@ const cron = require('node-cron');
 cron.schedule('0 0 * * 0', require('./clean')(pg));
 
 // Iniciando servidor
-fastify.listen({ port: config.PORT }, (err) => {
+fastify.listen({ port: config.PORT, host: '0.0.0.0' }, (err) => {
   if (err) {
     console.error(err);
     process.exit(1);
