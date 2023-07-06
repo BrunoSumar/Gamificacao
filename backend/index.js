@@ -12,15 +12,15 @@ console.log(config)
 fastify.register(require("@fastify/cors"), {
   origin: (origin, cb) => {
       cb(null, true);
-    console.log( origin )
-    const hostname = origin && new URL(origin).hostname;
-    if (hostname === "localhost" || config.DEV_MODE) {
-       // Request from localhost will pass
-      cb(null, true);
-      return;
-    }
-    // Generate an error on other origins, disabling access
-    cb(new Error("Not allowed"));
+    // console.log( origin )
+    // const hostname = origin && new URL(origin).hostname;
+    // if (hostname === "localhost" || config.DEV_MODE) {
+    //    // Request from localhost will pass
+    //   cb(null, true);
+    //   return;
+    // }
+    // // Generate an error on other origins, disabling access
+    // cb(new Error("Not allowed"));
   },
 });
 
@@ -84,14 +84,8 @@ fastify.listen({ port: config.PORT }, (err) => {
     console.error(err);
     process.exit(1);
   }
+  fastify.swagger()
   console.log(`Listening at ${config.PORT}`);
 });
 
-// Gera/expõem rota documentação
-// fastify.ready(err => {
-//   if (err) {
-//     console.error(err);
-//     throw err;
-//   }
-//   fastify.swagger()
-// })
+console.log('teste')
