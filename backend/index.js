@@ -15,11 +15,11 @@ fastify.register(require("@fastify/cors"), {
     console.log( origin )
     const hostname = origin && new URL(origin).hostname;
     if (hostname === "localhost" || config.DEV_MODE) {
-       Request from localhost will pass
+       // Request from localhost will pass
       cb(null, true);
       return;
     }
-    Generate an error on other origins, disabling access
+    // Generate an error on other origins, disabling access
     cb(new Error("Not allowed"));
   },
 });
