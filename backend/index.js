@@ -83,6 +83,15 @@ fastify.listen({ port: config.PORT, host: '0.0.0.0' }, (err) => {
     console.error(err);
     process.exit(1);
   }
-  fastify.swagger()
   console.log(`Listening at ${config.PORT}`);
 });
+
+
+// Gera/expõem rota documentação
+fastify.ready(err => {
+  if (err) {
+    console.error(err);
+    process.exit(1);
+  }
+  fastify.swagger();
+})
