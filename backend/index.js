@@ -6,7 +6,6 @@ const path = require("path");
 const fastify = require("fastify")();
 const config = require("./config");
 const bcrypt = require("bcryptjs");
-console.log(config)
 
 //CORS
 fastify.register(require("@fastify/cors"), {
@@ -87,5 +86,3 @@ fastify.listen({ port: config.PORT, host: '0.0.0.0' }, (err) => {
   fastify.swagger()
   console.log(`Listening at ${config.PORT}`);
 });
-
-console.log('teste')

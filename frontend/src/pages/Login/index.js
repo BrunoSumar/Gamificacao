@@ -28,7 +28,7 @@ const LoginOptions = ({ isLogged, setLogged, token, setToken, isLoading, setLoad
   if( isLogged ){
     return (
       <>
-        <h3>Logoado com sucesso:</h3>
+        <h3>Logado com sucesso:</h3>
         <article onClick={ copyToClipboard }>{ token }</article>
         <p style={{ 'text-align': 'center' }}><ins>{ copySuccess ? 'Texto copiado' : <br/> } </ins></p>
         <LogoutButton setLogged={setLogged}/>
